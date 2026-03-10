@@ -1,0 +1,793 @@
+
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>けん玉 認定トラッカー（級・準初段・段）</title>
+<style>
+:root{--txt:#1f2430;--muted:#5a6475;--line:#cfd6e3;--accent:#7dbb2d;--good:#2aa84a;--bad:#d64545;--radius:18px;--shadow:0 10px 24px rgba(0,0,0,.12);}
+*{box-sizing:border-box}
+body{margin:0;font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Segoe UI",Roboto,Arial;background:radial-gradient(900px 480px at 15% 0%, rgba(125,187,45,.22), transparent 60%),radial-gradient(700px 420px at 85% 15%, rgba(125,187,45,.14), transparent 58%),linear-gradient(180deg,#f7f9fc 0%,#eef3fb 55%,#f7f9fc 100%);color:var(--txt);min-height:100vh;padding:16px;}
+.wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:12px;padding-bottom:28px;}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;}
+h1{margin:0;font-size:20px;letter-spacing:.02em;}
+.sub{color:var(--muted);font-size:13px;margin-top:6px;line-height:1.55;}
+.pill{display:inline-flex;align-items:center;gap:8px;background:rgba(125,187,45,.12);border:1px solid rgba(125,187,45,.35);color:var(--txt);padding:8px 12px;border-radius:999px;font-size:13px;white-space:nowrap;}
+.pill.ok{border-color:rgba(125,187,45,.55);background:rgba(125,187,45,.10);}
+.grid{display:grid;grid-template-columns:1fr;gap:12px;}
+@media(min-width:940px){.grid{grid-template-columns:1.25fr .75fr;}}
+.card{background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.85));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.hd{padding:14px 16px 10px;background:linear-gradient(180deg, rgba(125,187,45,.18), rgba(255,255,255,.0) 70%);border-bottom:1px solid rgba(125,187,45,.18);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.bd{padding:14px 16px 16px;}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+label{font-size:13px;color:var(--muted);}
+select,input,button,textarea{font:inherit;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.85);color:var(--txt);padding:12px 14px;outline:none;}
+textarea{width:100%;min-height:110px;line-height:1.35;}
+button{cursor:pointer;user-select:none;touch-action:manipulation;transition:transform .05s ease, filter .15s ease, background .15s ease;}
+button:active{transform:translateY(1px);}
+button.primary{border-color:rgba(125,187,45,.55);background:rgba(125,187,45,.16);}
+button.good{border-color:rgba(42,168,74,.55);background:rgba(42,168,74,.12);}
+button.bad{border-color:rgba(214,69,69,.60);background:rgba(214,69,69,.10);}
+button.ghost{background:transparent;color:var(--muted);}
+button:disabled{opacity:.45;cursor:not-allowed;}
+.big{padding:14px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));border-radius:16px;}
+.k{font-weight:900;letter-spacing:.02em;}
+.muted{color:var(--muted);}
+.mini{font-size:12px;color:var(--muted);line-height:1.55;}
+#focusName{font-size:24px;font-weight:1100;letter-spacing:.03em;line-height:1.15;text-shadow:0 0 18px rgba(125,187,45,.22);}
+.resultBadge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);font-size:13px;color:rgba(255,255,255,.82);white-space:nowrap;}
+.resultBadge.ok{border-color:rgba(42,168,74,.45);background:rgba(42,168,74,.10);color:rgba(31,36,48,.92);}
+.resultBadge.ng{border-color:rgba(214,69,69,.45);background:rgba(214,69,69,.10);color:rgba(31,36,48,.92);}
+.resultBadge.wait{border-color:rgba(207,214,227,.9);background:rgba(255,255,255,.78);color:rgba(31,36,48,.78);}
+.dots{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;padding:10px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.02);}
+.dot{width:16px;height:16px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.05);}
+.dot.s{background:rgba(74,163,255,.85);border-color:rgba(74,163,255,.55);}
+.dot.f{background:rgba(255,77,90,.85);border-color:rgba(255,77,90,.55);}
+.dot.e{background:rgba(31,36,48,.06);border-color:rgba(31,36,48,.10);}
+#list{max-height:42vh;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-right:6px;margin-top:10px;}
+#log{max-height:44vh;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-right:6px;}
+@media(min-width:940px){#list{max-height:56vh;}#log{max-height:70vh;}}
+.item{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.02);border-radius:16px;padding:12px;margin-bottom:10px;}
+.item.focus{border-color:rgba(125,187,45,.45);background:rgba(125,187,45,.06);}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:rgba(31,36,48,.06);font-size:12px;color:var(--muted);white-space:nowrap;}
+.badge strong{color:var(--txt);}
+.note{border:1px dashed rgba(125,187,45,.30);border-radius:14px;padding:10px;background:rgba(125,187,45,.06);color:rgba(31,36,48,.78);font-size:12px;line-height:1.55;}
+.logItem{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);border-radius:14px;padding:10px 12px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;}
+.logItem .title{font-size:13px;}
+.logItem .desc{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.35;}
+.inlineForm{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;}
+.inlineForm input{width:180px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>認定トラッカー（級・準初段・段）</h1>
+    <div class="sub">
+      「級」は10級から開始して、成功が積み上がる限り上位級の到達可能性も同時に判定します。<br>
+      「準初段」「段」は、選んだランクだけを判定します。
+    </div>
+  </div>
+  <div class="row">
+    <div class="pill ok">JavaScript：起動中</div>
+    <div class="pill">保存：端末内</div>
+  </div>
+</header>
+
+<div class="grid">
+  <section class="card">
+    <div class="hd">
+      <div class="row">
+        <label>モード</label>
+        <select id="mode">
+          <option value="kyu">級（10級→1級 連続）</option>
+          <option value="jun">準初段（固定）</option>
+          <option value="dan">段（初段〜六段 固定）</option>
+        </select>
+        <label id="rankLabel">級位</label>
+        <select id="rankSel"></select>
+        <button class="primary" id="btnStart">開始</button>
+      </div>
+      <div class="row">
+        <button class="ghost" id="btnExport">出力</button>
+        <button class="ghost" id="btnUndo">戻す</button>
+        <button class="ghost" id="btnReset">リセット</button>
+      </div>
+    </div>
+
+    <div class="bd">
+      <div class="big">
+        <div class="muted">現在の種目</div>
+        <div id="focusName">開始してください</div>
+        <div class="mini" id="focusMeta" style="margin-top:8px;"></div>
+
+        <div class="row" style="margin-top:10px;">
+          <div class="resultBadge wait" id="resultBadge">判定：未判定</div>
+          <span class="badge">到達可能：<strong id="bestRank">-</strong></span>
+        </div>
+
+        <div class="dots" id="dotsRow" style="display:none;"></div>
+
+        <div class="inlineForm" id="timeBox" style="display:none;">
+          <label class="mini">記録（秒）</label>
+          <input id="timeVal" inputmode="decimal" placeholder="例 58.4"/>
+          <button class="good" id="btnTime">記録</button>
+        </div>
+
+        <div class="inlineForm" id="freeBox" style="display:none;">
+          <label class="mini">技名</label>
+          <input id="freeName" placeholder="自由種目の技名"/>
+          <button class="good" id="btnFree">登録</button>
+        </div>
+
+        <div class="row" id="moshiQuick" style="margin-top:10px; display:none;">
+          <label class="mini">規定回数を超えましたか</label>
+          <button class="good" id="btnMoshiPass">規定以上</button>
+          <button class="bad" id="btnMoshiFail">未達</button>
+        </div>
+
+        <div class="row" style="margin-top:12px;">
+          <button class="good" id="btnOk" disabled>成功</button>
+          <button class="bad" id="btnNg" disabled>失敗</button>
+          <button class="ghost" id="btnNext" disabled>次へ</button>
+        </div>
+
+        <div class="note" style="margin-top:12px;">
+          級の規程では希望級位の受審が可能ですが、飛び越した級位の分もその場で認定表どおり合格が必要です。<br>
+          このアプリの級モードは、練習用途として成功の積み上げで「到達可能」を表示します。
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div class="k">種目一覧</div>
+        <div class="mini">一覧は枠内スクロールです。</div>
+        <div id="list"></div>
+      </div>
+
+      <details style="margin-top:12px;">
+        <summary class="mini">級の回数テーブル（編集可）</summary>
+        <div class="mini" style="margin-top:8px;">形式：gradeKey → { trickNo: requiredSuccess }（未掲載種目は省略）</div>
+        <textarea id="kyuTable"></textarea>
+        <div class="row" style="margin-top:10px;">
+          <button class="good" id="btnApplyTable">反映</button>
+          <button class="ghost" id="btnResetTable">初期値へ</button>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <aside class="card">
+    <div class="hd">
+      <div class="row">
+        <div class="k">ログ</div>
+        <span class="badge">完了：<strong id="doneCnt">0</strong></span>
+        <span class="badge">残り：<strong id="leftCnt">0</strong></span>
+      </div>
+    </div>
+    <div class="bd">
+      <div id="log"></div>
+    </div>
+  </aside>
+</div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const LS = "kendama_tracker_mix_v4";
+
+  const el = (id)=>document.getElementById(id);
+
+  // ===== 級 =====
+  const KYU_TRICKS = [
+    {no:1,name:"大皿",type:"count"},
+    {no:2,name:"小皿",type:"count"},
+    {no:3,name:"中皿",type:"count"},
+    {no:4,name:"ろうそく",type:"count"},
+    {no:5,name:"とめけん",type:"count"},
+    {no:6,name:"飛行機",type:"count"},
+    {no:7,name:"ふりけん",type:"count"},
+    {no:8,name:"日本一周",type:"count"},
+    {no:9,name:"世界一周",type:"count"},
+    {no:10,name:"灯台",type:"count"},
+    {no:11,name:"もしかめ",type:"moshi"}
+  ];
+
+  // 初期値は練習用の仮テーブル（必要なら編集で上書き）
+    const KYU_TABLE_DEFAULT = {
+    "10kyu": {1:1},
+    "9kyu":  {1:2,2:1},
+    "8kyu":  {1:3,2:2,3:1},
+    "7kyu":  {1:3,2:2,3:1,4:1},
+    "6kyu":  {1:3,2:2,3:1,4:2,5:1},
+    "5kyu":  {1:3,2:2,3:1,4:3,5:2,6:1},
+    "4kyu":  {1:3,2:2,3:1,4:3,5:2,6:1,7:1},
+    "3kyu":  {1:3,2:2,3:1,4:3,5:2,6:1,7:1,8:1},
+    "2kyu":  {1:3,2:2,3:1,4:3,5:2,6:1,7:1,8:1,9:1},
+
+    // 通し（1級ラインの目安）
+    // 大皿〜日本一周：各3回 / 世界一周：2回 / 灯台：1回
+    "1kyu":  {1:3,2:3,3:3,4:3,5:3,6:3,7:3,8:3,9:2,10:1,11:1}
+  };
+
+  const KYU_ORDER = [
+    {key:"10kyu", label:"10級"},
+    {key:"9kyu",  label:"9級"},
+    {key:"8kyu",  label:"8級"},
+    {key:"7kyu",  label:"7級"},
+    {key:"6kyu",  label:"6級"},
+    {key:"5kyu",  label:"5級"},
+    {key:"4kyu",  label:"4級"},
+    {key:"3kyu",  label:"3級"},
+    {key:"2kyu",  label:"2級"},
+    {key:"1kyu",  label:"1級"}
+  ];
+
+  // ===== 準初段 =====
+  const JUN_TRICKS = [
+    {no:1,name:"とめけん",type:"count", req:5},
+    {no:2,name:"飛行機",type:"count", req:5},
+    {no:3,name:"ふりけん",type:"count", req:5},
+    {no:4,name:"県一周",type:"count", req:4},
+    {no:5,name:"日本一周",type:"count", req:4},
+    {no:6,name:"世界一周",type:"count", req:3},
+    {no:7,name:"灯台",type:"count", req:2},
+    {no:8,name:"けん先すべり",type:"count", req:1},
+    {no:9,name:"もしかめ",type:"moshi", req:1}
+  ];
+
+  // ===== 段 =====
+  const DAN_TRICKS = [
+    {no:1,name:"世界一周",type:"count"},
+    {no:2,name:"灯台",type:"count"},
+    {no:3,name:"けん先すべり",type:"count"},
+    {no:4,name:"地球まわし",type:"count"},
+    {no:5,name:"さか落とし",type:"count"},
+    {no:6,name:"うらふりけん",type:"count"},
+    {no:7,name:"宇宙一周",type:"count"},
+    {no:8,name:"うぐいす",type:"count"},
+    {no:9,name:"つるしとめけん",type:"count"},
+    {no:10,name:"はねけん",type:"count"},
+    {no:11,name:"一回転飛行機",type:"count"},
+    {no:12,name:"一回転灯台",type:"count"},
+    {no:13,name:"すべり止め極意",type:"count"},
+    {no:14,name:"うぐいすの谷渡り",type:"count"},
+    {no:15,name:"灯台とんぼ返り",type:"count"},
+    {no:16,name:"つるし一回転飛行",type:"count"},
+    {no:17,name:"二回転灯台",type:"count"},
+    {no:18,name:"自由種目（1）",type:"free"},
+    {no:19,name:"自由種目（2）",type:"free"},
+    {no:20,name:"タイム競技B",type:"time"},
+    {no:21,name:"もしかめ",type:"moshi"}
+  ];
+
+  const DAN_RANKS = {
+    shodan:{label:"初段", req:{1:4,2:4,3:3,4:3,5:2,6:2,7:1,8:1,9:1,10:1,21:1}},
+    nidan:{label:"二段", req:{1:5,2:5,3:4,4:4,5:3,6:3,7:2,8:2,9:2,10:2,21:1}},
+    sandan:{label:"三段", req:{3:5,4:5,5:4,6:4,7:3,8:3,9:3,10:3,11:1,12:1,20:120,21:1}},
+    yondan:{label:"四段", req:{3:6,4:6,5:5,6:5,7:4,8:4,9:4,10:4,11:2,12:2,20:60,21:1}},
+    godan:{label:"五段", req:{7:6,8:6,9:6,10:6,11:4,12:4,13:3,14:3,15:2,16:2,17:1,20:45}},
+    rokudan:{label:"六段", req:{7:8,8:8,9:8,10:8,11:6,12:6,13:5,14:5,15:4,16:4,17:3,18:1,19:1}}
+  };
+
+  // ===== UI =====
+  const mode = el("mode");
+  const rankSel = el("rankSel");
+  const rankLabel = el("rankLabel");
+  const btnStart = el("btnStart");
+  const btnExport = el("btnExport");
+  const btnUndo = el("btnUndo");
+  const btnReset = el("btnReset");
+
+  const focusName = el("focusName");
+  const focusMeta = el("focusMeta");
+  const resultBadge = el("resultBadge");
+  const bestRank = el("bestRank");
+  const dotsRow = el("dotsRow");
+
+  const timeBox = el("timeBox");
+  const timeVal = el("timeVal");
+  const btnTime = el("btnTime");
+
+  const freeBox = el("freeBox");
+  const freeName = el("freeName");
+  const btnFree = el("btnFree");
+
+  const moshiQuick = el("moshiQuick");
+  const btnMoshiPass = el("btnMoshiPass");
+  const btnMoshiFail = el("btnMoshiFail");
+
+  const btnOk = el("btnOk");
+  const btnNg = el("btnNg");
+  const btnNext = el("btnNext");
+
+  const list = el("list");
+  const log = el("log");
+  const doneCnt = el("doneCnt");
+  const leftCnt = el("leftCnt");
+
+  const kyuTableTa = el("kyuTable");
+  const btnApplyTable = el("btnApplyTable");
+  const btnResetTable = el("btnResetTable");
+
+  const S = {mode:"kyu", rankKey:null, kyuTable:KYU_TABLE_DEFAULT, tasks:[], focusIdx:0, log:[], history:[]};
+
+  function save(){ try{ localStorage.setItem(LS, JSON.stringify(S)); }catch(e){} }
+  function load(){
+    try{
+      const raw = localStorage.getItem(LS);
+      if(!raw) return false;
+      const obj = JSON.parse(raw);
+      if(!obj || typeof obj!=="object") return false;
+      Object.assign(S, obj);
+      if(!S.kyuTable) S.kyuTable = KYU_TABLE_DEFAULT;
+      return true;
+    }catch(e){ return false; }
+  }
+  function snapshot(){ return JSON.parse(JSON.stringify({mode:S.mode, rankKey:S.rankKey, kyuTable:S.kyuTable, tasks:S.tasks, focusIdx:S.focusIdx, log:S.log})); }
+  function pushHistory(){ S.history.push(snapshot()); if(S.history.length>60) S.history.shift(); }
+
+  function esc(s){ return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;"); }
+
+  function addLog(title, desc, right=""){ S.log.unshift({title, desc, right, at:Date.now()}); if(S.log.length>200) S.log.pop(); }
+
+  function setBadge(state){
+    resultBadge.classList.remove("ok","ng","wait");
+    if(state==="ok"){ resultBadge.classList.add("ok"); resultBadge.textContent="判定：合格"; }
+    else if(state==="ng"){ resultBadge.classList.add("ng"); resultBadge.textContent="判定：未達"; }
+    else { resultBadge.classList.add("wait"); resultBadge.textContent="判定：進行中"; }
+  }
+
+  function focusTask(){ return S.tasks[S.focusIdx] || null; }
+
+  function renderDots(t){
+    if(!t || t.type!=="count"){ dotsRow.style.display="none"; dotsRow.innerHTML=""; return; }
+    const marks = Array.isArray(t.marks) ? t.marks : [];
+    let html="";
+    for(let i=0;i<10;i++){
+      const m = marks[i];
+      if(m===1) html += '<span class="dot s" title="成功"></span>';
+      else if(m===0) html += '<span class="dot f" title="失敗"></span>';
+      else html += '<span class="dot e" title="未実施"></span>';
+    }
+    dotsRow.style.display="flex";
+    dotsRow.innerHTML=html;
+  }
+
+  function kyuBest(){
+    if(S.mode!=="kyu") return "-";
+    const m = new Map();
+    S.tasks.forEach(t=>m.set(t.no, t.success||0));
+    let best="10級";
+    for(const g of KYU_ORDER){
+      const req = S.kyuTable[g.key] || {};
+      const ok = Object.keys(req).every(k=>{
+        const no=Number(k);
+        if(no===11){
+          const t=S.tasks.find(x=>x.no===11);
+          return t && t.done;
+        }
+        return (m.get(no)||0) >= req[k];
+      });
+      if(ok) best=g.label;
+    }
+    return best;
+  }
+
+  function kyuRequirementFor(trickNo){
+    const req = (S.kyuTable[S.rankKey] || {});
+    return req[trickNo] ?? null;
+  }
+
+  function calcCounts(){
+    const done = S.tasks.filter(t=>t.done).length;
+    doneCnt.textContent=String(done);
+    leftCnt.textContent=String(Math.max(0,S.tasks.length-done));
+  }
+
+  function renderList(){
+    list.innerHTML="";
+    S.tasks.forEach((t, idx)=>{
+      const div=document.createElement("div");
+      div.className="item"+(idx===S.focusIdx?" focus":"");
+      const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
+      let reqTxt = "";
+      if(t.type==="count") reqTxt = (req!=null ? `必要成功：${req}回` : "（対象外）");
+      if(t.type==="moshi") reqTxt = "規定以上か判定";
+      if(t.type==="time") reqTxt = `制限時間：${req}秒以内（2回）`;
+      if(t.type==="free") reqTxt = "技名を登録";
+      const verdict = t.done ? "合格" : ((t.type==="count" && (t.attempts||0)>=10) ? "未達" : "未判定");
+      div.innerHTML = `
+        <div class="row" style="justify-content:space-between;">
+          <div>
+            <div class="k">${idx===S.focusIdx ? "▶ " : ""}${esc(t.name)} <span class="mini">(No.${t.no})</span></div>
+            <div class="mini">${esc(reqTxt)} / 成功 ${t.success||0} / 試技 ${t.attempts||0}</div>
+          </div>
+          <span class="badge"><strong>${verdict}</strong></span>
+        </div>
+      `;
+      div.addEventListener("click", ()=>{ S.focusIdx=idx; save(); updateUI(); });
+      list.appendChild(div);
+    });
+  }
+
+  function renderLog(){
+    if(S.log.length===0){ log.innerHTML='<div class="muted">ここにログが表示されます。</div>'; return; }
+    log.innerHTML="";
+    S.log.slice(0,80).forEach(e=>{
+      const div=document.createElement("div");
+      div.className="logItem";
+      div.innerHTML=`
+        <div>
+          <div class="title">${esc(e.title)}</div>
+          <div class="desc">${esc(e.desc)}</div>
+        </div>
+        <div>${e.right ? `<span class="badge"><strong>${esc(e.right)}</strong></span>` : ""}</div>
+      `;
+      log.appendChild(div);
+    });
+  }
+
+  function updateFocus(){
+    const t=focusTask();
+    bestRank.textContent = (S.mode==="kyu") ? kyuBest() : "-";
+
+    // hide all special boxes by default
+    timeBox.style.display="none";
+    freeBox.style.display="none";
+    moshiQuick.style.display="none";
+
+    if(!t){
+      focusName.textContent="開始してください";
+      focusMeta.textContent="";
+      btnOk.disabled=true; btnNg.disabled=true; btnNext.disabled=true;
+      setBadge("wait");
+      renderDots(null);
+      return;
+    }
+
+    focusName.textContent=t.name;
+
+    const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
+
+    if(t.type==="count"){
+      const target = (req==null) ? "対象外" : `必要成功：${req}回（最大10回）`;
+      focusMeta.textContent = `${target} / 成功 ${t.success||0} / 試技 ${t.attempts||0}`;
+      btnOk.disabled = t.done || (t.attempts||0)>=10 || req==null;
+      btnNg.disabled = t.done || (t.attempts||0)>=10 || req==null;
+      btnNext.disabled = !(t.done || (t.attempts||0)>=10 || req==null);
+      renderDots(t);
+      if(req==null) setBadge("wait");
+      else if(t.done) setBadge("ok");
+      else if((t.attempts||0)>=10) setBadge("ng");
+      else setBadge("wait");
+      return;
+    }
+
+    renderDots(null);
+
+    if(t.type==="moshi"){
+      moshiQuick.style.display="flex";
+      btnOk.disabled=true; btnNg.disabled=true;
+      btnNext.disabled = !(t.done || (t.attempts||0)>=1);
+      focusMeta.textContent = `規定以上かを選択 / 判定 ${t.done ? "合格" : ((t.attempts||0)>=1 ? "未達" : "未入力")}`;
+      if(t.done) setBadge("ok"); else if((t.attempts||0)>=1) setBadge("ng"); else setBadge("wait");
+      return;
+    }
+
+    if(t.type==="time"){
+      timeBox.style.display="flex";
+      btnOk.disabled=true; btnNg.disabled=true;
+      btnNext.disabled = !(t.done || (t.attempts||0)>=2);
+      const best = (t.timeAttempts && t.timeAttempts.length) ? Math.min(...t.timeAttempts) : null;
+      focusMeta.textContent = `制限時間：${req}秒以内（2回） / 記録 ${t.attempts||0}/2${best!=null ? " / 最速 "+best+"秒" : ""}`;
+      if(t.done) setBadge("ok"); else if((t.attempts||0)>=2) setBadge("ng"); else setBadge("wait");
+      return;
+    }
+
+    if(t.type==="free"){
+      freeBox.style.display="flex";
+      btnOk.disabled=true; btnNg.disabled=true;
+      btnNext.disabled = !t.done;
+      focusMeta.textContent = t.done ? `登録済み：${t.freeName||""}` : "技名を入力して登録";
+      setBadge(t.done ? "ok" : "wait");
+      return;
+    }
+
+    btnOk.disabled=true; btnNg.disabled=true; btnNext.disabled=false;
+    setBadge("wait");
+  }
+
+  function tryAutoAdvance(){
+    const t=focusTask();
+    if(!t) return;
+    const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
+
+    const exhausted =
+      (t.type==="count" && (t.attempts||0)>=10 && !t.done) ||
+      (t.type==="time"  && (t.attempts||0)>=2 && !t.done) ||
+      (t.type==="moshi" && (t.attempts||0)>=1 && !t.done);
+
+    if(!(t.done || exhausted || req==null)) return;
+    if(S.focusIdx < S.tasks.length-1) S.focusIdx += 1;
+  }
+
+  function recordCount(ok){
+    const t=focusTask();
+    if(!t || t.type!=="count") return;
+    const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
+    if(req==null) return;
+    if(t.done || (t.attempts||0)>=10) return;
+
+    pushHistory();
+
+    t.attempts=(t.attempts||0)+1;
+    t.marks=Array.isArray(t.marks)?t.marks:[];
+    t.marks.push(ok?1:0);
+    if(ok) t.success=(t.success||0)+1;
+
+    addLog(t.name, ok?"成功":"失敗", `${t.success||0}/${req}`);
+    if((t.success||0) >= req) t.done=true;
+
+    tryAutoAdvance();
+    save();
+    updateUI();
+  }
+
+  function recordMoshiQuick(passed){
+    const t=focusTask();
+    if(!t || t.type!=="moshi") return;
+    if(t.done) return;
+
+    pushHistory();
+    t.attempts=1;
+    t.done=!!passed;
+    addLog(t.name, passed?"規定以上":"未達", "");
+    tryAutoAdvance();
+    save();
+    updateUI();
+  }
+
+  function recordTime(){
+    const t=focusTask();
+    if(!t || t.type!=="time") return;
+    if(t.done) return;
+    t.timeAttempts = t.timeAttempts || [];
+    if(t.timeAttempts.length>=2) return;
+
+    const v = Number((timeVal.value||"").trim());
+    if(!Number.isFinite(v) || v<=0){ alert("秒数を入力してください。"); return; }
+
+    pushHistory();
+    const vv = Math.round(v*10)/10;
+    t.timeAttempts.push(vv);
+    t.attempts = t.timeAttempts.length;
+
+    const best = Math.min(...t.timeAttempts);
+    addLog(t.name, `記録：${vv}秒`, `最速${best}秒`);
+
+    if(best <= Number(t.required)) t.done = true;
+
+    tryAutoAdvance();
+    save();
+    updateUI();
+  }
+
+  function saveFree(){
+    const t=focusTask();
+    if(!t || t.type!=="free") return;
+    if(t.done) return;
+
+    const name=(freeName.value||"").trim();
+    if(!name){ alert("技名を入力してください。"); return; }
+
+    pushHistory();
+    t.freeName=name;
+    t.done=true;
+    t.attempts=1;
+    addLog(t.name, "登録", name);
+
+    tryAutoAdvance();
+    save();
+    updateUI();
+  }
+
+  function next(){
+    if(S.focusIdx < S.tasks.length-1){
+      S.focusIdx += 1;
+      save();
+      updateUI();
+    }
+  }
+
+  function exportText(){
+    const lines=[];
+    lines.push("認定トラッカー 結果");
+    lines.push(`作成日：${new Date().toLocaleString()}`);
+    lines.push(`モード：${mode.value} / 選択：${rankSel.options[rankSel.selectedIndex]?.textContent || "-"}`);
+    if(S.mode==="kyu") lines.push(`到達可能：${kyuBest()}`);
+    lines.push("");
+
+    S.tasks.forEach(t=>{
+      const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
+      const reqTxt = (t.type==="count") ? (req!=null ? `必要${req}` : "対象外") :
+                    (t.type==="moshi") ? "規定以上?" :
+                    (t.type==="time") ? `制限${req}s` :
+                    (t.type==="free") ? "登録" : "";
+      const verdict = t.done ? "合格" : ((t.type==="count" && (t.attempts||0)>=10) ? "未達" : "未判定");
+      lines.push(`No.${t.no} ${t.name} / ${reqTxt} / 成功${t.success||0} / 試技${t.attempts||0} / ${verdict}`);
+    });
+
+    lines.push("");
+    lines.push("ログ（新しい順）");
+    lines.push("-----");
+    S.log.slice(0,200).forEach(e=>lines.push(`${e.title}: ${e.desc}${e.right?(" ["+e.right+"]"):""}`));
+
+    const out = lines.join("\n");
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(out).then(()=>alert("コピーいたしました。")).catch(()=>prompt("コピーしてお使いください。", out));
+    }else{
+      prompt("コピーしてお使いください。", out);
+    }
+  }
+
+  function resetAll(){
+    S.mode = mode.value;
+    S.rankKey = null;
+    S.tasks = [];
+    S.focusIdx = 0;
+    S.log = [];
+    S.history = [];
+    if(!S.kyuTable) S.kyuTable = KYU_TABLE_DEFAULT;
+    save();
+    updateUI();
+  }
+
+  function undo(){
+    if(S.history.length===0) return;
+    const prev = S.history.pop();
+    Object.assign(S, prev);
+    save();
+    updateUI();
+  }
+
+  function setupRankSelector(){
+    rankSel.innerHTML="";
+    if(mode.value==="kyu"){
+      rankLabel.textContent="到達目標";
+      KYU_ORDER.forEach(g=>{
+        const opt=document.createElement("option");
+        opt.value=g.key; opt.textContent=g.label;
+        rankSel.appendChild(opt);
+      });
+      rankSel.value="10kyu";
+    }else if(mode.value==="jun"){
+      rankLabel.textContent="段位";
+      const opt=document.createElement("option");
+      opt.value="jun"; opt.textContent="準初段";
+      rankSel.appendChild(opt);
+      rankSel.value="jun";
+    }else{
+      rankLabel.textContent="段位";
+      Object.keys(DAN_RANKS).forEach(k=>{
+        const opt=document.createElement("option");
+        opt.value=k; opt.textContent=DAN_RANKS[k].label;
+        rankSel.appendChild(opt);
+      });
+      rankSel.value="shodan";
+    }
+    kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
+  }
+
+  function buildTasksForStart(){
+    S.mode = mode.value;
+
+    if(S.mode==="kyu"){
+      S.rankKey = rankSel.value;
+      S.tasks = KYU_TRICKS.map(t=>({no:t.no,name:t.name,type:t.type,required:null,attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""}));
+    }else if(S.mode==="jun"){
+      S.rankKey="jun";
+      S.tasks = JUN_TRICKS.map(t=>({no:t.no,name:t.name,type:t.type,required:t.req,attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""}));
+    }else{
+      S.rankKey = rankSel.value;
+      const req = DAN_RANKS[S.rankKey].req;
+      const tasks = [];
+      // count tasks
+      DAN_TRICKS.forEach(t=>{
+        if(t.type==="count" && req[t.no]){
+          tasks.push({no:t.no,name:t.name,type:"count",required:req[t.no],attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""});
+        }
+      });
+      // time
+      if(req[20]){
+        tasks.push({no:20,name:"タイム競技B",type:"time",required:req[20],attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""});
+      }
+      // moshi
+      if(req[21]){
+        tasks.push({no:21,name:"もしかめ",type:"moshi",required:1,attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""});
+      }
+      // free
+      if(req[18]){
+        tasks.push({no:18,name:"自由種目（1）",type:"free",required:1,attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""});
+      }
+      if(req[19]){
+        tasks.push({no:19,name:"自由種目（2）",type:"free",required:1,attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""});
+      }
+      S.tasks = tasks;
+    }
+
+    S.focusIdx=0;
+    S.log=[];
+    S.history=[];
+    addLog("開始", `モード：${S.mode}`, rankSel.options[rankSel.selectedIndex]?.textContent || "");
+  }
+
+  function updateUI(){
+    calcCounts();
+    renderList();
+    renderLog();
+    updateFocus();
+    save();
+  }
+
+  // events
+  mode.addEventListener("change", setupRankSelector);
+
+  btnStart.addEventListener("click", ()=>{
+    pushHistory();
+    buildTasksForStart();
+    updateUI();
+  });
+
+  btnOk.addEventListener("click", ()=>recordCount(true));
+  btnNg.addEventListener("click", ()=>recordCount(false));
+  btnNext.addEventListener("click", next);
+
+  btnMoshiPass.addEventListener("click", ()=>recordMoshiQuick(true));
+  btnMoshiFail.addEventListener("click", ()=>recordMoshiQuick(false));
+
+  btnTime.addEventListener("click", recordTime);
+  btnFree.addEventListener("click", saveFree);
+
+  btnExport.addEventListener("click", exportText);
+  btnUndo.addEventListener("click", undo);
+  btnReset.addEventListener("click", ()=>{
+    const ok = confirm("全リセットいたします。よろしいですか？");
+    if(!ok) return;
+    resetAll();
+  });
+
+  btnApplyTable.addEventListener("click", ()=>{
+    try{
+      const obj = JSON.parse(kyuTableTa.value);
+      S.kyuTable = obj;
+      save();
+      alert("反映いたしました。");
+      updateUI();
+    }catch(e){
+      alert("JSONとして読み取れませんでした。");
+    }
+  });
+  btnResetTable.addEventListener("click", ()=>{
+    S.kyuTable = KYU_TABLE_DEFAULT;
+    kyuTableTa.value = JSON.stringify(S.kyuTable, null, 2);
+    save();
+    updateUI();
+  });
+
+  // init
+  load();
+  mode.value = S.mode || "kyu";
+  setupRankSelector();
+  if(S.rankKey){
+    if(mode.value==="kyu" && KYU_ORDER.some(x=>x.key===S.rankKey)) rankSel.value = S.rankKey;
+    if(mode.value==="dan" && DAN_RANKS[S.rankKey]) rankSel.value = S.rankKey;
+  }
+  kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
+  updateUI();
+})();
+</script>
+</body>
+</html>
