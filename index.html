@@ -58,6 +58,128 @@ button:disabled{opacity:.45;cursor:not-allowed;}
 .logItem .desc{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.35;}
 .inlineForm{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;}
 .inlineForm input{width:180px;}
+
+/* 大判ポップアップ（合格/不合格） */
+#judgeOverlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  background: rgba(240,243,249,.72);
+  backdrop-filter: blur(4px);
+}
+#judgeOverlay.show{ display:flex; }
+#judgeBox{
+  width:min(720px, 92vw);
+  border-radius:24px;
+  border:1px solid rgba(31,36,48,.14);
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 18px 70px rgba(0,0,0,.18);
+  padding:18px 18px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+#judgeTitle{
+  font-weight:1100;
+  letter-spacing:.06em;
+  font-size:56px;
+  line-height:1.05;
+  margin-top:6px;
+}
+#judgeSub{
+  margin-top:10px;
+  color: rgba(31,36,48,.72);
+  font-size:15px;
+  line-height:1.45;
+}
+#judgeBox.ok{ border-color: rgba(42,168,74,.35); }
+#judgeBox.ng{ border-color: rgba(214,69,69,.35); }
+#judgeGlow{
+  position:absolute;
+  inset:-40px -60px auto -60px;
+  height:180px;
+  opacity:.65;
+}
+#judgeBox.ok #judgeGlow{
+  background: radial-gradient(closest-side, rgba(125,187,45,.35), transparent 70%);
+}
+#judgeBox.ng #judgeGlow{
+  background: radial-gradient(closest-side, rgba(214,69,69,.32), transparent 70%);
+}
+#confetti{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:10000;
+}
+@media (max-width: 520px){
+  #judgeTitle{ font-size:44px; }
+}
+
+
+/* 合格演出（ゴージャス） */
+@keyframes popZoom {
+  0% { transform: scale(.72); opacity: 0; }
+  55% { transform: scale(1.06); opacity: 1; }
+  80% { transform: scale(.98); }
+  100% { transform: scale(1); }
+}
+@keyframes titleWave {
+  0% { transform: translateY(0) scale(1); letter-spacing:.06em; }
+  45% { transform: translateY(-6px) scale(1.02); letter-spacing:.10em; }
+  100% { transform: translateY(0) scale(1); letter-spacing:.06em; }
+}
+@keyframes shineSweep {
+  0% { transform: translateX(-120%) rotate(12deg); opacity: 0; }
+  15% { opacity: .0; }
+  35% { opacity: .35; }
+  70% { opacity: .0; }
+  100% { transform: translateX(120%) rotate(12deg); opacity: 0; }
+}
+#judgeBox{
+  transform: scale(.72);
+  opacity: 0;
+}
+#judgeOverlay.show #judgeBox{
+  animation: popZoom .55s ease-out forwards;
+}
+#judgeTitle{
+  position:relative;
+}
+#judgeOverlay.show #judgeTitle{
+  animation: titleWave .75s ease-in-out;
+}
+#judgeShine{
+  position:absolute;
+  inset:-40px;
+  pointer-events:none;
+  opacity:0;
+}
+#judgeBox.ok #judgeShine{
+  background: linear-gradient(90deg, transparent 0%, rgba(125,187,45,.0) 25%, rgba(125,187,45,.35) 50%, rgba(125,187,45,.0) 75%, transparent 100%);
+}
+#judgeBox.ng #judgeShine{
+  background: linear-gradient(90deg, transparent 0%, rgba(214,69,69,.0) 25%, rgba(214,69,69,.32) 50%, rgba(214,69,69,.0) 75%, transparent 100%);
+}
+#judgeOverlay.show #judgeShine{
+  animation: shineSweep .9s ease-in-out;
+}
+
+
+/* さらに大きい合格表示 */
+#judgeTitle{ font-size:72px; }
+#judgeBox.mega #judgeTitle{ font-size:92px; }
+#judgeBox.mega #judgeSub{ font-size:16px; }
+#judgeBox{ will-change: transform, opacity; }
+@media (max-width: 520px){
+  #judgeTitle{ font-size:54px; }
+  #judgeBox.mega #judgeTitle{ font-size:68px; }
+}
+/* mega時は少し長く見せる */
+
 </style>
 </head>
 <body>
@@ -176,7 +298,7 @@ button:disabled{opacity:.45;cursor:not-allowed;}
 <script>
 (() => {
   "use strict";
-  const LS = "kendama_tracker_mix_v4";
+  const LS = "kendama_tracker_mix_v8";
 
   const el = (id)=>document.getElementById(id);
 
@@ -286,6 +408,11 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   const resultBadge = el("resultBadge");
   const bestRank = el("bestRank");
   const dotsRow = el("dotsRow");
+  const judgeOverlay = document.getElementById("judgeOverlay");
+  const judgeBox = document.getElementById("judgeBox");
+  const judgeTitle = document.getElementById("judgeTitle");
+  const judgeSub = document.getElementById("judgeSub");
+  const confettiCanvas = document.getElementById("confetti");
 
   const timeBox = el("timeBox");
   const timeVal = el("timeVal");
@@ -312,7 +439,7 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   const btnApplyTable = el("btnApplyTable");
   const btnResetTable = el("btnResetTable");
 
-  const S = {mode:"kyu", rankKey:null, kyuTable:KYU_TABLE_DEFAULT, tasks:[], focusIdx:0, log:[], history:[]};
+  const S = {mode:"dan", rankKey:null, kyuTable:KYU_TABLE_DEFAULT, tasks:[], focusIdx:0, log:[], history:[]};
 
   function save(){ try{ localStorage.setItem(LS, JSON.stringify(S)); }catch(e){} }
   function load(){
@@ -339,6 +466,88 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     else if(state==="ng"){ resultBadge.classList.add("ng"); resultBadge.textContent="判定：未達"; }
     else { resultBadge.classList.add("wait"); resultBadge.textContent="判定：進行中"; }
   }
+
+  function showJudge(kind, title, sub){
+    if(!judgeOverlay || !judgeBox || !judgeTitle || !judgeSub) return;
+    judgeBox.classList.remove("ok","ng");
+    judgeBox.classList.add(kind === "ok" ? "ok" : "ng");
+    judgeTitle.textContent = title;
+    judgeSub.textContent = sub || "";
+    judgeOverlay.classList.add("show");
+    clearTimeout(showJudge._t);
+    showJudge._t = setTimeout(()=>judgeOverlay.classList.remove("show"), 900);
+
+    if(kind === "ok"){
+      const mega = (title && String(title).includes("完全")) || (sub && String(sub).includes("全種目"));
+      confettiBurst(mega);
+      if(mega){
+        // 二段階発射
+        setTimeout(()=>confettiBurst(true), 220);
+      }
+    }
+  }
+
+  function confettiBurst(mega){
+    if(!confettiCanvas) return;
+    const ctx = confettiCanvas.getContext("2d");
+    if(!ctx) return;
+
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    confettiCanvas.width = Math.floor(w * dpr);
+    confettiCanvas.height = Math.floor(h * dpr);
+    confettiCanvas.style.width = w + "px";
+    confettiCanvas.style.height = h + "px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    const N = mega ? 260 : 150;
+    const originY = mega ? h*0.18 : h*0.22;
+    const spread = mega ? 220 : 140;
+
+    const parts = [];
+    for(let i=0;i<N;i++){
+      const x = w*0.5 + (Math.random()-0.5)*spread;
+      const y = originY + (Math.random()-0.5)*50;
+      const vx = (Math.random()-0.5) * (mega ? 10 : 8);
+      const vy = (mega ? 5 : 4) + Math.random()*(mega ? 12 : 10);
+      const s  = (mega ? 7 : 6) + Math.random()*(mega ? 10 : 8);
+      const r  = Math.random()*Math.PI*2;
+      const vr = (Math.random()-0.5) * (mega ? 0.30 : 0.25);
+      const hue = Math.floor(Math.random()*360);
+      parts.push({x,y,vx,vy,s,r,vr,hue,life:0,ttl:(mega?90:75)+Math.floor(Math.random()*(mega?35:25))});
+    }
+
+    let frame = 0;
+    const maxF = mega ? 130 : 95;
+    function tick(){
+      frame++;
+      ctx.clearRect(0,0,w,h);
+      for(const p of parts){
+        p.life++;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.18;
+        p.r += p.vr;
+
+        const a = Math.max(0, 1 - p.life / p.ttl);
+        ctx.save();
+        ctx.globalAlpha = a;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.r);
+        ctx.fillStyle = `hsl(${p.hue} 85% 55%)`;
+        ctx.fillRect(-p.s/2, -p.s/2, p.s, p.s*0.7);
+        ctx.restore();
+      }
+      if(frame < maxF){
+        requestAnimationFrame(tick);
+      }else{
+        ctx.clearRect(0,0,w,h);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
 
   function focusTask(){ return S.tasks[S.focusIdx] || null; }
 
@@ -501,17 +710,38 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   }
 
   function tryAutoAdvance(){
-    const t=focusTask();
+    // 合格 or 未達（上限）になったとき、0.8秒だけ“判定を見せてから”次へ進めます
+    const t = focusTask();
     if(!t) return;
+
     const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
 
     const exhausted =
-      (t.type==="count" && (t.attempts||0)>=10 && !t.done) ||
-      (t.type==="time"  && (t.attempts||0)>=2 && !t.done) ||
-      (t.type==="moshi" && (t.attempts||0)>=1 && !t.done);
+      (t.type==="count" && (t.attempts||0) >= 10 && !t.done) ||
+      (t.type==="time"  && (t.attempts||0) >= 2 && !t.done) ||
+      (t.type==="moshi" && (t.attempts||0) >= 1 && !t.done);
 
-    if(!(t.done || exhausted || req==null)) return;
-    if(S.focusIdx < S.tasks.length-1) S.focusIdx += 1;
+    const shouldMove = (t.done || exhausted || req==null);
+    if(!shouldMove) return;
+
+    // まず、この瞬間の判定を画面に反映
+    save();
+    updateUI();
+
+    if(t.done){
+      showJudge("ok","合格", `${t.name}：規定を満たしました。`);
+    }else if(exhausted){
+      showJudge("ng","不合格", `${t.name}：上限で未達でした。`);
+    }
+
+    clearTimeout(tryAutoAdvance._t);
+    tryAutoAdvance._t = setTimeout(()=>{
+      if(S.focusIdx < S.tasks.length-1){
+        S.focusIdx += 1;
+      }
+      save();
+      updateUI();
+    }, 800);
   }
 
   function recordCount(ok){
@@ -531,7 +761,11 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     addLog(t.name, ok?"成功":"失敗", `${t.success||0}/${req}`);
     if((t.success||0) >= req) t.done=true;
 
-    tryAutoAdvance();
+    if(t.done || (t.attempts||0) >= 10){
+      tryAutoAdvance();
+      return;
+    }
+
     save();
     updateUI();
   }
@@ -546,8 +780,7 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     t.done=!!passed;
     addLog(t.name, passed?"規定以上":"未達", "");
     tryAutoAdvance();
-    save();
-    updateUI();
+    return;
   }
 
   function recordTime(){
@@ -570,7 +803,11 @@ button:disabled{opacity:.45;cursor:not-allowed;}
 
     if(best <= Number(t.required)) t.done = true;
 
-    tryAutoAdvance();
+    if(t.done || (t.attempts||0) >= 2){
+      tryAutoAdvance();
+      return;
+    }
+
     save();
     updateUI();
   }
@@ -590,8 +827,7 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     addLog(t.name, "登録", name);
 
     tryAutoAdvance();
-    save();
-    updateUI();
+    return;
   }
 
   function next(){
@@ -779,7 +1015,7 @@ button:disabled{opacity:.45;cursor:not-allowed;}
 
   // init
   load();
-  mode.value = S.mode || "kyu";
+  mode.value = S.mode || "dan";
   setupRankSelector();
   if(S.rankKey){
     if(mode.value==="kyu" && KYU_ORDER.some(x=>x.key===S.rankKey)) rankSel.value = S.rankKey;
@@ -789,5 +1025,16 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   updateUI();
 })();
 </script>
+
+<div id="judgeOverlay" aria-hidden="true">
+  <div id="judgeBox" class="ok">
+    <div id="judgeGlow"></div>
+    <div id="judgeShine"></div>
+    <div id="judgeTitle">合格</div>
+    <div id="judgeSub">規定回数を満たしました。</div>
+  </div>
+</div>
+<canvas id="confetti"></canvas>
+
 </body>
 </html>
