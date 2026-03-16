@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ja">
 <head>
@@ -31,7 +30,7 @@ button.good{border-color:rgba(42,168,74,.55);background:rgba(42,168,74,.12);}
 button.bad{border-color:rgba(214,69,69,.60);background:rgba(214,69,69,.10);}
 button.ghost{background:transparent;color:var(--muted);}
 button:disabled{opacity:.45;cursor:not-allowed;}
-.big{padding:14px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));border-radius:16px;}
+.big{padding:14px;border:1px solid rgba(207,214,227,.8);background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.80));border-radius:16px;}
 .k{font-weight:900;letter-spacing:.02em;}
 .muted{color:var(--muted);}
 .mini{font-size:12px;color:var(--muted);line-height:1.55;}
@@ -48,9 +47,9 @@ button:disabled{opacity:.45;cursor:not-allowed;}
 #list{max-height:42vh;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-right:6px;margin-top:10px;}
 #log{max-height:44vh;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-right:6px;}
 @media(min-width:940px){#list{max-height:56vh;}#log{max-height:70vh;}}
-.item{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.02);border-radius:16px;padding:12px;margin-bottom:10px;}
+.item{border:1px solid rgba(31,36,48,.10);background:rgba(255,255,255,.70);border-radius:16px;padding:12px;margin-bottom:10px;}
 .item.focus{border-color:rgba(125,187,45,.45);background:rgba(125,187,45,.06);}
-.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:rgba(31,36,48,.06);font-size:12px;color:var(--muted);white-space:nowrap;}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(31,36,48,.10);background:rgba(31,36,48,.06);font-size:12px;color:var(--muted);white-space:nowrap;}
 .badge strong{color:var(--txt);}
 .note{border:1px dashed rgba(125,187,45,.30);border-radius:14px;padding:10px;background:rgba(125,187,45,.06);color:rgba(31,36,48,.78);font-size:12px;line-height:1.55;}
 .logItem{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);border-radius:14px;padding:10px 12px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;}
@@ -81,13 +80,16 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   text-align:center;
   position:relative;
   overflow:hidden;
+  transform: scale(.72);
+  opacity: 0;
 }
 #judgeTitle{
   font-weight:1100;
   letter-spacing:.06em;
-  font-size:56px;
+  font-size:72px;
   line-height:1.05;
   margin-top:6px;
+  position:relative;
 }
 #judgeSub{
   margin-top:10px;
@@ -103,11 +105,19 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   height:180px;
   opacity:.65;
 }
-#judgeBox.ok #judgeGlow{
-  background: radial-gradient(closest-side, rgba(125,187,45,.35), transparent 70%);
+#judgeBox.ok #judgeGlow{ background: radial-gradient(closest-side, rgba(125,187,45,.35), transparent 70%); }
+#judgeBox.ng #judgeGlow{ background: radial-gradient(closest-side, rgba(214,69,69,.32), transparent 70%); }
+#judgeShine{
+  position:absolute;
+  inset:-40px;
+  pointer-events:none;
+  opacity:0;
 }
-#judgeBox.ng #judgeGlow{
-  background: radial-gradient(closest-side, rgba(214,69,69,.32), transparent 70%);
+#judgeBox.ok #judgeShine{
+  background: linear-gradient(90deg, transparent 0%, rgba(125,187,45,.0) 25%, rgba(125,187,45,.35) 50%, rgba(125,187,45,.0) 75%, transparent 100%);
+}
+#judgeBox.ng #judgeShine{
+  background: linear-gradient(90deg, transparent 0%, rgba(214,69,69,.0) 25%, rgba(214,69,69,.32) 50%, rgba(214,69,69,.0) 75%, transparent 100%);
 }
 #confetti{
   position:fixed;
@@ -116,16 +126,15 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   z-index:10000;
 }
 @media (max-width: 520px){
-  #judgeTitle{ font-size:44px; }
+  #judgeTitle{ font-size:54px; }
 }
-
 
 /* 合格演出（ゴージャス） */
 @keyframes popZoom {
   0% { transform: scale(.72); opacity: 0; }
   55% { transform: scale(1.06); opacity: 1; }
   80% { transform: scale(.98); }
-  100% { transform: scale(1); }
+  100% { transform: scale(1); opacity: 1; }
 }
 @keyframes titleWave {
   0% { transform: translateY(0) scale(1); letter-spacing:.06em; }
@@ -139,47 +148,15 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   70% { opacity: .0; }
   100% { transform: translateX(120%) rotate(12deg); opacity: 0; }
 }
-#judgeBox{
-  transform: scale(.72);
-  opacity: 0;
-}
 #judgeOverlay.show #judgeBox{
   animation: popZoom .55s ease-out forwards;
-}
-#judgeTitle{
-  position:relative;
 }
 #judgeOverlay.show #judgeTitle{
   animation: titleWave .75s ease-in-out;
 }
-#judgeShine{
-  position:absolute;
-  inset:-40px;
-  pointer-events:none;
-  opacity:0;
-}
-#judgeBox.ok #judgeShine{
-  background: linear-gradient(90deg, transparent 0%, rgba(125,187,45,.0) 25%, rgba(125,187,45,.35) 50%, rgba(125,187,45,.0) 75%, transparent 100%);
-}
-#judgeBox.ng #judgeShine{
-  background: linear-gradient(90deg, transparent 0%, rgba(214,69,69,.0) 25%, rgba(214,69,69,.32) 50%, rgba(214,69,69,.0) 75%, transparent 100%);
-}
 #judgeOverlay.show #judgeShine{
   animation: shineSweep .9s ease-in-out;
 }
-
-
-/* さらに大きい合格表示 */
-#judgeTitle{ font-size:72px; }
-#judgeBox.mega #judgeTitle{ font-size:92px; }
-#judgeBox.mega #judgeSub{ font-size:16px; }
-#judgeBox{ will-change: transform, opacity; }
-@media (max-width: 520px){
-  #judgeTitle{ font-size:54px; }
-  #judgeBox.mega #judgeTitle{ font-size:68px; }
-}
-/* mega時は少し長く見せる */
-
 </style>
 </head>
 <body>
@@ -295,10 +272,24 @@ button:disabled{opacity:.45;cursor:not-allowed;}
 </div>
 </div>
 
+<div id="judgeOverlay" aria-hidden="true">
+  <div id="judgeBox" class="ok">
+    <div id="judgeGlow"></div>
+    <div id="judgeShine"></div>
+    <div id="judgeTitle">合格</div>
+    <div id="judgeSub">規定回数を満たしました。</div>
+    <div id="judgeDetails" style="margin-top:10px;color:rgba(31,36,48,.78);font-size:14px;line-height:1.5;white-space:pre-line;display:none;"></div>
+    <div class="row" style="justify-content:center;margin-top:14px;">
+      <button class="primary" id="btnJudgeClose">閉じる</button>
+    </div>
+  </div>
+</div>
+<canvas id="confetti"></canvas>
+
 <script>
 (() => {
   "use strict";
-  const LS = "kendama_tracker_mix_v8";
+  const LS = "kendama_tracker_mix_v9";
 
   const el = (id)=>document.getElementById(id);
 
@@ -318,7 +309,7 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   ];
 
   // 初期値は練習用の仮テーブル（必要なら編集で上書き）
-    const KYU_TABLE_DEFAULT = {
+  const KYU_TABLE_DEFAULT = {
     "10kyu": {1:1},
     "9kyu":  {1:2,2:1},
     "8kyu":  {1:3,2:2,3:1},
@@ -412,6 +403,8 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   const judgeBox = document.getElementById("judgeBox");
   const judgeTitle = document.getElementById("judgeTitle");
   const judgeSub = document.getElementById("judgeSub");
+  const judgeDetails = document.getElementById("judgeDetails");
+  const btnJudgeClose = document.getElementById("btnJudgeClose");
   const confettiCanvas = document.getElementById("confetti");
 
   const timeBox = el("timeBox");
@@ -467,22 +460,44 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     else { resultBadge.classList.add("wait"); resultBadge.textContent="判定：進行中"; }
   }
 
-  function showJudge(kind, title, sub){
+  function showJudge(kind, title, sub, opts){
     if(!judgeOverlay || !judgeBox || !judgeTitle || !judgeSub) return;
-    judgeBox.classList.remove("ok","ng");
+    opts = opts || {};
+
+    const mega = (opts.mega === true) || (title && String(title).includes("完全")) || (sub && String(sub).includes("全種目"));
+
+    judgeBox.classList.remove("ok","ng","mega");
     judgeBox.classList.add(kind === "ok" ? "ok" : "ng");
+    if(mega) judgeBox.classList.add("mega");
+
     judgeTitle.textContent = title;
     judgeSub.textContent = sub || "";
+
+    if(judgeDetails){
+      const d = opts.details || "";
+      judgeDetails.textContent = d;
+      judgeDetails.style.display = d ? "block" : "none";
+    }
+
+    // アニメーションを毎回確実に発火
+    judgeOverlay.classList.remove("show");
+    void judgeOverlay.offsetWidth;
     judgeOverlay.classList.add("show");
+
+    // 表示時間：通常は自動で閉じる。最終結果は手動で閉じる（autoHide=false）
+    const hold = Number.isFinite(opts.hold) ? opts.hold : (mega ? 1400 : 900);
+    const autoHide = (opts.autoHide !== false);
+
     clearTimeout(showJudge._t);
-    showJudge._t = setTimeout(()=>judgeOverlay.classList.remove("show"), 900);
+    if(autoHide){
+      showJudge._t = setTimeout(()=>judgeOverlay.classList.remove("show"), hold);
+    }
 
     if(kind === "ok"){
-      const mega = (title && String(title).includes("完全")) || (sub && String(sub).includes("全種目"));
       confettiBurst(mega);
       if(mega){
-        // 二段階発射
         setTimeout(()=>confettiBurst(true), 220);
+        setTimeout(()=>confettiBurst(true), 520);
       }
     }
   }
@@ -547,7 +562,6 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     }
     requestAnimationFrame(tick);
   }
-
 
   function focusTask(){ return S.tasks[S.focusIdx] || null; }
 
@@ -738,7 +752,21 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     tryAutoAdvance._t = setTimeout(()=>{
       if(S.focusIdx < S.tasks.length-1){
         S.focusIdx += 1;
+        save();
+        updateUI();
+        return;
       }
+
+      // 最終種目で判定が出た場合：全体の合否を表示
+      const tasks = (S.tasks || []);
+      const failed = tasks.filter(x=>!x.done).map(x=>x.name);
+      if(failed.length === 0){
+        showJudge("ok","完全合格","全種目クリアしました。",{mega:true, autoHide:false});
+      }else{
+        const detail = "未達の技：\n" + failed.join("\n");
+        showJudge("ng","不合格","最後まで完走しました。",{details:detail, autoHide:false});
+      }
+
       save();
       updateUI();
     }, 800);
@@ -761,6 +789,7 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     addLog(t.name, ok?"成功":"失敗", `${t.success||0}/${req}`);
     if((t.success||0) >= req) t.done=true;
 
+    // 合格 or 上限に到達したら“見せてから”次へ
     if(t.done || (t.attempts||0) >= 10){
       tryAutoAdvance();
       return;
@@ -861,7 +890,7 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     lines.push("-----");
     S.log.slice(0,200).forEach(e=>lines.push(`${e.title}: ${e.desc}${e.right?(" ["+e.right+"]"):""}`));
 
-    const out = lines.join("\n");
+    const out = lines.join("\\n");
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(out).then(()=>alert("コピーいたしました。")).catch(()=>prompt("コピーしてお使いください。", out));
     }else{
@@ -1013,6 +1042,13 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     updateUI();
   });
 
+  if(btnJudgeClose){
+    btnJudgeClose.addEventListener("click", ()=>judgeOverlay.classList.remove("show"));
+  }
+  if(judgeOverlay){
+    judgeOverlay.addEventListener("click", (e)=>{ if(e.target===judgeOverlay) judgeOverlay.classList.remove("show"); });
+  }
+
   // init
   load();
   mode.value = S.mode || "dan";
@@ -1025,16 +1061,5 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   updateUI();
 })();
 </script>
-
-<div id="judgeOverlay" aria-hidden="true">
-  <div id="judgeBox" class="ok">
-    <div id="judgeGlow"></div>
-    <div id="judgeShine"></div>
-    <div id="judgeTitle">合格</div>
-    <div id="judgeSub">規定回数を満たしました。</div>
-  </div>
-</div>
-<canvas id="confetti"></canvas>
-
 </body>
 </html>
