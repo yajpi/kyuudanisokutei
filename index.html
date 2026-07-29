@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>けん玉 認定トラッカー（級・準初段・段）</title>
+<title>けん玉認定練習トラッカー v3.0</title>
 <style>
 :root{--txt:#1f2430;--muted:#5a6475;--line:#cfd6e3;--accent:#7dbb2d;--good:#2aa84a;--bad:#d64545;--radius:18px;--shadow:0 10px 24px rgba(0,0,0,.12);}
 *{box-sizing:border-box}
@@ -30,7 +30,7 @@ button.good{border-color:rgba(42,168,74,.55);background:rgba(42,168,74,.12);}
 button.bad{border-color:rgba(214,69,69,.60);background:rgba(214,69,69,.10);}
 button.ghost{background:transparent;color:var(--muted);}
 button:disabled{opacity:.45;cursor:not-allowed;}
-.big{padding:14px;border:1px solid rgba(207,214,227,.8);background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.80));border-radius:16px;}
+.big{padding:14px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));border-radius:16px;}
 .k{font-weight:900;letter-spacing:.02em;}
 .muted{color:var(--muted);}
 .mini{font-size:12px;color:var(--muted);line-height:1.55;}
@@ -47,9 +47,9 @@ button:disabled{opacity:.45;cursor:not-allowed;}
 #list{max-height:42vh;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-right:6px;margin-top:10px;}
 #log{max-height:44vh;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-right:6px;}
 @media(min-width:940px){#list{max-height:56vh;}#log{max-height:70vh;}}
-.item{border:1px solid rgba(31,36,48,.10);background:rgba(255,255,255,.70);border-radius:16px;padding:12px;margin-bottom:10px;}
+.item{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.02);border-radius:16px;padding:12px;margin-bottom:10px;}
 .item.focus{border-color:rgba(125,187,45,.45);background:rgba(125,187,45,.06);}
-.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(31,36,48,.10);background:rgba(31,36,48,.06);font-size:12px;color:var(--muted);white-space:nowrap;}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:rgba(31,36,48,.06);font-size:12px;color:var(--muted);white-space:nowrap;}
 .badge strong{color:var(--txt);}
 .note{border:1px dashed rgba(125,187,45,.30);border-radius:14px;padding:10px;background:rgba(125,187,45,.06);color:rgba(31,36,48,.78);font-size:12px;line-height:1.55;}
 .logItem{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);border-radius:14px;padding:10px 12px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;}
@@ -80,16 +80,13 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   text-align:center;
   position:relative;
   overflow:hidden;
-  transform: scale(.72);
-  opacity: 0;
 }
 #judgeTitle{
   font-weight:1100;
   letter-spacing:.06em;
-  font-size:72px;
+  font-size:56px;
   line-height:1.05;
   margin-top:6px;
-  position:relative;
 }
 #judgeSub{
   margin-top:10px;
@@ -105,19 +102,11 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   height:180px;
   opacity:.65;
 }
-#judgeBox.ok #judgeGlow{ background: radial-gradient(closest-side, rgba(125,187,45,.35), transparent 70%); }
-#judgeBox.ng #judgeGlow{ background: radial-gradient(closest-side, rgba(214,69,69,.32), transparent 70%); }
-#judgeShine{
-  position:absolute;
-  inset:-40px;
-  pointer-events:none;
-  opacity:0;
+#judgeBox.ok #judgeGlow{
+  background: radial-gradient(closest-side, rgba(125,187,45,.35), transparent 70%);
 }
-#judgeBox.ok #judgeShine{
-  background: linear-gradient(90deg, transparent 0%, rgba(125,187,45,.0) 25%, rgba(125,187,45,.35) 50%, rgba(125,187,45,.0) 75%, transparent 100%);
-}
-#judgeBox.ng #judgeShine{
-  background: linear-gradient(90deg, transparent 0%, rgba(214,69,69,.0) 25%, rgba(214,69,69,.32) 50%, rgba(214,69,69,.0) 75%, transparent 100%);
+#judgeBox.ng #judgeGlow{
+  background: radial-gradient(closest-side, rgba(214,69,69,.32), transparent 70%);
 }
 #confetti{
   position:fixed;
@@ -126,15 +115,16 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   z-index:10000;
 }
 @media (max-width: 520px){
-  #judgeTitle{ font-size:54px; }
+  #judgeTitle{ font-size:44px; }
 }
+
 
 /* 合格演出（ゴージャス） */
 @keyframes popZoom {
   0% { transform: scale(.72); opacity: 0; }
   55% { transform: scale(1.06); opacity: 1; }
   80% { transform: scale(.98); }
-  100% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1); }
 }
 @keyframes titleWave {
   0% { transform: translateY(0) scale(1); letter-spacing:.06em; }
@@ -148,30 +138,846 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   70% { opacity: .0; }
   100% { transform: translateX(120%) rotate(12deg); opacity: 0; }
 }
+#judgeBox{
+  transform: scale(.72);
+  opacity: 0;
+}
 #judgeOverlay.show #judgeBox{
   animation: popZoom .55s ease-out forwards;
+}
+#judgeTitle{
+  position:relative;
 }
 #judgeOverlay.show #judgeTitle{
   animation: titleWave .75s ease-in-out;
 }
+#judgeShine{
+  position:absolute;
+  inset:-40px;
+  pointer-events:none;
+  opacity:0;
+}
+#judgeBox.ok #judgeShine{
+  background: linear-gradient(90deg, transparent 0%, rgba(125,187,45,.0) 25%, rgba(125,187,45,.35) 50%, rgba(125,187,45,.0) 75%, transparent 100%);
+}
+#judgeBox.ng #judgeShine{
+  background: linear-gradient(90deg, transparent 0%, rgba(214,69,69,.0) 25%, rgba(214,69,69,.32) 50%, rgba(214,69,69,.0) 75%, transparent 100%);
+}
 #judgeOverlay.show #judgeShine{
   animation: shineSweep .9s ease-in-out;
 }
+
+
+/* さらに大きい合格表示 */
+#judgeTitle{ font-size:72px; }
+#judgeBox.mega #judgeTitle{ font-size:92px; }
+#judgeBox.mega #judgeSub{ font-size:16px; }
+#judgeBox{ will-change: transform, opacity; }
+@media (max-width: 520px){
+  #judgeTitle{ font-size:54px; }
+  #judgeBox.mega #judgeTitle{ font-size:68px; }
+}
+/* mega時は少し長く見せる */
+
+
+
+#practiceOverlay{
+  position:fixed; inset:0; z-index:11000; display:none;
+  align-items:center; justify-content:center; padding:16px;
+  background:rgba(20,26,36,.74); backdrop-filter:blur(6px);
+}
+#practiceOverlay.show{display:flex}
+.practicePanel{
+  width:min(680px,96vw); border-radius:24px; padding:20px;
+  background:#fff; border:1px solid rgba(31,36,48,.15);
+  box-shadow:0 24px 90px rgba(0,0,0,.35); text-align:center;
+}
+.practiceTitle{font-size:30px;font-weight:1100}
+.practiceCount{font-size:min(24vw,130px);font-weight:1100;line-height:1;margin:20px 0 8px}
+.practiceButtons button{min-width:150px;font-size:22px;padding:18px 22px}
+.cloudGrid{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:760px){.cloudGrid{grid-template-columns:1.5fr 1fr}}
+.cloudGrid input{width:100%}
+.cloudStatus{padding:10px 12px;border-radius:12px;background:rgba(31,36,48,.06);font-size:12px;line-height:1.5}
+.cloudStatus.ok{background:rgba(42,168,74,.10)}
+.cloudStatus.ng{background:rgba(214,69,69,.10)}
+.historyTable{width:100%;border-collapse:collapse;font-size:12px}
+.historyTable th,.historyTable td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.historyScroll{max-height:320px;overflow:auto}
+.moshiPanel{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.moshiPanel input{width:160px;font-size:22px;font-weight:800}
+
+
+.fixedSheet{
+  margin-top:10px;padding:10px 12px;border-radius:12px;
+  background:rgba(31,36,48,.06);font-size:12px;line-height:1.6;word-break:break-all;
+}
+
+
+
+
+
+
+
+
+/* v26: 技の判定確定時に「判定」表示を信号灯の色でやさしく点灯 */
+.resultBadge.transition-ok{
+  color:#315d3e;
+  background:rgba(205,232,213,.78);
+  border-color:rgba(137,189,151,.68);
+  animation:gentleJudgeOk .48s ease-in-out 3 !important;
+}
+.resultBadge.transition-ng{
+  color:#754443;
+  background:rgba(239,215,213,.80);
+  border-color:rgba(205,153,150,.66);
+  animation:gentleJudgeNg .48s ease-in-out 3 !important;
+}
+@keyframes gentleJudgeOk{
+  0%,100%{
+    box-shadow:none;
+    filter:none;
+  }
+  50%{
+    background:rgba(219,239,225,.94);
+    box-shadow:
+      0 0 0 2px rgba(176,218,188,.16),
+      0 0 8px rgba(121,181,139,.22);
+    filter:brightness(1.015);
+  }
+}
+@keyframes gentleJudgeNg{
+  0%,100%{
+    box-shadow:none;
+    filter:none;
+  }
+  50%{
+    background:rgba(245,226,224,.95);
+    box-shadow:
+      0 0 0 2px rgba(232,190,188,.15),
+      0 0 8px rgba(202,143,140,.21);
+    filter:brightness(1.012);
+  }
+}
+
+
+
+
+
+/* v26: 上段のメイン操作欄とクラウド欄の横幅を揃える */
+.cloudCard{
+  margin-top:12px;
+}
+.cloudActions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.cloudActions button{
+  width:100%;
+  min-width:0;
+  white-space:normal;
+}
+.cloudHelp{
+  margin-top:14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(255,255,255,.62);
+  overflow:hidden;
+}
+.cloudHelp summary{
+  cursor:pointer;
+  padding:13px 14px;
+  font-weight:900;
+  background:rgba(125,187,45,.08);
+}
+.cloudHelpBody{
+  padding:4px 14px 14px;
+  font-size:13px;
+  line-height:1.75;
+}
+.cloudHelpBody ol{
+  margin:8px 0 8px 1.35em;
+  padding:0;
+}
+.cloudHelpBody code{
+  padding:2px 5px;
+  border-radius:6px;
+  background:rgba(31,36,48,.07);
+  word-break:break-all;
+}
+@media(min-width:940px){
+  .cloudCard{
+    width:calc((100% - 12px) * 0.625);
+  }
+}
+@media(max-width:759px){
+  .cloudGrid{
+    grid-template-columns:1fr !important;
+  }
+  .cloudActions{
+    grid-template-columns:1fr;
+  }
+  .cloudCard .hd{
+    align-items:flex-start;
+  }
+  .historyScroll{
+    max-height:none;
+    overflow-x:auto;
+  }
+  .historyTable{
+    min-width:520px;
+  }
+}
+
+
+/* v26: 統一した穏やかな視覚フィードバック */
+.dot{
+  transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+.dot.s{background:#a8d9b9;border-color:#82bd98}
+.dot.f{background:#e6b4b1;border-color:#cf918d}
+.dot.e{background:#e5e8ed;border-color:#cfd4dc}
+
+.dot.blink-success{animation:trialLampSuccess .42s ease-in-out 3}
+.dot.blink-failure{animation:trialLampFailure .42s ease-in-out 3}
+
+@keyframes trialLampSuccess{
+  0%,100%{background:#a8d9b9;border-color:#82bd98;box-shadow:none;transform:scale(1)}
+  50%{
+    background:#dceee3;
+    border-color:#a9cdb7;
+    box-shadow:0 0 0 2px rgba(159,216,181,.15),0 0 8px rgba(121,189,150,.20);
+    transform:scale(1.10)
+  }
+}
+@keyframes trialLampFailure{
+  0%,100%{background:#e6b4b1;border-color:#cf918d;box-shadow:none;transform:scale(1)}
+  50%{
+    background:#f1dddd;
+    border-color:#dbb0ae;
+    box-shadow:0 0 0 2px rgba(230,170,168,.14),0 0 8px rgba(207,133,130,.19);
+    transform:scale(1.10)
+  }
+}
+
+
+
+.resultBadge.transition-ok{
+  color:#315d3e;
+  background:rgba(205,232,213,.78);
+  border-color:rgba(137,189,151,.68);
+  animation:judgeFeedbackOk .48s ease-in-out 3 !important;
+}
+.resultBadge.transition-ng{
+  color:#754443;
+  background:rgba(239,215,213,.80);
+  border-color:rgba(205,153,150,.66);
+  animation:judgeFeedbackNg .48s ease-in-out 3 !important;
+}
+@keyframes judgeFeedbackOk{
+  0%,100%{box-shadow:none;filter:none}
+  50%{
+    background:rgba(219,239,225,.94);
+    box-shadow:0 0 0 2px rgba(176,218,188,.16),0 0 8px rgba(121,181,139,.21);
+    filter:brightness(1.015)
+  }
+}
+@keyframes judgeFeedbackNg{
+  0%,100%{box-shadow:none;filter:none}
+  50%{
+    background:rgba(245,226,224,.95);
+    box-shadow:0 0 0 2px rgba(232,190,188,.15),0 0 8px rgba(202,143,140,.20);
+    filter:brightness(1.012)
+  }
+}
+
+
+
+/* v3.0.8: 未達ダイアログと最終リザルトのみOK操作まで保持する */
+#judgeOverlay.transient.show #judgeBox{
+  animation: popZoom .12s ease-out forwards;
+}
+#judgeOverlay.transient.show #judgeTitle{
+  animation:none;
+}
+#judgeOverlay.transient.show #judgeShine{
+  animation: shineSweep .35s ease-in-out;
+}
+
+/* v3.0.4: 判定文字を確実に読める時間だけ保持 */
+#judgeOverlay.transient #btnJudgeClose{display:inline-flex;min-width:140px;}
+#judgeOverlay.final-result #btnJudgeClose{display:inline-flex;min-width:140px;}
+#judgeOverlay.final-result.locked #btnJudgeClose{pointer-events:none;opacity:.55;}
+#judgeOverlay.show #judgeBox{visibility:visible;}
+
+/* v26: クラウド欄をメイン操作欄と揃えた読みやすい一列構成 */
+.cloudCard{
+  width:100%;
+}
+.cloudCard .bd{
+  max-width:100%;
+}
+.cloudGrid{
+  grid-template-columns:1fr !important;
+}
+.cloudActions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.cloudActions button{
+  width:100%;
+  min-width:0;
+}
+@media(max-width:640px){
+  body{padding:10px}
+  .bd,.hd{padding-left:12px;padding-right:12px}
+  .cloudActions{grid-template-columns:1fr}
+  .cloudHelpBody{font-size:14px}
+  .cloudStatus{font-size:13px}
+  .fixedSheet{font-size:13px}
+}
+
+
+/* v26: 種目名の読みやすいランダム色 */
+#focusName{transition:color .35s ease,text-shadow .35s ease}
+
+/* v26: 成功紙吹雪・失敗しょんぼり演出 */
+#celebrationCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998}
+#gentleFailEffect{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;visibility:hidden;z-index:9997}
+#gentleFailEffect .failBubble{min-width:230px;padding:20px 24px;border-radius:24px;text-align:center;color:#6f6260;background:rgba(245,239,237,.94);border:1px solid rgba(196,174,170,.55);box-shadow:0 8px 28px rgba(83,67,64,.10)}
+#gentleFailEffect .failText{font-size:15px;font-weight:800}
+#gentleFailEffect.success .failBubble{color:#315d3e;background:rgba(239,249,242,.96);border-color:rgba(137,189,151,.62);box-shadow:0 8px 28px rgba(49,93,62,.10)}
+#gentleFailEffect.success .failText{font-size:18px;font-weight:1000}
+#gentleFailEffect.play{visibility:visible;animation:gentleFailScene 1.15s ease both}
+#gentleFailEffect.play .failBubble{animation:gentleFailBubble 1.15s ease both}
+@keyframes gentleFailScene{0%{opacity:0}18%{opacity:1}72%{opacity:1}100%{opacity:0}}
+@keyframes gentleFailBubble{0%{transform:translateY(-8px) scale(.96);opacity:0}22%{transform:translateY(0) scale(1);opacity:1}55%{transform:translateY(5px) scale(.995);opacity:1}100%{transform:translateY(12px) scale(.98);opacity:0}}
+
+
+/* v26: 各ボタン押下時のやさしい色変化 */
+button.feedback-success{
+  animation:buttonPressBlue .34s ease-in-out 2 !important;
+}
+button.feedback-failure{
+  animation:buttonPressRed .34s ease-in-out 2 !important;
+}
+@keyframes buttonPressBlue{
+  0%,100%{
+    background:rgba(42,168,74,.12);
+    border-color:rgba(42,168,74,.55);
+    box-shadow:none;
+    transform:scale(1);
+  }
+  50%{
+    background:rgba(164,207,232,.62);
+    border-color:rgba(101,161,194,.72);
+    box-shadow:0 0 0 2px rgba(164,207,232,.18),0 0 7px rgba(101,161,194,.20);
+    transform:scale(1.012);
+  }
+}
+@keyframes buttonPressRed{
+  0%,100%{
+    background:rgba(214,69,69,.10);
+    border-color:rgba(214,69,69,.60);
+    box-shadow:none;
+    transform:scale(1);
+  }
+  50%{
+    background:rgba(240,196,193,.64);
+    border-color:rgba(204,129,125,.72);
+    box-shadow:0 0 0 2px rgba(240,196,193,.17),0 0 7px rgba(204,129,125,.19);
+    transform:scale(1.012);
+  }
+}
+
+
+/* v26: タイム競技B */
+.timeBOverlay{
+  position:fixed;inset:0;z-index:9995;
+  display:none;align-items:center;justify-content:center;
+  padding:16px;background:rgba(24,29,38,.48);
+  backdrop-filter:blur(5px);
+}
+.timeBOverlay.show{display:flex}
+.timeBCard{
+  width:min(760px,100%);max-height:92vh;overflow:auto;
+  border-radius:24px;background:#fbfcfe;
+  border:1px solid rgba(73,84,105,.18);
+  box-shadow:0 24px 70px rgba(25,31,43,.24);
+  padding:18px;
+}
+.timeBHead,.timeBSetup,.timeBControls{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.timeBHead{justify-content:space-between}
+.timeBHead h2{margin:2px 0 0}
+.timeBSetup{margin-top:14px;padding:12px;border-radius:16px;background:rgba(31,36,48,.045)}
+.timeBTimerWrap{text-align:center;margin:18px 0 12px}
+.timeBTimer{
+  font-variant-numeric:tabular-nums;
+  font-size:clamp(44px,10vw,78px);
+  font-weight:900;letter-spacing:.03em;line-height:1;
+  color:#315d7b;
+}
+.timeBRemaining{margin-top:8px;color:#5a6372}
+.timeBCurrent{
+  margin:14px 0;padding:18px;text-align:center;
+  border-radius:18px;background:rgba(72,99,130,.055);
+  border:1px solid rgba(72,99,130,.12);
+}
+.timeBCurrentName{
+  margin:5px 0;font-size:clamp(25px,6vw,42px);
+  line-height:1.2;font-weight:900;
+  transition:color .32s ease,transform .24s ease;
+}
+.timeBCurrentName.change{animation:timeBNameChange .38s ease}
+@keyframes timeBNameChange{
+  0%{opacity:.35;transform:translateY(-4px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+.timeBControls{justify-content:center}
+.timeBControls button{min-height:46px}
+.timeBStatus{
+  margin-top:12px;padding:11px 13px;border-radius:13px;
+  background:rgba(31,36,48,.055);text-align:center;font-size:14px;
+}
+.timeBStatus.ok{background:rgba(42,168,74,.10);color:#315d3e}
+.timeBStatus.ng{background:rgba(214,69,69,.09);color:#754443}
+.timeBList{
+  margin:14px 0 0;padding:0;list-style:none;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+  counter-reset:timeb;
+}
+.timeBList li{
+  counter-increment:timeb;
+  padding:9px 11px;border-radius:12px;
+  background:rgba(31,36,48,.045);
+  border:1px solid rgba(31,36,48,.07);
+  font-size:14px;
+}
+.timeBList li::before{
+  content:counter(timeb) ". ";
+  font-weight:800;color:#6a7180;
+}
+.timeBList li.current{
+  background:rgba(164,207,232,.32);
+  border-color:rgba(101,161,194,.42);
+  font-weight:800;
+}
+.timeBList li.done{
+  background:rgba(184,226,197,.28);
+  color:#466950;
+}
+@media(max-width:640px){
+  .timeBCard{padding:14px;border-radius:19px}
+  .timeBSetup,.timeBControls{display:grid;grid-template-columns:1fr}
+  .timeBSetup label{display:none}
+  .timeBControls button,.timeBSetup select,.timeBSetup button{width:100%}
+  .timeBList{grid-template-columns:1fr}
+}
+
+
+.timeBCriteria{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.timeBCriteria div{
+  padding:11px 8px;
+  border-radius:14px;
+  text-align:center;
+  background:rgba(31,36,48,.05);
+  border:1px solid rgba(31,36,48,.08);
+}
+.timeBCriteria strong{display:block;font-size:18px}
+.timeBCriteria span{display:block;margin-top:3px;font-size:13px;color:#667080}
+@media(max-width:520px){
+  .timeBCriteria{grid-template-columns:1fr}
+  .timeBCriteria div{display:flex;justify-content:space-between;align-items:center;padding:9px 12px}
+  .timeBCriteria strong,.timeBCriteria span{display:inline;margin:0}
+}
+
+
+
+
+/* v3.0.2: タイム競技B 大判操作ボタン */
+.timeBControls{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  grid-template-areas:
+    "start success"
+    "pause reset";
+  gap:12px;
+  align-items:stretch;
+}
+#btnTimeBStart{grid-area:start}
+#btnTimeBSuccess{grid-area:success}
+#btnTimeBPause{grid-area:pause}
+#btnTimeBReset{grid-area:reset}
+#btnTimeBStart,#btnTimeBSuccess{
+  min-height:96px;
+  width:100%;
+  border-radius:22px;
+  padding:18px 24px;
+  font-size:clamp(22px,3.2vw,34px);
+  font-weight:1000;
+  letter-spacing:.02em;
+  color:#fff;
+  border-width:2px;
+  box-shadow:0 10px 24px rgba(31,36,48,.16);
+  text-shadow:0 1px 1px rgba(0,0,0,.12);
+}
+#btnTimeBStart{
+  background:linear-gradient(180deg,#ffad1f 0%,#f39800 100%);
+  border-color:#df7f00;
+}
+#btnTimeBSuccess{
+  background:linear-gradient(180deg,#55c66c 0%,#2aa84a 100%);
+  border-color:#21873b;
+}
+#btnTimeBStart::before{content:"▶";margin-right:.45em;font-size:.88em}
+#btnTimeBSuccess::before{content:"✓";margin-right:.45em;font-size:1em}
+#btnTimeBPause,#btnTimeBReset{
+  min-height:58px;
+  width:100%;
+  font-size:17px;
+  font-weight:900;
+  border-radius:16px;
+  background:#fffaf3;
+  border-color:rgba(184,139,83,.36);
+}
+#btnTimeBStart:not(:disabled):hover,#btnTimeBSuccess:not(:disabled):hover{
+  filter:brightness(1.04);
+  transform:translateY(-2px);
+}
+#btnTimeBStart:not(:disabled):active,#btnTimeBSuccess:not(:disabled):active{
+  transform:translateY(2px) scale(.992);
+  box-shadow:0 4px 10px rgba(31,36,48,.14);
+}
+#btnTimeBStart:disabled,#btnTimeBSuccess:disabled{
+  opacity:.42;
+  filter:saturate(.45);
+}
+@media(max-width:640px){
+  .timeBControls{
+    grid-template-columns:1fr 1fr;
+    grid-template-areas:
+      "start start"
+      "success success"
+      "pause reset";
+  }
+  #btnTimeBStart,#btnTimeBSuccess{min-height:88px;font-size:26px}
+  #btnTimeBPause,#btnTimeBReset{min-height:54px;font-size:16px}
+}
+
+/* v26: タイム競技Bの起動ボタン */
+button.timeBLaunch{
+  color:#fff;
+  background:linear-gradient(135deg,#426a9a,#655694);
+  border-color:#4b5f91;
+  box-shadow:0 5px 14px rgba(62,76,129,.25);
+  font-weight:900;
+}
+button.timeBLaunch:hover{
+  filter:brightness(1.06);
+  transform:translateY(-1px);
+}
+button.timeBLaunch:active{
+  transform:translateY(0);
+  box-shadow:0 2px 7px rgba(62,76,129,.22);
+}
+
+
+/* v26: タイム競技Bランキング */
+.timeBRankingPanel{
+  margin-top:18px;
+  padding-top:16px;
+  border-top:1px solid rgba(31,36,48,.12);
+}
+.timeBRankingHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.timeBRankingEntry{
+  margin-top:12px;
+  padding:13px;
+  border-radius:16px;
+  background:rgba(79,91,143,.06);
+  border:1px solid rgba(79,91,143,.14);
+}
+.timeBFinalRecord{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.timeBFinalRecord strong{
+  font-size:27px;
+  font-variant-numeric:tabular-nums;
+}
+.timeBFinalRecord b{
+  padding:5px 9px;
+  border-radius:999px;
+  background:rgba(42,168,74,.12);
+}
+.timeBRankingForm{
+  display:grid;
+  grid-template-columns:1fr 1.5fr auto;
+  align-items:end;
+  gap:9px;
+  margin-top:10px;
+}
+.timeBRankingForm label{
+  display:grid;
+  gap:5px;
+  font-size:12px;
+  font-weight:800;
+}
+.timeBRankingView{
+  margin-top:12px;
+  max-height:340px;
+  overflow:auto;
+  border-radius:14px;
+}
+.timeBRankingTable{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+.timeBRankingTable th,.timeBRankingTable td{
+  padding:9px 8px;
+  text-align:left;
+  border-bottom:1px solid rgba(31,36,48,.08);
+  vertical-align:top;
+}
+.timeBRankingTable th{
+  position:sticky;
+  top:0;
+  background:#f4f6fa;
+  z-index:1;
+}
+.timeBRankingTable td:nth-child(1),
+.timeBRankingTable td:nth-child(3){
+  white-space:nowrap;
+}
+.timeBRankingTable .rankNo{
+  font-weight:900;
+  text-align:center;
+}
+.timeBRankingTable .best3{
+  font-size:16px;
+}
+@media(max-width:640px){
+  .timeBRankingForm{grid-template-columns:1fr}
+  .timeBRankingForm button{width:100%}
+  .timeBRankingTable{font-size:12px}
+  .timeBRankingTable th,.timeBRankingTable td{padding:8px 6px}
+}
+
+
+/* v27: 最終リザルト */
+#judgeBox.mega{width:min(760px,calc(100vw - 24px));max-height:min(88vh,920px);overflow:auto;}
+#judgeBox.mega #judgeTitle{font-size:clamp(44px,10vw,82px);line-height:1;letter-spacing:.06em;margin-top:8px;}
+#judgeBox.mega #judgeSub{margin-top:10px;font-size:17px;font-weight:800;}
+.finalResultPanel{margin-top:18px;text-align:left;}
+.finalResultStats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;}
+.finalResultStats div{padding:12px;border-radius:14px;background:rgba(255,255,255,.65);border:1px solid rgba(31,36,48,.10);text-align:center;}
+.finalResultStats span{display:block;font-size:11px;color:var(--muted);font-weight:800;}
+.finalResultStats strong{display:block;margin-top:4px;font-size:18px;font-variant-numeric:tabular-nums;}
+.finalResultSection{margin-top:14px;padding:13px;border-radius:15px;background:rgba(255,255,255,.55);border:1px solid rgba(31,36,48,.09);}
+.finalResultSection h3{margin:0 0 9px;font-size:15px;}
+.finalFailedItem{padding:9px 10px;border-radius:11px;background:rgba(214,69,69,.08);border-left:4px solid var(--bad);margin-top:7px;line-height:1.45;}
+.finalResultTable{width:100%;border-collapse:collapse;font-size:13px;}
+.finalResultTable th,.finalResultTable td{padding:9px 7px;border-bottom:1px solid rgba(31,36,48,.08);text-align:left;vertical-align:top;}
+.finalResultTable th{color:var(--muted);font-size:11px;}
+.finalResultTable td:nth-child(3),.finalResultTable td:nth-child(4){white-space:nowrap;}
+.finalResultStatus{display:inline-block;min-width:44px;padding:3px 7px;border-radius:999px;text-align:center;font-weight:900;}
+.finalResultStatus.ok{color:#17652b;background:rgba(42,168,74,.13);}
+.finalResultStatus.ng{color:#8e2525;background:rgba(214,69,69,.12);}
+@media(max-width:560px){
+  .finalResultStats{grid-template-columns:1fr 1fr}
+  .finalResultStats div:last-child{grid-column:1/-1}
+  .finalResultTable{font-size:12px}
+  .finalResultTable th,.finalResultTable td{padding:8px 5px}
+}
+
+
+/* v28: 設定・更新履歴 */
+.appHeaderTools{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+.appVersionRow{display:flex;gap:7px;justify-content:flex-end}
+.versionChip,.settingsChip{min-height:30px;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:900}
+.versionChip{color:#475169;background:rgba(255,255,255,.65);border:1px solid rgba(71,81,105,.22)}
+.settingsChip{color:#fff;background:#566a86;border-color:#566a86}
+.appModalOverlay{position:fixed;inset:0;z-index:10020;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(26,32,43,.48);backdrop-filter:blur(5px)}
+.appModalOverlay.show{display:flex}
+.appModal{width:min(620px,100%);max-height:min(88vh,860px);overflow:auto;padding:18px;border-radius:22px;background:#f8fafc;border:1px solid rgba(31,36,48,.15);box-shadow:0 24px 80px rgba(0,0,0,.24)}
+.appModalHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.appModalTitle{font-size:23px;font-weight:1000}
+.settingsGroup{margin-top:12px;padding:13px;border-radius:16px;background:#fff;border:1px solid rgba(31,36,48,.09)}
+.settingsGroup h3{margin:0 0 8px;font-size:14px}
+.settingSwitch{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 3px;border-bottom:1px solid rgba(31,36,48,.07);cursor:pointer}
+.settingSwitch:last-child{border-bottom:0}
+.settingSwitch span{display:grid;gap:3px;color:var(--txt)}
+.settingSwitch small{color:var(--muted);font-weight:400;line-height:1.4}
+.settingSwitch input{width:22px;height:22px;accent-color:#587aa3}
+.settingsActions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.changelogEntry{padding:14px;margin-top:10px;border-radius:16px;background:#fff;border:1px solid rgba(31,36,48,.09)}
+.changelogEntry.current{border-color:rgba(88,122,163,.32);box-shadow:0 7px 18px rgba(88,122,163,.10)}
+.changelogVersionRow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.changelogVersion{font-size:18px;font-weight:1000}
+.changelogDate{font-size:12px;color:var(--muted)}
+.changelogEntry ul{margin:10px 0 0;padding-left:1.35em;line-height:1.7}
+.currentTag,.newBadge{display:inline-block;padding:4px 8px;border-radius:999px;color:#fff;background:#566a86;font-size:11px;font-weight:1000}
+.appInfoBox{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px;padding:12px;border-radius:14px;background:rgba(86,106,134,.07);color:var(--muted)}
+.updateNoticeModal{text-align:center;width:min(430px,100%)}
+.updateNoticeModal .appModalTitle{margin-top:10px}
+.updateNoticeModal p{line-height:1.7;color:var(--muted)}
+@media(max-width:600px){header{align-items:stretch}.appHeaderTools{align-items:stretch}.appHeaderTools>.row,.appVersionRow{justify-content:flex-end}}
+
+
+/* =========================================================
+   v3.0 PUBLIC UI LAYER
+   Existing behavior is preserved; this layer unifies visual design.
+   ========================================================= */
+:root{
+  --txt:#2d2924;
+  --muted:#746b61;
+  --line:#eadfd3;
+  --accent:#f39800;
+  --accent-deep:#d97900;
+  --accent-soft:#fff0d5;
+  --good:#249654;
+  --bad:#d64b43;
+  --surface:#ffffff;
+  --surface-soft:#fffaf4;
+  --radius:22px;
+  --shadow:0 14px 36px rgba(95,62,24,.10);
+}
+html{scroll-behavior:smooth;background:#fff8ef}
+body{
+  font-family:"BIZ UDPGothic","BIZ UDPゴシック","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  background:
+    radial-gradient(900px 520px at 5% -5%,rgba(243,152,0,.18),transparent 62%),
+    radial-gradient(700px 460px at 100% 12%,rgba(255,210,130,.20),transparent 60%),
+    linear-gradient(180deg,#fffaf4 0%,#fff8ef 45%,#fdf6ed 100%);
+  color:var(--txt);padding:clamp(12px,2vw,24px);
+}
+.wrap{max-width:1180px;gap:18px;padding-bottom:16px}
+header{
+  padding:clamp(18px,3vw,30px);
+  border:1px solid rgba(243,152,0,.22);
+  border-radius:28px;
+  background:rgba(255,255,255,.82);
+  box-shadow:0 18px 48px rgba(120,76,18,.09);
+  backdrop-filter:blur(12px);
+}
+h1{font-size:clamp(22px,3vw,34px);font-weight:900;letter-spacing:.015em}
+.sub{font-size:13px;line-height:1.8;margin-top:10px;max-width:760px}
+.heroTagline{display:inline-block;color:var(--accent-deep);font-weight:900;letter-spacing:.12em;font-size:12px;margin-bottom:2px}
+.appHeaderTools{gap:10px}
+.pill{background:#fff9ef;border-color:#f1d7af;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7)}
+.pill.ok{background:#f3fbf5;border-color:#bfe2c9}
+.card{border-color:rgba(230,214,197,.9);border-radius:var(--radius);background:rgba(255,255,255,.93);box-shadow:var(--shadow)}
+.hd{padding:16px 18px;background:linear-gradient(180deg,rgba(255,239,214,.82),rgba(255,255,255,.38));border-bottom-color:#f1dfc8}
+.bd{padding:18px}
+label{font-weight:800;color:#685f56}
+select,input,button,textarea{border-color:#ddd1c4;background:#fff;color:var(--txt);min-height:46px}
+select:focus,input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(243,152,0,.13)}
+button{font-weight:800;transition:transform .12s ease,box-shadow .18s ease,filter .18s ease,border-color .18s ease}
+button:hover:not(:disabled){filter:brightness(1.015);transform:translateY(-1px)}
+button:active:not(:disabled){transform:translateY(1px) scale(.985)}
+button.primary{color:#fff;border-color:var(--accent-deep);background:linear-gradient(180deg,#f7a817,#ef8d00);box-shadow:0 8px 18px rgba(225,127,0,.22)}
+button.ghost{background:#fff;color:#695f55;border-color:#ded2c6}
+button.good{color:#fff;border-color:#1f854a;background:linear-gradient(180deg,#35aa68,#248f55);box-shadow:0 10px 22px rgba(36,150,84,.20)}
+button.bad{color:#fff;border-color:#be3f39;background:linear-gradient(180deg,#e85b53,#ce443d);box-shadow:0 10px 22px rgba(214,75,67,.18)}
+#btnStart{min-width:112px;min-height:52px;font-size:16px}
+#btnOk,#btnNg,#btnNext,.practiceButtons button{min-height:62px;min-width:138px;border-radius:999px;font-size:20px;padding:16px 28px}
+#btnNext{background:#fff7e9;color:#9b5600;border:2px solid #f2bd66;box-shadow:0 8px 18px rgba(181,109,14,.10)}
+.timeBLaunch{min-height:52px;border-radius:14px;color:#fff!important;background:linear-gradient(180deg,#ffae2b,#ee8900)!important;border-color:#d97800!important;box-shadow:0 10px 22px rgba(218,124,0,.22)!important}
+.big{padding:18px;border-color:#eadfd3;background:linear-gradient(180deg,#fff,#fffaf4);border-radius:20px}
+#focusName{font-size:clamp(25px,4vw,36px);text-shadow:none;color:#2d2924}
+.resultBadge{border-color:#e2d7ca;background:#fff;color:#665e55}
+.resultBadge.wait{border-color:#e5d9cb;background:#fffaf3;color:#665e55}
+.dots{border-color:#eadfd3;background:#fffaf5}
+.dot{border-color:#d9cec1;background:#eee6dd}
+.dot.s{background:#2e9b61;border-color:#23834f}
+.dot.f{background:#dc514a;border-color:#c7443e}
+.item{border-color:#eadfd3;background:#fff;border-radius:18px}
+.item.focus{border:2px solid rgba(243,152,0,.7);background:#fff8eb;box-shadow:0 8px 24px rgba(227,137,12,.10)}
+.badge{border-color:#e5dacf;background:#faf6f1}
+.note{border-color:#eac58c;background:#fff9ed}
+.logItem{border-color:#eadfd3;background:#fff}
+.versionChip,.settingsChip{border-color:#e3c08a!important;background:#fff8eb!important;color:#89500a!important}
+.appModalOverlay{background:rgba(62,46,28,.38);backdrop-filter:blur(8px)}
+.appModal,.practicePanel,#judgeBox{border-color:#ead7c0;background:rgba(255,255,255,.97);box-shadow:0 28px 90px rgba(66,42,17,.24)}
+.appModalTitle{color:#332b23}
+.settingsGroup{border-color:#eee1d3!important;background:#fffaf5!important}
+#judgeBox.ok{border-color:#8bc9a3}
+#judgeBox.ng{border-color:#e49c97}
+#judgeTitle{letter-spacing:.03em}
+.appFooter{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 14px;padding:18px 12px;color:#756a5f;text-align:center}
+.appFooter strong{color:#4b4137}
+.appFooter span{padding:5px 9px;border-radius:999px;background:#fff0d8;color:#9b5a00;font-weight:900;font-size:12px}
+.appFooter small{flex-basis:100%;line-height:1.6}
+@media(max-width:720px){
+  body{padding:10px}
+  header{padding:18px;border-radius:22px}
+  .hd,.bd{padding:14px}
+  .hd>.row,.hd .row:first-child{width:100%}
+  .hd select{flex:1 1 160px;min-width:0}
+  #btnStart,.timeBLaunch{flex:1 1 120px}
+  #btnOk,#btnNg,#btnNext,.practiceButtons button{flex:1 1 42%;min-width:0}
+  .card{border-radius:20px}
+}
+@media(max-width:430px){
+  h1{font-size:23px}
+  .sub{font-size:12px}
+  #btnOk,#btnNg{font-size:19px;min-height:66px}
+  #btnNext{flex-basis:100%}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* v3.0.8: 通常判定のモーダルを廃止し、最終結果を独立画面として固定表示 */
+.moshiPresetRow{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}
+.moshiPresetRow button{min-height:40px;padding:8px 13px;border-radius:999px;background:#fff7ea;border:1px solid #efc37c;color:#8c5207;font-weight:900}
+#finalScreen{position:fixed;inset:0;z-index:13000;display:none;overflow:auto;padding:18px;background:#fff8ef}
+#finalScreen.show{display:block}
+.finalScreenInner{width:min(880px,100%);margin:0 auto;padding:18px 0 34px}
+.finalScreenCard{background:#fff;border:1px solid #ead7c0;border-radius:24px;box-shadow:0 18px 60px rgba(66,42,17,.18);padding:clamp(16px,3vw,28px)}
+.finalScreenHeader{text-align:center;margin-bottom:16px}
+#finalScreenTitle{font-size:clamp(42px,10vw,80px);line-height:1;font-weight:1000;letter-spacing:.04em}
+#finalScreenSub{margin-top:10px;color:var(--muted);font-weight:800}
+#btnFinalScreenClose{display:block;width:min(360px,100%);margin:20px auto 0;min-height:58px;font-size:18px}
+body.final-screen-open{overflow:hidden}
+
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
   <div>
-    <h1>認定トラッカー（級・準初段・段）</h1>
+    <h1>けん玉認定練習トラッカー</h1>
     <div class="sub">
-      「級」は10級から開始して、成功が積み上がる限り上位級の到達可能性も同時に判定します。<br>
-      「準初段」「段」は、選んだランクだけを判定します。
+      <span class="heroTagline">Challenge. Practice. Improve.</span><br>
+      級・準初段・段の認定練習と、タイム競技Bの計測をひとつにまとめた練習アプリです。
     </div>
   </div>
-  <div class="row">
-    <div class="pill ok">JavaScript：起動中</div>
-    <div class="pill">保存：端末内</div>
+  <div class="appHeaderTools">
+    <div class="row">
+      <div class="pill ok">JavaScript：起動中</div>
+      <div class="pill">保存：端末内</div>
+    </div>
+    <div class="appVersionRow">
+      <button class="versionChip" id="btnVersion">v3.0.9</button>
+      <button class="settingsChip" id="btnSettings">⚙ 設定</button>
+    </div>
   </div>
 </header>
 
@@ -188,6 +994,7 @@ button:disabled{opacity:.45;cursor:not-allowed;}
         <label id="rankLabel">級位</label>
         <select id="rankSel"></select>
         <button class="primary" id="btnStart">開始</button>
+        <button class="timeBLaunch" id="btnOpenTimeB">タイム競技B</button>
       </div>
       <div class="row">
         <button class="ghost" id="btnExport">出力</button>
@@ -221,16 +1028,27 @@ button:disabled{opacity:.45;cursor:not-allowed;}
           <button class="good" id="btnFree">登録</button>
         </div>
 
-        <div class="row" id="moshiQuick" style="margin-top:10px; display:none;">
-          <label class="mini">規定回数を超えましたか</label>
-          <button class="good" id="btnMoshiPass">規定以上</button>
-          <button class="bad" id="btnMoshiFail">未達</button>
+        <div class="moshiPanel" id="moshiQuick" style="margin-top:10px; display:none;">
+          <label class="mini">今回のもしかめ回数</label>
+          <input id="moshiCount" inputmode="numeric" min="0" step="1" placeholder="例 245"/>
+          <button class="good" id="btnMoshiRecord">記録</button>
+          <span class="badge">規定：<strong id="moshiRequired">-</strong>回</span>
+          <span class="badge">自己最大：<strong id="moshiMax">-</strong>回</span>
+          <div class="moshiPresetRow" id="moshiPresetRow" aria-label="もしかめ回数の入力補助">
+            <button type="button" data-moshi="50">50</button>
+            <button type="button" data-moshi="100">100</button>
+            <button type="button" data-moshi="200">200</button>
+            <button type="button" data-moshi="300">300</button>
+            <button type="button" data-moshi="500">500</button>
+            <button type="button" data-moshi="1000">1000</button>
+          </div>
         </div>
 
         <div class="row" style="margin-top:12px;">
           <button class="good" id="btnOk" disabled>成功</button>
           <button class="bad" id="btnNg" disabled>失敗</button>
           <button class="ghost" id="btnNext" disabled>次へ</button>
+        </div>
         </div>
 
         <div class="note" style="margin-top:12px;">
@@ -270,28 +1088,377 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     </div>
   </aside>
 </div>
+
+<section class="card cloudCard">
+  <div class="hd">
+    <div>
+      <div class="k">クラウド記録</div>
+      <div class="mini">各利用者が設定したGoogleスプレッドシートへ確定記録を保存します。試技中は端末内にも自動保存します。</div>
+    </div>
+    <span class="badge">保存方式：<strong>端末＋Google Sheets</strong></span>
+  </div>
+  <div class="bd">
+    <div class="cloudGrid">
+      <div>
+        <label>Apps Script ウェブアプリURL</label>
+        <input id="cloudUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec"/>
+        <div class="fixedSheet">
+          保存先は固定されません。各利用者が自分のGoogleドライブで作成した
+          スプレッドシートのApps ScriptウェブアプリURLを保存して使用します。
+        </div>
+      </div>
+      <div>
+        <label>個人用トークン</label>
+        <input id="cloudToken" type="password" placeholder="自分で決めた合言葉"/>
+      </div>
+      <div class="cloudActions">
+        <button class="primary" id="btnSaveCloudSettings">設定保存</button>
+        <button class="good" id="btnCloudSave">現在結果を保存</button>
+        <button class="ghost" id="btnLoadHistory">履歴読込</button>
+        <button class="ghost" id="btnFxTest">演出テスト</button>
+      </div>
+    </div>
+    <div id="cloudStatus" class="cloudStatus" style="margin-top:10px;">未設定です。Apps ScriptのURLとトークンを入力してください。</div>
+
+    <details class="cloudHelp">
+      <summary>クラウド同期の設定方法</summary>
+      <div class="cloudHelpBody">
+        <ol>
+          <li>自分のGoogleドライブで新しいGoogleスプレッドシートを作成します。</li>
+          <li><strong>拡張機能 → Apps Script</strong>を開きます。</li>
+          <li>用意したApps Scriptコードを貼り付け、コード内の個人用トークンを自分専用の合言葉へ変更します。</li>
+          <li><strong>デプロイ → 新しいデプロイ → ウェブアプリ</strong>を選びます。</li>
+          <li>実行ユーザーを自分、アクセスできるユーザーを利用環境に合う設定にしてデプロイします。</li>
+          <li>発行された<code>https://script.google.com/macros/s/.../exec</code>のURLを、この欄の「Apps Script ウェブアプリURL」に貼ります。</li>
+          <li>Apps Script側と同じ個人用トークンを入力し、「設定保存」を押します。</li>
+          <li>「現在結果を保存」を押し、「保存しました」と表示されれば同期完了です。</li>
+        </ol>
+        <div class="mini">
+          スプレッドシートのURLそのものではなく、Apps Scriptをデプロイして発行された
+          <code>/exec</code>で終わるURLを入力します。この設定はブラウザに保存され、次回以降も同じ保存先を使用します。記録用シートと見出しは、最初の保存時に自動作成されます。
+        </div>
+      </div>
+    </details>
+
+    <div style="margin-top:14px;">
+      <div class="row" style="justify-content:space-between;">
+        <div class="k">最近の記録</div>
+        <span class="badge">もしかめ最大：<strong id="cloudMoshiMax">-</strong>回</span>
+      </div>
+      <div id="historyView" class="historyScroll" style="margin-top:8px;"><div class="muted">履歴を読み込むと表示されます。</div></div>
+    </div>
+  </div>
+</section>
+
 </div>
 
+
+
+<div class="timeBOverlay" id="timeBOverlay" aria-hidden="true">
+  <section class="timeBCard" role="dialog" aria-modal="true" aria-labelledby="timeBTitle">
+    <div class="timeBHead">
+      <div>
+        <div class="mini">独立計測モード</div>
+        <h2 id="timeBTitle">タイム競技B</h2>
+      </div>
+      <button class="ghost" id="btnCloseTimeB">閉じる</button>
+    </div>
+
+    <div class="timeBCriteria" aria-label="段位判定基準">
+      <div><strong>五段</strong><span>45秒以内</span></div>
+      <div><strong>四段</strong><span>60秒以内</span></div>
+      <div><strong>三段</strong><span>120秒以内</span></div>
+    </div>
+
+    <div class="timeBTimerWrap">
+      <div class="mini">経過時間</div>
+      <div class="timeBTimer" id="timeBTimer">00:00.0</div>
+      <div class="timeBRemaining">判定目安：<strong id="timeBRemaining">五段圏内</strong></div>
+    </div>
+
+    <div class="timeBCurrent">
+      <div class="mini">現在の種目</div>
+      <div class="timeBCurrentName" id="timeBCurrentName">前ふりろうそく</div>
+      <div class="mini" id="timeBProgress">1 / 10</div>
+    </div>
+
+    <div class="timeBControls">
+      <button class="primary" id="btnTimeBStart">スタート</button>
+      <button class="ghost" id="btnTimeBPause" disabled>一時停止</button>
+      <button class="good" id="btnTimeBSuccess" disabled>成功・次の技へ</button>
+      <button class="ghost" id="btnTimeBReset">リセット</button>
+    </div>
+
+    <div class="timeBStatus" id="timeBStatus">スタートで計測を始めます。最後の技に成功すると自動停止します。</div>
+
+    <ol class="timeBList" id="timeBList"></ol>
+
+    <section class="timeBRankingPanel" id="timeBRankingPanel">
+      <div class="timeBRankingHead">
+        <div>
+          <div class="k">タイム競技B ランキング</div>
+          <div class="mini">送信した記録を、この画面内で確認できます。</div>
+        </div>
+        <button class="ghost" id="btnTimeBLoadRanking">ランキング更新</button>
+      </div>
+
+      <div class="timeBRankingEntry" id="timeBRankingEntry" hidden>
+        <div class="timeBFinalRecord">
+          <span>今回の記録</span>
+          <strong id="timeBFinalTime">--:--.-</strong>
+          <b id="timeBFinalRank">未判定</b>
+        </div>
+        <div class="timeBRankingForm">
+          <label>
+            表示名
+            <input id="timeBRankingName" maxlength="24" placeholder="例：けん玉太郎">
+          </label>
+          <label>
+            一言メモ
+            <input id="timeBRankingMemo" maxlength="60" placeholder="例：はねけんで少し詰まりました">
+          </label>
+          <button class="primary" id="btnTimeBSendRanking">ランキングへ送信</button>
+        </div>
+        <div class="mini" id="timeBRankingSendStatus"></div>
+      </div>
+
+      <div class="timeBRankingView" id="timeBRankingView">
+        <div class="muted">「ランキング更新」を押すと記録を読み込みます。</div>
+      </div>
+    </section>
+  </section>
+</div>
+
+<canvas id="celebrationCanvas" aria-hidden="true"></canvas>
+<div id="gentleFailEffect" aria-hidden="true">
+  <div class="failBubble">
+    <div class="failText">惜しい。次の種目へ進みます。</div>
+  </div>
+</div>
+
+
+<div id="settingsOverlay" class="appModalOverlay" aria-hidden="true">
+  <div class="appModal">
+    <div class="appModalHead">
+      <div>
+        <div class="appModalTitle">設定</div>
+        <div class="mini">設定はこの端末のブラウザに保存されます。</div>
+      </div>
+      <button class="ghost" id="btnSettingsClose">閉じる</button>
+    </div>
+
+    <div class="settingsGroup">
+      <h3>前回の選択を記憶</h3>
+      <label class="settingSwitch">
+        <span><strong>モード</strong><small>級・準初段・段の選択を記憶します。</small></span>
+        <input type="checkbox" id="settingRememberMode">
+      </label>
+      <label class="settingSwitch">
+        <span><strong>段位・級位</strong><small>最後に選んだ段位や級位を記憶します。</small></span>
+        <input type="checkbox" id="settingRememberRank">
+      </label>
+      <label class="settingSwitch">
+        <span><strong>クラウド設定</strong><small>Apps Script URLとトークンを記憶します。</small></span>
+        <input type="checkbox" id="settingRememberCloud">
+      </label>
+      <label class="settingSwitch">
+        <span><strong>ランキング表示名</strong><small>タイム競技Bで使った名前を記憶します。</small></span>
+        <input type="checkbox" id="settingRememberTimeBName">
+      </label>
+    </div>
+
+    <div class="settingsGroup">
+      <h3>操作</h3>
+      <label class="settingSwitch">
+        <span><strong>バイブレーション</strong><small>対応端末で成功・失敗時に振動します。</small></span>
+        <input type="checkbox" id="settingVibration">
+      </label>
+    </div>
+
+    <div class="settingsActions">
+      <button class="primary" id="btnSaveAppSettings">設定を保存</button>
+      <button class="ghost" id="btnResetAppSettings">初期設定に戻す</button>
+    </div>
+    <div class="mini" id="appSettingsStatus"></div>
+  </div>
+</div>
+
+<div id="changelogOverlay" class="appModalOverlay" aria-hidden="true">
+  <div class="appModal">
+    <div class="appModalHead">
+      <div>
+        <div class="appModalTitle">更新履歴</div>
+        <div class="mini">けん玉認定練習トラッカー</div>
+      </div>
+      <button class="ghost" id="btnChangelogClose">閉じる</button>
+    </div>
+    <div id="changelogList"></div>
+    <div class="appInfoBox">
+      <strong>Version 3.0.9</strong>
+      <span>公開版：v3.0</span>
+    </div>
+  </div>
+</div>
+
+<div id="updateNoticeOverlay" class="appModalOverlay" aria-hidden="true">
+  <div class="appModal updateNoticeModal">
+    <div class="newBadge">NEW</div>
+    <div class="appModalTitle">v3.0.8へ更新しました</div>
+    <p>デザインと操作性を全面的に見直し、公開版として仕上げました。</p>
+    <button class="primary" id="btnUpdateNoticeClose">確認</button>
+  </div>
+</div>
+
+
+<footer class="appFooter">
+  <strong>けん玉認定練習トラッカー</strong>
+  <span>Version 3.0.9</span>
+  <small>練習の記録は、次の一回を少しだけ強くします。</small>
+</footer>
 <div id="judgeOverlay" aria-hidden="true">
   <div id="judgeBox" class="ok">
     <div id="judgeGlow"></div>
     <div id="judgeShine"></div>
-    <div id="judgeTitle">合格</div>
+    <div id="judgeTitle">成功</div>
     <div id="judgeSub">規定回数を満たしました。</div>
     <div id="judgeDetails" style="margin-top:10px;color:rgba(31,36,48,.78);font-size:14px;line-height:1.5;white-space:pre-line;display:none;"></div>
+    <div id="finalResultPanel" class="finalResultPanel" hidden>
+      <div class="finalResultStats">
+        <div><span>達成種目</span><strong id="finalPassedCount">0 / 0</strong></div>
+        <div><span>総成功率</span><strong id="finalSuccessRate">0%</strong></div>
+        <div><span>実施日時</span><strong id="finalFinishedAt">--</strong></div>
+      </div>
+      <section class="finalResultSection" id="finalFailedSection">
+        <h3>未達だった技</h3>
+        <div id="finalFailedList"></div>
+      </section>
+      <section class="finalResultSection">
+        <h3>種目別リザルト</h3>
+        <div id="finalSkillResults"></div>
+      </section>
+    </div>
     <div class="row" style="justify-content:center;margin-top:14px;">
       <button class="primary" id="btnJudgeClose">閉じる</button>
     </div>
   </div>
 </div>
+<div id="finalScreen" aria-hidden="true">
+  <div class="finalScreenInner">
+    <section class="finalScreenCard">
+      <div class="finalScreenHeader">
+        <div id="finalScreenTitle">結果</div>
+        <div id="finalScreenSub"></div>
+      </div>
+      <div id="finalScreenContent"></div>
+      <button class="primary" id="btnFinalScreenClose">結果を閉じる</button>
+    </section>
+  </div>
+</div>
+
+<div id="practiceOverlay" aria-hidden="true">
+  <div class="practicePanel">
+    <div class="mini">検定では未達でした。ここからは記録に含めない追加練習です。</div>
+    <div class="practiceTitle" id="practiceTitle">追加練習</div>
+    <div class="practiceCount"><span id="practiceSuccess">0</span><span style="font-size:.34em;color:var(--muted)"> / 10</span></div>
+    <div class="mini">成功を10回積み上げるまで続けます。失敗回数は自由です。</div>
+    <div class="row practiceButtons" style="justify-content:center;margin-top:18px;">
+      <button class="good" id="btnPracticeOk">成功</button>
+      <button class="bad" id="btnPracticeNg">失敗</button>
+    </div>
+    <button class="ghost" id="btnPracticeSkip" style="margin-top:12px;">追加練習を終了</button>
+  </div>
+</div>
+
 <canvas id="confetti"></canvas>
+
+
 
 <script>
 (() => {
   "use strict";
-  const LS = "kendama_tracker_mix_v9";
+  const LS = "kendama_tracker_mix_v28";
 
   const el = (id)=>document.getElementById(id);
+
+  const APP_VERSION = "3.0.9";
+  const APP_SETTINGS_KEY = "kendama_tracker_app_settings_v28";
+  const APP_UPDATE_SEEN_KEY = "kendama_tracker_update_seen";
+  const TIME_B_NAME_STORAGE = "kendama_timeb_ranking_name";
+
+  const DEFAULT_APP_SETTINGS = {
+    rememberMode:true,
+    rememberRank:true,
+    rememberCloud:true,
+    rememberTimeBName:true,
+    vibration:true
+  };
+
+  const CHANGELOG = [
+    {version:"3.0.9", date:"2026-07-29", current:true, items:[
+      "完走リザルトの「結果を閉じる」ボタンが確実に動作するようイベント登録位置を修正",
+      "成功時に紙吹雪と「成功しました。次の種目へ進みます。」を表示",
+      "成功演出後の自動遷移を約0.95秒に調整"
+    ]},
+    {version:"3.0.7", date:"2026-07-29", current:true, items:[
+      "通常の成功ポップアップを廃止し、紙吹雪だけで成功を通知",
+      "成功後は短い演出のあと自動で次の種目へ移行",
+      "未達と最終リザルトだけをOK操作で閉じる方式に整理",
+      "判定オーバーレイが残って画面がぼやける問題を修正"
+    ]},
+    {version:"3.0.3", date:"2026-07-29", current:false, items:[
+      "成功・未達の判定ウィンドウをOK操作まで固定し、OK後に次の種目へ移行",
+      "最終合否を各種目の実記録から再計算し、誤判定を防止",
+      "最終の合格・不合格リザルトをOK操作まで固定表示",
+      "次の種目へ移る前の結果確認をしやすく調整"
+    ]},
+    {version:"3.0.1",date:"2026-07-29",items:[
+      "タイム競技Bのスタート・成功ボタンを大判化",
+      "一時停止・リセットを補助操作として整理",
+    ]},
+    {version:"3.0.0",date:"2026-07-29",current:false,items:[
+      "オレンジ基調の公開版デザインへ全面刷新",
+      "成功・失敗・開始・次へボタンをスマートフォン向けに大型化",
+      "配色・余白・角丸・影を共通化して視認性を改善",
+      "モーダル部品の読み込み順を修正し、初期化の安定性を向上",
+      "前回選択の保存機能と既存データの互換性を維持"
+    ]},
+    {version:"2.8.1",date:"2026-07-28",items:[
+      "段位・級位の選択欄が空になる不具合を修正",
+      "設定画面用の部品をJavaScript初期化前に読み込むよう修正"
+    ]},
+    {version:"2.8.0",date:"2026-07-28",items:[
+      "右上にバージョン番号と設定ボタンを追加",
+      "更新履歴画面を追加",
+      "モードと段位・級位の記憶設定を追加",
+      "クラウド設定とランキング表示名の記憶を個別に設定可能",
+      "初回起動時の更新案内を追加"
+    ]},
+    {version:"2.7.0",date:"2026-07-28",items:[
+      "最終合否を大きく表示するリザルト画面を追加",
+      "未達だった技の一覧を追加",
+      "種目別の成功率・達成度を表示"
+    ]},
+    {version:"2.6.0",date:"2026-07-28",items:[
+      "タイム競技Bランキングを追加",
+      "表示名・日時・一言メモの保存に対応",
+      "失敗時も次の競技へ自動移行"
+    ]},
+    {version:"2.5.0",date:"2026-07-28",items:[
+      "タイム競技Bの継続計測と自動判定に対応",
+      "個人ごとのApps Script URL設定に対応"
+    ]}
+  ];
+
+  function loadAppSettings(){
+    try{
+      const raw=localStorage.getItem(APP_SETTINGS_KEY);
+      return raw ? {...DEFAULT_APP_SETTINGS,...JSON.parse(raw)} : {...DEFAULT_APP_SETTINGS};
+    }catch(e){ return {...DEFAULT_APP_SETTINGS}; }
+  }
+  let appSettings=loadAppSettings();
+  function persistAppSettings(){
+    try{ localStorage.setItem(APP_SETTINGS_KEY,JSON.stringify(appSettings)); }catch(e){}
+  }
 
   // ===== 級 =====
   const KYU_TRICKS = [
@@ -309,20 +1476,17 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   ];
 
   // 初期値は練習用の仮テーブル（必要なら編集で上書き）
-  const KYU_TABLE_DEFAULT = {
+    const KYU_TABLE_DEFAULT = {
     "10kyu": {1:1},
     "9kyu":  {1:2,2:1},
     "8kyu":  {1:3,2:2,3:1},
-    "7kyu":  {1:3,2:2,3:1,4:1},
-    "6kyu":  {1:3,2:2,3:1,4:2,5:1},
-    "5kyu":  {1:3,2:2,3:1,4:3,5:2,6:1},
-    "4kyu":  {1:3,2:2,3:1,4:3,5:2,6:1,7:1},
-    "3kyu":  {1:3,2:2,3:1,4:3,5:2,6:1,7:1,8:1},
-    "2kyu":  {1:3,2:2,3:1,4:3,5:2,6:1,7:1,8:1,9:1},
-
-    // 通し（1級ラインの目安）
-    // 大皿〜日本一周：各3回 / 世界一周：2回 / 灯台：1回
-    "1kyu":  {1:3,2:3,3:3,4:3,5:3,6:3,7:3,8:3,9:2,10:1,11:1}
+    "7kyu":  {2:3,3:2,4:1},
+    "6kyu":  {3:3,4:2,5:1},
+    "5kyu":  {4:3,5:2,6:1},
+    "4kyu":  {5:3,6:2,7:1},
+    "3kyu":  {6:3,7:2,8:1},
+    "2kyu":  {7:3,8:2,9:1},
+    "1kyu":  {8:3,9:2,10:1,11:50}
   };
 
   const KYU_ORDER = [
@@ -348,7 +1512,7 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     {no:6,name:"世界一周",type:"count", req:3},
     {no:7,name:"灯台",type:"count", req:2},
     {no:8,name:"けん先すべり",type:"count", req:1},
-    {no:9,name:"もしかめ",type:"moshi", req:1}
+    {no:9,name:"もしかめ",type:"moshi", req:100}
   ];
 
   // ===== 段 =====
@@ -370,19 +1534,18 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     {no:15,name:"灯台とんぼ返り",type:"count"},
     {no:16,name:"つるし一回転飛行",type:"count"},
     {no:17,name:"二回転灯台",type:"count"},
-    {no:18,name:"自由種目（1）",type:"free"},
-    {no:19,name:"自由種目（2）",type:"free"},
-    {no:20,name:"タイム競技B",type:"time"},
-    {no:21,name:"もしかめ",type:"moshi"}
+    {no:18,name:"自由種目",type:"free"},
+    {no:19,name:"タイム競技B",type:"time"},
+    {no:20,name:"もしかめ",type:"moshi"}
   ];
 
   const DAN_RANKS = {
-    shodan:{label:"初段", req:{1:4,2:4,3:3,4:3,5:2,6:2,7:1,8:1,9:1,10:1,21:1}},
-    nidan:{label:"二段", req:{1:5,2:5,3:4,4:4,5:3,6:3,7:2,8:2,9:2,10:2,21:1}},
-    sandan:{label:"三段", req:{3:5,4:5,5:4,6:4,7:3,8:3,9:3,10:3,11:1,12:1,20:120,21:1}},
-    yondan:{label:"四段", req:{3:6,4:6,5:5,6:5,7:4,8:4,9:4,10:4,11:2,12:2,20:60,21:1}},
-    godan:{label:"五段", req:{7:6,8:6,9:6,10:6,11:4,12:4,13:3,14:3,15:2,16:2,17:1,20:45}},
-    rokudan:{label:"六段", req:{7:8,8:8,9:8,10:8,11:6,12:6,13:5,14:5,15:4,16:4,17:3,18:1,19:1}}
+    shodan:{label:"初段", req:{1:4,2:4,3:3,4:3,5:2,6:2,7:1,8:1,9:1,10:1,20:200}},
+    nidan:{label:"二段", req:{1:5,2:5,3:4,4:4,5:3,6:3,7:2,8:2,9:2,10:2,20:300}},
+    sandan:{label:"三段", req:{3:5,4:5,5:4,6:4,7:3,8:3,9:3,10:3,11:1,12:1,19:120,20:500}},
+    yondan:{label:"四段", req:{3:6,4:6,5:5,6:5,7:4,8:4,9:4,10:4,11:2,12:2,19:60,20:1000}},
+    godan:{label:"五段", req:{7:6,8:6,9:6,10:6,11:4,12:4,13:3,14:3,15:2,16:2,17:1,19:45}},
+    rokudan:{label:"六段", req:{7:8,8:8,9:8,10:8,11:6,12:6,13:5,14:5,15:4,16:4,17:3,18:2}}
   };
 
   // ===== UI =====
@@ -390,6 +1553,29 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   const rankSel = el("rankSel");
   const rankLabel = el("rankLabel");
   const btnStart = el("btnStart");
+  const btnOpenTimeB = el("btnOpenTimeB");
+  const timeBOverlay = el("timeBOverlay");
+  const btnCloseTimeB = el("btnCloseTimeB");
+  const timeBTimer = el("timeBTimer");
+  const timeBRemaining = el("timeBRemaining");
+  const timeBCurrentName = el("timeBCurrentName");
+  const timeBProgress = el("timeBProgress");
+  const btnTimeBStart = el("btnTimeBStart");
+  const btnTimeBPause = el("btnTimeBPause");
+  const btnTimeBSuccess = el("btnTimeBSuccess");
+  const btnTimeBReset = el("btnTimeBReset");
+  const timeBStatus = el("timeBStatus");
+  const timeBList = el("timeBList");
+  const timeBRankingPanel = el("timeBRankingPanel");
+  const timeBRankingEntry = el("timeBRankingEntry");
+  const timeBFinalTime = el("timeBFinalTime");
+  const timeBFinalRank = el("timeBFinalRank");
+  const timeBRankingName = el("timeBRankingName");
+  const timeBRankingMemo = el("timeBRankingMemo");
+  const btnTimeBSendRanking = el("btnTimeBSendRanking");
+  const btnTimeBLoadRanking = el("btnTimeBLoadRanking");
+  const timeBRankingSendStatus = el("timeBRankingSendStatus");
+  const timeBRankingView = el("timeBRankingView");
   const btnExport = el("btnExport");
   const btnUndo = el("btnUndo");
   const btnReset = el("btnReset");
@@ -404,8 +1590,38 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   const judgeTitle = document.getElementById("judgeTitle");
   const judgeSub = document.getElementById("judgeSub");
   const judgeDetails = document.getElementById("judgeDetails");
+  const finalResultPanel = document.getElementById("finalResultPanel");
+  const finalPassedCount = document.getElementById("finalPassedCount");
+  const finalSuccessRate = document.getElementById("finalSuccessRate");
+  const finalFinishedAt = document.getElementById("finalFinishedAt");
+  const finalFailedSection = document.getElementById("finalFailedSection");
+  const finalFailedList = document.getElementById("finalFailedList");
+  const finalSkillResults = document.getElementById("finalSkillResults");
   const btnJudgeClose = document.getElementById("btnJudgeClose");
   const confettiCanvas = document.getElementById("confetti");
+  const finalScreen = el("finalScreen");
+  const finalScreenTitle = el("finalScreenTitle");
+  const finalScreenSub = el("finalScreenSub");
+  const finalScreenContent = el("finalScreenContent");
+  const btnFinalScreenClose = el("btnFinalScreenClose");
+
+  const btnVersion = el("btnVersion");
+  const btnSettings = el("btnSettings");
+  const settingsOverlay = el("settingsOverlay");
+  const btnSettingsClose = el("btnSettingsClose");
+  const settingRememberMode = el("settingRememberMode");
+  const settingRememberRank = el("settingRememberRank");
+  const settingRememberCloud = el("settingRememberCloud");
+  const settingRememberTimeBName = el("settingRememberTimeBName");
+  const settingVibration = el("settingVibration");
+  const btnSaveAppSettings = el("btnSaveAppSettings");
+  const btnResetAppSettings = el("btnResetAppSettings");
+  const appSettingsStatus = el("appSettingsStatus");
+  const changelogOverlay = el("changelogOverlay");
+  const btnChangelogClose = el("btnChangelogClose");
+  const changelogList = el("changelogList");
+  const updateNoticeOverlay = el("updateNoticeOverlay");
+  const btnUpdateNoticeClose = el("btnUpdateNoticeClose");
 
   const timeBox = el("timeBox");
   const timeVal = el("timeVal");
@@ -416,12 +1632,34 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   const btnFree = el("btnFree");
 
   const moshiQuick = el("moshiQuick");
-  const btnMoshiPass = el("btnMoshiPass");
-  const btnMoshiFail = el("btnMoshiFail");
+  const moshiCount = el("moshiCount");
+  const btnMoshiRecord = el("btnMoshiRecord");
+  const moshiRequired = el("moshiRequired");
+  const moshiMax = el("moshiMax");
+  const moshiPresetRow = el("moshiPresetRow");
+
+  const practiceOverlay = el("practiceOverlay");
+  const practiceTitle = el("practiceTitle");
+  const practiceSuccess = el("practiceSuccess");
+  const btnPracticeOk = el("btnPracticeOk");
+  const btnPracticeNg = el("btnPracticeNg");
+  const btnPracticeSkip = el("btnPracticeSkip");
+
+  const cloudUrl = el("cloudUrl");
+  const cloudToken = el("cloudToken");
+  const btnSaveCloudSettings = el("btnSaveCloudSettings");
+  const btnCloudSave = el("btnCloudSave");
+  const btnLoadHistory = el("btnLoadHistory");
+  const btnFxTest = el("btnFxTest");
+  const cloudStatus = el("cloudStatus");
+  const historyView = el("historyView");
+  const cloudMoshiMax = el("cloudMoshiMax");
 
   const btnOk = el("btnOk");
   const btnNg = el("btnNg");
   const btnNext = el("btnNext");
+  const celebrationCanvas=el("celebrationCanvas");
+  const gentleFailEffect=el("gentleFailEffect");
 
   const list = el("list");
   const log = el("log");
@@ -432,39 +1670,283 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   const btnApplyTable = el("btnApplyTable");
   const btnResetTable = el("btnResetTable");
 
-  const S = {mode:"dan", rankKey:null, kyuTable:KYU_TABLE_DEFAULT, tasks:[], focusIdx:0, log:[], history:[]};
+  const S = {
+    mode:"dan", rankKey:"shodan", kyuTable:KYU_TABLE_DEFAULT, tasks:[], focusIdx:0,
+    log:[], history:[], sessionId:"", startedAt:null, finishedAt:null,
+    finalShown:false, cloudSaved:false, moshiBest:0,
+    cloud:{url:"",token:"",kendama:""}
+  };
+  const practice = {active:false, success:0, failedTaskIndex:-1};
+
+
+
+  const CLOUD_PREF_COOKIE = "kendama_cloud_destination";
+  const CLOUD_PREF_STORAGE = "kendama_cloud_destination_v1";
+
+  function writeCloudPreference(cloud){
+    if(!appSettings.rememberCloud) return;
+    const value={
+      url:String(cloud?.url||"").trim(),
+      token:String(cloud?.token||"").trim(),
+      kendama:String(cloud?.kendama||"競技用けん玉")
+    };
+    try{ localStorage.setItem(CLOUD_PREF_STORAGE,JSON.stringify(value)); }catch(e){}
+    try{
+      document.cookie=`${CLOUD_PREF_COOKIE}=${encodeURIComponent(JSON.stringify(value))}; Max-Age=31536000; Path=/; SameSite=Lax`;
+    }catch(e){}
+  }
+
+  function readCloudPreference(){
+    if(!appSettings.rememberCloud) return null;
+    try{
+      const raw=localStorage.getItem(CLOUD_PREF_STORAGE);
+      if(raw){
+        const value=JSON.parse(raw);
+        if(value && typeof value==="object") return value;
+      }
+    }catch(e){}
+    try{
+      const hit=document.cookie.split("; ").find(row=>row.startsWith(CLOUD_PREF_COOKIE+"="));
+      if(hit){
+        const value=JSON.parse(decodeURIComponent(hit.slice(CLOUD_PREF_COOKIE.length+1)));
+        if(value && typeof value==="object") return value;
+      }
+    }catch(e){}
+    return null;
+  }
+
+  const PREF_COOKIE = "kendama_rank_preference";
+  const PREF_FALLBACK = "kendama_last_mode_and_rank";
+  const PREF_MODE_ONLY = "kendama_last_mode";
+  const PREF_RANK_ONLY = "kendama_last_rank";
+
+  function writeRankPreference(){
+    if(!appSettings.rememberMode && !appSettings.rememberRank) return;
+    let old={};
+    try{ old=JSON.parse(localStorage.getItem(PREF_FALLBACK)||"{}"); }catch(e){}
+    const pref={
+      mode:appSettings.rememberMode ? (mode.value||"dan") : (old.mode||"dan"),
+      rankKey:appSettings.rememberRank ? (rankSel.value||"shodan") : (old.rankKey||"shodan")
+    };
+    try{
+      localStorage.setItem(PREF_FALLBACK,JSON.stringify(pref));
+      if(appSettings.rememberMode) localStorage.setItem(PREF_MODE_ONLY,pref.mode);
+      if(appSettings.rememberRank) localStorage.setItem(PREF_RANK_ONLY,pref.rankKey);
+    }catch(e){}
+    try{
+      document.cookie=`${PREF_COOKIE}=${encodeURIComponent(JSON.stringify(pref))}; Max-Age=31536000; Path=/; SameSite=Lax`;
+    }catch(e){}
+  }
+
+  function readRankPreference(){
+    if(!appSettings.rememberMode && !appSettings.rememberRank) return null;
+    let pref=null;
+    try{
+      const raw=localStorage.getItem(PREF_FALLBACK);
+      if(raw) pref=JSON.parse(raw);
+      if(!pref){
+        const modeOnly=localStorage.getItem(PREF_MODE_ONLY);
+        const rankOnly=localStorage.getItem(PREF_RANK_ONLY);
+        if(modeOnly || rankOnly) pref={mode:modeOnly||"dan",rankKey:rankOnly||"shodan"};
+      }
+    }catch(e){}
+    if(!pref){
+      try{
+        const hit=document.cookie.split("; ").find(row=>row.startsWith(PREF_COOKIE+"="));
+        if(hit) pref=JSON.parse(decodeURIComponent(hit.slice(PREF_COOKIE.length+1)));
+      }catch(e){}
+    }
+    if(!pref) return null;
+    return {
+      mode:appSettings.rememberMode ? pref.mode : "dan",
+      rankKey:appSettings.rememberRank ? pref.rankKey : "shodan"
+    };
+  }
+
+  function applyRankPreference(){
+    const pref = readRankPreference();
+    if(!pref) return false;
+    if(["kyu","jun","dan"].includes(pref.mode)){
+      mode.value = pref.mode;
+      setupRankSelector(pref.rankKey);
+      if([...rankSel.options].some(o=>o.value===pref.rankKey)){
+        rankSel.value = pref.rankKey;
+      }
+      return true;
+    }
+    return false;
+  }
 
   function save(){ try{ localStorage.setItem(LS, JSON.stringify(S)); }catch(e){} }
   function load(){
     try{
       const raw = localStorage.getItem(LS);
-      if(!raw) return false;
+      if(!raw){
+        const cloudPref=readCloudPreference();
+        if(cloudPref) S.cloud={...S.cloud,...cloudPref};
+        return false;
+      }
       const obj = JSON.parse(raw);
       if(!obj || typeof obj!=="object") return false;
       Object.assign(S, obj);
       if(!S.kyuTable) S.kyuTable = KYU_TABLE_DEFAULT;
+      if(!S.cloud) S.cloud = {url:"",token:"",kendama:""};
+      const cloudPref=readCloudPreference();
+      if(cloudPref) S.cloud={...S.cloud,...cloudPref};
+      if(!Number.isFinite(S.moshiBest)) S.moshiBest = 0;
       return true;
     }catch(e){ return false; }
   }
-  function snapshot(){ return JSON.parse(JSON.stringify({mode:S.mode, rankKey:S.rankKey, kyuTable:S.kyuTable, tasks:S.tasks, focusIdx:S.focusIdx, log:S.log})); }
+  function snapshot(){ return JSON.parse(JSON.stringify({
+    mode:S.mode, rankKey:S.rankKey, kyuTable:S.kyuTable, tasks:S.tasks,
+    focusIdx:S.focusIdx, log:S.log, sessionId:S.sessionId, startedAt:S.startedAt,
+    finishedAt:S.finishedAt, finalShown:S.finalShown, cloudSaved:S.cloudSaved,
+    moshiBest:S.moshiBest, cloud:S.cloud
+  })); }
   function pushHistory(){ S.history.push(snapshot()); if(S.history.length>60) S.history.shift(); }
 
   function esc(s){ return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;"); }
 
+
+  function syncSettingsForm(){
+    settingRememberMode.checked=!!appSettings.rememberMode;
+    settingRememberRank.checked=!!appSettings.rememberRank;
+    settingRememberCloud.checked=!!appSettings.rememberCloud;
+    settingRememberTimeBName.checked=!!appSettings.rememberTimeBName;
+    settingVibration.checked=!!appSettings.vibration;
+  }
+
+  function openSettings(){
+    syncSettingsForm();
+    appSettingsStatus.textContent="";
+    settingsOverlay.classList.add("show");
+  }
+  function closeSettings(){ settingsOverlay.classList.remove("show"); }
+
+  function saveAppSettingsFromForm(){
+    appSettings={
+      rememberMode:settingRememberMode.checked,
+      rememberRank:settingRememberRank.checked,
+      rememberCloud:settingRememberCloud.checked,
+      rememberTimeBName:settingRememberTimeBName.checked,
+      vibration:settingVibration.checked
+    };
+    persistAppSettings();
+
+    if(appSettings.rememberMode || appSettings.rememberRank){
+      writeRankPreference();
+    }else{
+      try{
+        localStorage.removeItem(PREF_FALLBACK);
+        localStorage.removeItem(PREF_MODE_ONLY);
+        localStorage.removeItem(PREF_RANK_ONLY);
+      }catch(e){}
+      document.cookie=`${PREF_COOKIE}=; Max-Age=0; Path=/; SameSite=Lax`;
+    }
+
+    if(appSettings.rememberCloud){
+      writeCloudPreference(S.cloud||{});
+    }else{
+      try{ localStorage.removeItem(CLOUD_PREF_STORAGE); }catch(e){}
+      document.cookie=`${CLOUD_PREF_COOKIE}=; Max-Age=0; Path=/; SameSite=Lax`;
+    }
+
+    if(appSettings.rememberTimeBName){
+      const name=(timeBRankingName?.value||"").trim();
+      if(name) try{ localStorage.setItem(TIME_B_NAME_STORAGE,name); }catch(e){}
+    }else{
+      try{ localStorage.removeItem(TIME_B_NAME_STORAGE); }catch(e){}
+    }
+
+    appSettingsStatus.textContent="設定を保存しました。";
+    appSettingsStatus.className="mini ok";
+  }
+
+  function resetAppSettings(){
+    appSettings={...DEFAULT_APP_SETTINGS};
+    persistAppSettings();
+    syncSettingsForm();
+    writeRankPreference();
+    writeCloudPreference(S.cloud||{});
+    appSettingsStatus.textContent="初期設定に戻しました。";
+    appSettingsStatus.className="mini ok";
+  }
+
+  function renderChangelog(){
+    changelogList.innerHTML=CHANGELOG.map(item=>`
+      <section class="changelogEntry ${item.current?"current":""}">
+        <div class="changelogVersionRow">
+          <div><span class="changelogVersion">v${esc(item.version)}</span> ${item.current?'<span class="currentTag">現在</span>':""}</div>
+          <span class="changelogDate">${esc(item.date)}</span>
+        </div>
+        <ul>${item.items.map(text=>`<li>${esc(text)}</li>`).join("")}</ul>
+      </section>
+    `).join("");
+  }
+  function openChangelog(){ renderChangelog(); changelogOverlay.classList.add("show"); }
+  function closeChangelog(){ changelogOverlay.classList.remove("show"); }
+
+  function showUpdateNoticeOnce(){
+    try{
+      if(localStorage.getItem(APP_UPDATE_SEEN_KEY)===APP_VERSION) return;
+    }catch(e){}
+    updateNoticeOverlay.classList.add("show");
+  }
+  function closeUpdateNotice(){
+    try{ localStorage.setItem(APP_UPDATE_SEEN_KEY,APP_VERSION); }catch(e){}
+    updateNoticeOverlay.classList.remove("show");
+  }
+
   function addLog(title, desc, right=""){ S.log.unshift({title, desc, right, at:Date.now()}); if(S.log.length>200) S.log.pop(); }
 
   function setBadge(state){
-    resultBadge.classList.remove("ok","ng","wait");
-    if(state==="ok"){ resultBadge.classList.add("ok"); resultBadge.textContent="判定：合格"; }
+    resultBadge.classList.remove("ok","ng","wait","transition-ok","transition-ng");
+    if(state==="ok"){ resultBadge.classList.add("ok"); resultBadge.textContent="判定：成功"; }
     else if(state==="ng"){ resultBadge.classList.add("ng"); resultBadge.textContent="判定：未達"; }
     else { resultBadge.classList.add("wait"); resultBadge.textContent="判定：進行中"; }
   }
+
+
+  function blinkResultSignal(ok){
+    clearTimeout(blinkResultSignal._t);
+    resultBadge.classList.remove(
+      "ok","ng","wait",
+      "transition-ok","transition-ng"
+    );
+
+    resultBadge.textContent = ok ? "判定：成功" : "判定：未達";
+    resultBadge.classList.add(ok ? "ok" : "ng");
+    void resultBadge.offsetWidth;
+    resultBadge.classList.add(ok ? "transition-ok" : "transition-ng");
+
+    blinkResultSignal._t=setTimeout(()=>{
+      resultBadge.classList.remove("transition-ok","transition-ng");
+    },1550);
+  }
+
+  let judgeRequiresConfirmation = false;
+  let judgeOpenedAt = 0;
+  let judgeConfirmAction = null;
 
   function showJudge(kind, title, sub, opts){
     if(!judgeOverlay || !judgeBox || !judgeTitle || !judgeSub) return;
     opts = opts || {};
 
+    const isFinal = opts.finalResult === true;
     const mega = (opts.mega === true) || (title && String(title).includes("完全")) || (sub && String(sub).includes("全種目"));
+
+    clearTimeout(showJudge._t);
+    clearTimeout(showJudge._unlockTimer);
+
+    // 前回の演出フレームを消去し、判定ウィンドウより前面に残さない。
+    if(celebrationCanvas){
+      const cctx = celebrationCanvas.getContext("2d");
+      if(cctx) cctx.clearRect(0,0,celebrationCanvas.width,celebrationCanvas.height);
+    }
+    if(confettiCanvas){
+      const fctx = confettiCanvas.getContext("2d");
+      if(fctx) fctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    }
 
     judgeBox.classList.remove("ok","ng","mega");
     judgeBox.classList.add(kind === "ok" ? "ok" : "ng");
@@ -473,32 +1955,45 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     judgeTitle.textContent = title;
     judgeSub.textContent = sub || "";
 
+    if(finalResultPanel && !isFinal){
+      finalResultPanel.hidden = true;
+    }
+
     if(judgeDetails){
       const d = opts.details || "";
       judgeDetails.textContent = d;
       judgeDetails.style.display = d ? "block" : "none";
     }
 
-    // アニメーションを毎回確実に発火
-    judgeOverlay.classList.remove("show");
+    judgeOverlay.classList.remove("show","transient","final-result","locked");
+    judgeOverlay.classList.add(isFinal ? "final-result" : "transient");
+    if(isFinal) judgeOverlay.classList.add("locked");
     void judgeOverlay.offsetWidth;
     judgeOverlay.classList.add("show");
+    judgeOverlay.setAttribute("aria-hidden","false");
 
-    // 表示時間：通常は自動で閉じる。最終結果は手動で閉じる（autoHide=false）
-    const hold = Number.isFinite(opts.hold) ? opts.hold : (mega ? 1400 : 900);
-    const autoHide = (opts.autoHide !== false);
+    // v3.0.6: 通常判定・最終結果とも、OKが押されるまで閉じない。
+    judgeRequiresConfirmation = true;
+    judgeConfirmAction = typeof opts.onConfirm === "function" ? opts.onConfirm : null;
+    judgeOpenedAt = Date.now();
 
-    clearTimeout(showJudge._t);
-    if(autoHide){
-      showJudge._t = setTimeout(()=>judgeOverlay.classList.remove("show"), hold);
+  if(btnJudgeClose){
+      btnJudgeClose.textContent = "OK";
+      btnJudgeClose.disabled = true;
     }
 
-    if(kind === "ok"){
-      confettiBurst(mega);
-      if(mega){
-        setTimeout(()=>confettiBurst(true), 220);
-        setTimeout(()=>confettiBurst(true), 520);
-      }
+    // 成功ボタンのタップが、そのままOKへ流れ込むのを防ぐ短いロック。
+    // 表示自体はこの後もOK操作まで維持される。
+    showJudge._unlockTimer = setTimeout(()=>{
+      judgeOverlay.classList.remove("locked");
+      if(btnJudgeClose) btnJudgeClose.disabled = false;
+    }, 350);
+
+    // 紙吹雪は最終結果だけに限定する。通常判定では表示競合を起こさない。
+    if(kind === "ok" && isFinal){
+      confettiBurst(true);
+      setTimeout(()=>confettiBurst(true), 220);
+      setTimeout(()=>confettiBurst(true), 520);
     }
   }
 
@@ -563,6 +2058,7 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     requestAnimationFrame(tick);
   }
 
+
   function focusTask(){ return S.tasks[S.focusIdx] || null; }
 
   function renderDots(t){
@@ -571,8 +2067,11 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     let html="";
     for(let i=0;i<10;i++){
       const m = marks[i];
-      if(m===1) html += '<span class="dot s" title="成功"></span>';
-      else if(m===0) html += '<span class="dot f" title="失敗"></span>';
+      const flashClass = (t.flashIndex===i)
+        ? (m===1 ? " blink-success" : (m===0 ? " blink-failure" : ""))
+        : "";
+      if(m===1) html += `<span class="dot s${flashClass}" title="成功"></span>`;
+      else if(m===0) html += `<span class="dot f${flashClass}" title="失敗"></span>`;
       else html += '<span class="dot e" title="未実施"></span>';
     }
     dotsRow.style.display="flex";
@@ -604,6 +2103,10 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     return req[trickNo] ?? null;
   }
 
+  function moshiAttemptLimit(){
+    return (S.mode==="kyu" && S.rankKey==="1kyu") ? 2 : 1;
+  }
+
   function calcCounts(){
     const done = S.tasks.filter(t=>t.done).length;
     doneCnt.textContent=String(done);
@@ -618,15 +2121,18 @@ button:disabled{opacity:.45;cursor:not-allowed;}
       const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
       let reqTxt = "";
       if(t.type==="count") reqTxt = (req!=null ? `必要成功：${req}回` : "（対象外）");
-      if(t.type==="moshi") reqTxt = "規定以上か判定";
+      if(t.type==="moshi") reqTxt = `規定：${req}回以上`;
       if(t.type==="time") reqTxt = `制限時間：${req}秒以内（2回）`;
       if(t.type==="free") reqTxt = "技名を登録";
-      const verdict = t.done ? "合格" : ((t.type==="count" && (t.attempts||0)>=10) ? "未達" : "未判定");
+      const verdict = t.done ? "成功" :
+        (((t.type==="count" && (t.attempts||0)>=10) ||
+          (t.type==="moshi" && (t.attempts||0)>=moshiAttemptLimit()) ||
+          (t.type==="time" && (t.attempts||0)>=2)) ? "未達" : "未判定");
       div.innerHTML = `
         <div class="row" style="justify-content:space-between;">
           <div>
             <div class="k">${idx===S.focusIdx ? "▶ " : ""}${esc(t.name)} <span class="mini">(No.${t.no})</span></div>
-            <div class="mini">${esc(reqTxt)} / 成功 ${t.success||0} / 試技 ${t.attempts||0}</div>
+            <div class="mini">${esc(reqTxt)} / ${t.type==="moshi" ? `記録 ${t.moshiCount ?? "-"}回` : `成功 ${t.success||0} / 試技 ${t.attempts||0}`}</div>
           </div>
           <span class="badge"><strong>${verdict}</strong></span>
         </div>
@@ -655,12 +2161,13 @@ button:disabled{opacity:.45;cursor:not-allowed;}
 
   function updateFocus(){
     const t=focusTask();
-    bestRank.textContent = (S.mode==="kyu") ? kyuBest() : "-";
+    bestRank.textContent = (S.mode==="kyu") ? (KYU_ORDER.find(x=>x.key===S.rankKey)?.label || "-") : "-";
 
     // hide all special boxes by default
     timeBox.style.display="none";
     freeBox.style.display="none";
     moshiQuick.style.display="none";
+    btnMoshiRecord.disabled=false; moshiCount.disabled=false;
 
     if(!t){
       focusName.textContent="開始してください";
@@ -680,10 +2187,10 @@ button:disabled{opacity:.45;cursor:not-allowed;}
       focusMeta.textContent = `${target} / 成功 ${t.success||0} / 試技 ${t.attempts||0}`;
       btnOk.disabled = t.done || (t.attempts||0)>=10 || req==null;
       btnNg.disabled = t.done || (t.attempts||0)>=10 || req==null;
-      btnNext.disabled = !(t.done || (t.attempts||0)>=10 || req==null);
+      btnNext.disabled = false;
       renderDots(t);
       if(req==null) setBadge("wait");
-      else if(t.done) setBadge("ok");
+      else if(t.done && (t.success||0) >= (req||0)) setBadge("ok");
       else if((t.attempts||0)>=10) setBadge("ng");
       else setBadge("wait");
       return;
@@ -694,9 +2201,15 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     if(t.type==="moshi"){
       moshiQuick.style.display="flex";
       btnOk.disabled=true; btnNg.disabled=true;
-      btnNext.disabled = !(t.done || (t.attempts||0)>=1);
-      focusMeta.textContent = `規定以上かを選択 / 判定 ${t.done ? "合格" : ((t.attempts||0)>=1 ? "未達" : "未入力")}`;
-      if(t.done) setBadge("ok"); else if((t.attempts||0)>=1) setBadge("ng"); else setBadge("wait");
+      const moshiLimit = moshiAttemptLimit();
+      btnMoshiRecord.disabled=t.done || (t.attempts||0)>=moshiLimit;
+      moshiCount.disabled=t.done || (t.attempts||0)>=moshiLimit;
+      btnNext.disabled = !(t.done || (t.attempts||0)>=moshiLimit);
+      moshiRequired.textContent = String(req || "-");
+      moshiMax.textContent = String(Math.max(S.moshiBest||0, t.moshiCount||0) || "-");
+      const records = Array.isArray(t.moshiAttempts) ? t.moshiAttempts.join("・") : (t.moshiCount ?? "-");
+      focusMeta.textContent = `規定：${req}回以上（試技${moshiLimit}回まで） / 記録 ${records || "-"}回 / 判定 ${t.done ? "成功" : ((t.attempts||0)>=moshiLimit ? "未達" : "進行中")}`;
+      if(t.done) setBadge("ok"); else if((t.attempts||0)>=moshiLimit) setBadge("ng"); else setBadge("wait");
       return;
     }
 
@@ -723,53 +2236,321 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     setBadge("wait");
   }
 
-  function tryAutoAdvance(){
-    // 合格 or 未達（上限）になったとき、0.8秒だけ“判定を見せてから”次へ進めます
-    const t = focusTask();
-    if(!t) return;
+  function vibrate(pattern){
+    if(!appSettings.vibration) return;
+    try{ if(navigator.vibrate) navigator.vibrate(pattern); }catch(e){}
+  }
 
-    const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
+  function restartClass(node, className, duration=1000){
+    if(!node) return;
+    node.classList.remove(className);
+    void node.offsetWidth;
+    node.classList.add(className);
+    clearTimeout(node._fxTimer);
+    node._fxTimer=setTimeout(()=>node.classList.remove(className),duration);
+  }
 
-    const exhausted =
-      (t.type==="count" && (t.attempts||0) >= 10 && !t.done) ||
-      (t.type==="time"  && (t.attempts||0) >= 2 && !t.done) ||
-      (t.type==="moshi" && (t.attempts||0) >= 1 && !t.done);
 
-    const shouldMove = (t.done || exhausted || req==null);
-    if(!shouldMove) return;
-
-    // まず、この瞬間の判定を画面に反映
-    save();
-    updateUI();
-
-    if(t.done){
-      showJudge("ok","合格", `${t.name}：規定を満たしました。`);
-    }else if(exhausted){
-      showJudge("ng","不合格", `${t.name}：上限で未達でした。`);
+  function runConfetti(){
+    if(!celebrationCanvas) return;
+    const ctx=celebrationCanvas.getContext("2d");
+    if(!ctx) return;
+    const dpr=Math.max(1,window.devicePixelRatio||1);
+    const width=window.innerWidth,height=window.innerHeight;
+    celebrationCanvas.width=Math.floor(width*dpr);
+    celebrationCanvas.height=Math.floor(height*dpr);
+    celebrationCanvas.style.width=width+"px";
+    celebrationCanvas.style.height=height+"px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const colors=["#88c9a1","#f2c57c","#a7b8df","#d8a4b0","#c6b7df","#f0d98b"];
+    const pieces=Array.from({length:72},()=>({
+      x:Math.random()*width,y:-20-Math.random()*height*.15,
+      vx:(Math.random()-.5)*2.2,vy:2.2+Math.random()*3.2,
+      w:5+Math.random()*6,h:8+Math.random()*9,
+      rot:Math.random()*Math.PI,spin:(Math.random()-.5)*.18,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      sway:Math.random()*Math.PI*2
+    }));
+    let frame=0;
+    function draw(){
+      ctx.clearRect(0,0,width,height);
+      for(const p of pieces){
+        p.sway+=.06;p.x+=p.vx+Math.sin(p.sway)*.55;p.y+=p.vy;p.rot+=p.spin;
+        ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);
+        ctx.fillStyle=p.color;ctx.globalAlpha=Math.max(0,1-frame/125);
+        ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();
+      }
+      frame++;
+      if(frame<125) requestAnimationFrame(draw);
+      else ctx.clearRect(0,0,width,height);
     }
+    requestAnimationFrame(draw);
+  }
 
-    clearTimeout(tryAutoAdvance._t);
-    tryAutoAdvance._t = setTimeout(()=>{
-      if(S.focusIdx < S.tasks.length-1){
-        S.focusIdx += 1;
-        save();
-        updateUI();
-        return;
-      }
+  function runOutcomeMessage(ok){
+    if(!gentleFailEffect) return;
+    const textNode=gentleFailEffect.querySelector(".failText");
+    gentleFailEffect.classList.remove("play","success");
+    if(ok){
+      gentleFailEffect.classList.add("success");
+      if(textNode) textNode.textContent="成功しました。次の種目へ進みます。";
+    }else{
+      if(textNode) textNode.textContent="惜しい。次の種目へ進みます。";
+    }
+    void gentleFailEffect.offsetWidth;
+    gentleFailEffect.classList.add("play");
+    clearTimeout(runOutcomeMessage._t);
+    runOutcomeMessage._t=setTimeout(()=>{
+      gentleFailEffect.classList.remove("play","success");
+    },1250);
+  }
 
-      // 最終種目で判定が出た場合：全体の合否を表示
-      const tasks = (S.tasks || []);
-      const failed = tasks.filter(x=>!x.done).map(x=>x.name);
-      if(failed.length === 0){
-        showJudge("ok","完全合格","全種目クリアしました。",{mega:true, autoHide:false});
-      }else{
-        const detail = "未達の技：\n" + failed.join("\n");
-        showJudge("ng","不合格","最後まで完走しました。",{details:detail, autoHide:false});
-      }
+  function runGentleFailEffect(){ runOutcomeMessage(false); }
+  function runGentleSuccessEffect(){ runOutcomeMessage(true); }
 
+  function animateFeedbackButton(button, ok){
+    restartClass(
+      button,
+      ok ? "feedback-success" : "feedback-failure",
+      1000
+    );
+  }
+
+  function flashFeedback(ok, label){
+    animateFeedbackButton(ok ? btnOk : btnNg, ok);
+    vibrate(ok ? [45,25,55] : [65,30,65]);
+  }
+
+  function openRecovery(taskIndex){
+    const t = S.tasks[taskIndex];
+    if(!t || t.type!=="count") return advanceAfterOutcome();
+    practice.active = true;
+    practice.success = 0;
+    practice.failedTaskIndex = taskIndex;
+    practiceTitle.textContent = `${t.name}：追加練習`;
+    practiceSuccess.textContent = "0";
+    practiceOverlay.classList.add("show");
+  }
+
+  function closeRecovery(){
+    practiceOverlay.classList.remove("show");
+    practice.active = false;
+    practice.success = 0;
+    practice.failedTaskIndex = -1;
+    advanceAfterOutcome();
+  }
+
+  function advanceAfterOutcome(){
+    if(S.focusIdx < S.tasks.length-1){
+      S.focusIdx += 1;
       save();
       updateUI();
-    }, 800);
+    }else{
+      finishSession();
+    }
+  }
+
+  function taskPassedByRecord(t){
+    if(!t) return false;
+    const req = taskRequirement(t);
+    if(req == null) return true;
+
+    if(t.type === "count"){
+      return Number(t.success || 0) >= Number(req);
+    }
+    if(t.type === "moshi"){
+      const values = Array.isArray(t.moshiAttempts) ? t.moshiAttempts.map(Number).filter(Number.isFinite) : [];
+      const best = values.length ? Math.max(...values) : Number(t.moshiCount || 0);
+      return best >= Number(req);
+    }
+    if(t.type === "time"){
+      const values = Array.isArray(t.timeAttempts) ? t.timeAttempts.map(Number).filter(v=>Number.isFinite(v) && v>0) : [];
+      return values.length > 0 && Math.min(...values) <= Number(req);
+    }
+    if(t.type === "free"){
+      return Boolean(String(t.freeName || "").trim());
+    }
+    return false;
+  }
+
+  function refreshAllTaskVerdicts(){
+    for(const t of S.tasks){
+      t.done = taskPassedByRecord(t);
+    }
+  }
+
+  function sessionPassed(){
+    return S.tasks.length > 0 && S.tasks.every(taskPassedByRecord);
+  }
+
+  function failedTaskDetails(){
+    return S.tasks.filter(t=>!t.done).map(t=>{
+      const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
+      if(t.type==="moshi") return `${t.name}：最高${t.moshiCount ?? 0}/${req}回（${t.attempts||0}/${moshiAttemptLimit()}試技）`;
+      if(t.type==="time"){
+        const best = t.timeAttempts?.length ? Math.min(...t.timeAttempts) : "-";
+        return `${t.name}：最速${best}秒（規定${req}秒）`;
+      }
+      if(t.type==="free") return `${t.name}：未登録`;
+      return `${t.name}：成功${t.success||0}/${req}・試技${t.attempts||0}/10`;
+    });
+  }
+
+
+  function taskRequirement(t){
+    return (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
+  }
+
+  function taskResultSummary(t){
+    const req=taskRequirement(t);
+    if(t.type==="moshi"){
+      const values=Array.isArray(t.moshiAttempts)?t.moshiAttempts:[];
+      const best=values.length?Math.max(...values):0;
+      const rate=Number(req)>0?Math.min(100,Math.round(best/Number(req)*100)):0;
+      return {result:`最高 ${best}回 / 規定 ${req}回`,rate:`達成率 ${rate}%`,attempts:`${values.length}試技`};
+    }
+    if(t.type==="time"){
+      const values=Array.isArray(t.timeAttempts)?t.timeAttempts:[];
+      const best=values.length?Math.min(...values):null;
+      return {
+        result:best==null?`未記録 / 規定 ${req}秒`:`最速 ${best}秒 / 規定 ${req}秒`,
+        rate:best==null?"記録なし":(best<=Number(req)?"規定達成":"規定未達"),
+        attempts:`${values.length}試技`
+      };
+    }
+    if(t.type==="free"){
+      return {result:t.done?(t.freeName||"登録済み"):"未登録",rate:t.done?"完了":"未完了",attempts:t.done?"1件":"0件"};
+    }
+    const attempts=Number(t.attempts||0);
+    const success=Number(t.success||0);
+    const rate=attempts>0?Math.round(success/attempts*100):0;
+    return {result:`成功 ${success}回 / 規定 ${req}回`,rate:`成功率 ${rate}%`,attempts:`${attempts}試技`};
+  }
+
+  function totalSessionSuccessRate(){
+    let successes=0,attempts=0;
+    for(const t of S.tasks){
+      if(t.type==="count"){
+        successes+=Number(t.success||0);
+        attempts+=Number(t.attempts||0);
+      }
+    }
+    return attempts>0?Math.round(successes/attempts*100):0;
+  }
+
+  function renderFinalResult(){
+    if(!finalResultPanel) return;
+    refreshAllTaskVerdicts();
+    const completed=S.tasks.filter(taskPassedByRecord).length;
+    finalPassedCount.textContent=`${completed} / ${S.tasks.length}`;
+    finalSuccessRate.textContent=`${totalSessionSuccessRate()}%`;
+    finalFinishedAt.textContent=new Date(S.finishedAt||Date.now()).toLocaleString("ja-JP",{
+      year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"
+    });
+
+    const failed=S.tasks.filter(t=>!taskPassedByRecord(t));
+    finalFailedSection.hidden=failed.length===0;
+    finalFailedList.innerHTML=failed.map(t=>{
+      const r=taskResultSummary(t);
+      return `<div class="finalFailedItem"><strong>${esc(t.name)}</strong><br>${esc(r.result)}・${esc(r.attempts)}</div>`;
+    }).join("");
+
+    finalSkillResults.innerHTML=`<table class="finalResultTable">
+      <thead><tr><th>種目</th><th>結果</th><th>成功率・達成度</th><th>判定</th></tr></thead>
+      <tbody>${S.tasks.map(t=>{
+        const r=taskResultSummary(t);
+        return `<tr>
+          <td><strong>${esc(t.name)}</strong><br><span class="mini">${esc(r.attempts)}</span></td>
+          <td>${esc(r.result)}</td>
+          <td>${esc(r.rate)}</td>
+          <td><span class="finalResultStatus ${taskPassedByRecord(t)?"ok":"ng"}">${taskPassedByRecord(t)?"合格":"未達"}</span></td>
+        </tr>`;
+      }).join("")}</tbody>
+    </table>`;
+    finalResultPanel.hidden=false;
+  }
+
+  function showFinalResult(){
+    refreshAllTaskVerdicts();
+    const passed=sessionPassed();
+    renderFinalResult();
+
+    // 通常判定用モーダルの残骸を確実に除去する。
+    clearTimeout(showJudge._t);
+    clearTimeout(showJudge._unlockTimer);
+    clearTimeout(tryAutoAdvance._advanceTimer);
+    judgeConfirmAction=null;
+    judgeRequiresConfirmation=false;
+    if(judgeOverlay){
+      judgeOverlay.classList.remove("show","transient","final-result","locked");
+      judgeOverlay.setAttribute("aria-hidden","true");
+    }
+
+    finalScreenTitle.textContent=passed?"合格":"不合格";
+    finalScreenTitle.style.color=passed?"#249654":"#d64b43";
+    finalScreenSub.textContent=passed
+      ? "全種目の規定を達成しました。"
+      : "未達の種目があります。結果を確認して次の練習につなげましょう。";
+    finalScreenContent.innerHTML=finalResultPanel.innerHTML;
+    finalScreen.classList.add("show");
+    finalScreen.setAttribute("aria-hidden","false");
+    document.body.classList.add("final-screen-open");
+
+    if(passed){
+      runConfetti();
+      setTimeout(runConfetti,260);
+    }
+  }
+
+  function finishSession(){
+    if(S.finalShown) return;
+    S.finishedAt = Date.now();
+    S.finalShown = true;
+    showFinalResult();
+    save();
+    autoCloudSave();
+  }
+
+  function clearNormalJudgeOverlay(){
+    clearTimeout(showJudge._t);
+    clearTimeout(showJudge._unlockTimer);
+    judgeConfirmAction=null;
+    judgeRequiresConfirmation=false;
+    if(judgeOverlay){
+      judgeOverlay.classList.remove("show","transient","final-result","locked");
+      judgeOverlay.setAttribute("aria-hidden","true");
+    }
+  }
+
+  function tryAutoAdvance(){
+    clearTimeout(tryAutoAdvance._advanceTimer);
+    clearNormalJudgeOverlay();
+    const t=focusTask();
+    if(!t) return;
+
+    const exhausted=
+      (t.type==="count" && (t.attempts||0)>=10) ||
+      (t.type==="moshi" && (t.attempts||0)>=moshiAttemptLimit()) ||
+      (t.type==="time" && (t.attempts||0)>=2);
+
+    if(t.done){
+      t.outcomeEffectShown=true;
+      save();
+      blinkResultSignal(true);
+      runConfetti();
+      runGentleSuccessEffect();
+      tryAutoAdvance._advanceTimer=setTimeout(advanceAfterOutcome,950);
+      return;
+    }
+
+    if(exhausted){
+      t.outcomeEffectShown=true;
+      save();
+      blinkResultSignal(false);
+      runGentleFailEffect();
+      // 不合格時もモーダルを出さず、演出後に必ず次へ進む。
+      tryAutoAdvance._advanceTimer=setTimeout(advanceAfterOutcome,900);
+    }
   }
 
   function recordCount(ok){
@@ -780,36 +2561,58 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     if(t.done || (t.attempts||0)>=10) return;
 
     pushHistory();
+    flashFeedback(ok, ok ? "成功" : "失敗");
 
     t.attempts=(t.attempts||0)+1;
     t.marks=Array.isArray(t.marks)?t.marks:[];
     t.marks.push(ok?1:0);
+    t.flashIndex=t.marks.length-1;
     if(ok) t.success=(t.success||0)+1;
 
     addLog(t.name, ok?"成功":"失敗", `${t.success||0}/${req}`);
     if((t.success||0) >= req) t.done=true;
 
-    // 合格 or 上限に到達したら“見せてから”次へ
+    save();
+    updateUI();
+
     if(t.done || (t.attempts||0) >= 10){
-      tryAutoAdvance();
+      requestAnimationFrame(()=>{
+        requestAnimationFrame(tryAutoAdvance);
+      });
       return;
     }
+  }
+
+  function recordMoshiCount(){
+    const t=focusTask();
+    if(!t || t.type!=="moshi" || t.done) return;
+    const limit = moshiAttemptLimit();
+    if((t.attempts||0)>=limit) return;
+
+    const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
+    const v = Math.floor(Number((moshiCount.value||"").trim()));
+    if(!Number.isFinite(v) || v<0){ alert("もしかめの回数を0以上の整数で入力してください。"); return; }
+
+    pushHistory();
+    t.moshiAttempts = Array.isArray(t.moshiAttempts) ? t.moshiAttempts : [];
+    t.moshiAttempts.push(v);
+    t.attempts=t.moshiAttempts.length;
+    t.moshiCount=Math.max(...t.moshiAttempts);
+    t.success=t.moshiCount;
+    t.done=t.moshiCount >= Number(req);
+    S.moshiBest=Math.max(S.moshiBest||0,v);
+    addLog(t.name, `${v}回`, `規定${req}回・${t.attempts}/${limit}試技`);
+    flashFeedback(t.done, t.done ? "成功" : "未達");
+    moshiCount.value="";
 
     save();
     updateUI();
-  }
 
-  function recordMoshiQuick(passed){
-    const t=focusTask();
-    if(!t || t.type!=="moshi") return;
-    if(t.done) return;
-
-    pushHistory();
-    t.attempts=1;
-    t.done=!!passed;
-    addLog(t.name, passed?"規定以上":"未達", "");
-    tryAutoAdvance();
-    return;
+    if(t.done || t.attempts>=limit){
+      requestAnimationFrame(()=>{
+        requestAnimationFrame(tryAutoAdvance);
+      });
+    }
   }
 
   function recordTime(){
@@ -831,6 +2634,7 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     addLog(t.name, `記録：${vv}秒`, `最速${best}秒`);
 
     if(best <= Number(t.required)) t.done = true;
+    flashFeedback(t.done, t.done ? "成功" : "記録");
 
     if(t.done || (t.attempts||0) >= 2){
       tryAutoAdvance();
@@ -860,11 +2664,35 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   }
 
   function next(){
-    if(S.focusIdx < S.tasks.length-1){
-      S.focusIdx += 1;
-      save();
-      updateUI();
+    const t=focusTask();
+    if(!t) return;
+
+    if(t.type==="count" && !t.done && (t.attempts||0)<10){
+      pushHistory();
+      t.marks=Array.isArray(t.marks)?t.marks:[];
+      const remaining=10-(t.attempts||0);
+      for(let i=0;i<remaining;i++) t.marks.push(0);
+      t.attempts=10;
+      t.flashIndex=9;
+      const req=(S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
+      t.done=(t.success||0)>=Number(req);
+      addLog(t.name,"次へで終了",`成功${t.success||0}回・残り${remaining}回は失敗`);
+      flashFeedback(false,"終了");
+      blinkResultSignal(t.done);
+      tryAutoAdvance();
+      return;
     }
+
+    if(t.type==="moshi" && !t.done){
+      t.attempts=moshiAttemptLimit();
+      save();
+    }
+    if(t.type==="time" && !t.done){
+      t.attempts=2;
+      save();
+    }
+
+    advanceAfterOutcome();
   }
 
   function exportText(){
@@ -878,10 +2706,13 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     S.tasks.forEach(t=>{
       const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
       const reqTxt = (t.type==="count") ? (req!=null ? `必要${req}` : "対象外") :
-                    (t.type==="moshi") ? "規定以上?" :
+                    (t.type==="moshi") ? `規定${req}回` :
                     (t.type==="time") ? `制限${req}s` :
                     (t.type==="free") ? "登録" : "";
-      const verdict = t.done ? "合格" : ((t.type==="count" && (t.attempts||0)>=10) ? "未達" : "未判定");
+      const verdict = t.done ? "成功" :
+        (((t.type==="count" && (t.attempts||0)>=10) ||
+          (t.type==="moshi" && (t.attempts||0)>=moshiAttemptLimit()) ||
+          (t.type==="time" && (t.attempts||0)>=2)) ? "未達" : "未判定");
       lines.push(`No.${t.no} ${t.name} / ${reqTxt} / 成功${t.success||0} / 試技${t.attempts||0} / ${verdict}`);
     });
 
@@ -890,12 +2721,127 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     lines.push("-----");
     S.log.slice(0,200).forEach(e=>lines.push(`${e.title}: ${e.desc}${e.right?(" ["+e.right+"]"):""}`));
 
-    const out = lines.join("\\n");
+    const out = lines.join("\n");
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(out).then(()=>alert("コピーいたしました。")).catch(()=>prompt("コピーしてお使いください。", out));
     }else{
       prompt("コピーしてお使いください。", out);
     }
+  }
+
+
+  function rankName(){
+    if(S.mode==="jun") return "準初段";
+    if(S.mode==="dan") return DAN_RANKS[S.rankKey]?.label || S.rankKey || "-";
+    return KYU_ORDER.find(x=>x.key===S.rankKey)?.label || S.rankKey || "-";
+  }
+
+  function currentRecord(){
+    const passed = sessionPassed();
+    return {
+      action:"save",
+      token:S.cloud?.token || "",
+      sessionId:S.sessionId || `${Date.now()}-manual`,
+      startedAt:S.startedAt ? new Date(S.startedAt).toISOString() : "",
+      finishedAt:new Date(S.finishedAt || Date.now()).toISOString(),
+      mode:S.mode,
+      rankKey:S.rankKey || "",
+      rankName:rankName(),
+      result:passed ? "合格" : "不合格",
+      kendama:"競技用けん玉",
+      moshiMax:S.moshiBest || 0,
+      tasks:S.tasks.map(t=>({
+        no:t.no,name:t.name,type:t.type,required:(S.mode==="kyu"?kyuRequirementFor(t.no):t.required),
+        attempts:t.attempts||0,success:t.success||0,done:!!t.done,
+        moshiCount:t.moshiCount ?? "",moshiAttempts:t.moshiAttempts||[],timeAttempts:t.timeAttempts||[],freeName:t.freeName||""
+      }))
+    };
+  }
+
+  function setCloudStatus(message, kind=""){
+    cloudStatus.textContent=message;
+    cloudStatus.className="cloudStatus"+(kind?` ${kind}`:"");
+  }
+
+  function saveCloudSettings(){
+    S.cloud = {
+      url:(cloudUrl.value||"").trim(),
+      token:(cloudToken.value||"").trim(),
+      kendama:"競技用けん玉"
+    };
+    writeCloudPreference(S.cloud);
+    save();
+    setCloudStatus(S.cloud.url && S.cloud.token ? "このブラウザの保存先として設定しました。" : "URLまたはトークンが未入力です。", S.cloud.url&&S.cloud.token?"ok":"ng");
+  }
+
+  async function sendCloudRecord(manual=false){
+    const url=(S.cloud?.url||"").trim();
+    const token=(S.cloud?.token||"").trim();
+    if(!url || !token){
+      if(manual) setCloudStatus("Apps ScriptのURLとトークンを設定してください。","ng");
+      return false;
+    }
+    if(!S.tasks.length){
+      if(manual) setCloudStatus("保存する試技記録がありません。","ng");
+      return false;
+    }
+    try{
+      setCloudStatus("Googleスプレッドシートへ送信しています…");
+      await fetch(url,{
+        method:"POST",
+        mode:"no-cors",
+        headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body:JSON.stringify(currentRecord())
+      });
+      S.cloudSaved=true;
+      save();
+      setCloudStatus("送信要求を完了しました。スプレッドシート側で記録をご確認ください。","ok");
+      return true;
+    }catch(e){
+      setCloudStatus(`送信できませんでした：${e.message}`,"ng");
+      return false;
+    }
+  }
+
+  function autoCloudSave(){
+    if(S.cloudSaved) return;
+    sendCloudRecord(false);
+  }
+
+  function loadCloudHistory(){
+    const url=(S.cloud?.url||"").trim();
+    const token=(S.cloud?.token||"").trim();
+    if(!url || !token){ setCloudStatus("Apps ScriptのURLとトークンを設定してください。","ng"); return; }
+    const cb="kendamaHistory_"+Date.now();
+    const script=document.createElement("script");
+    const timer=setTimeout(()=>{
+      delete window[cb]; script.remove();
+      setCloudStatus("履歴の読込がタイムアウトしました。","ng");
+    },12000);
+    window[cb]=(data)=>{
+      clearTimeout(timer); script.remove(); delete window[cb];
+      if(!data || data.ok===false){ setCloudStatus(data?.error || "履歴を読み込めませんでした。","ng"); return; }
+      renderCloudHistory(data);
+      setCloudStatus("クラウド履歴を読み込みました。","ok");
+    };
+    const sep=url.includes("?")?"&":"?";
+    script.src=`${url}${sep}action=history&token=${encodeURIComponent(token)}&callback=${encodeURIComponent(cb)}&limit=50&_=${Date.now()}`;
+    script.onerror=()=>{clearTimeout(timer);delete window[cb];script.remove();setCloudStatus("履歴を読み込めませんでした。","ng");};
+    document.body.appendChild(script);
+  }
+
+  function renderCloudHistory(data){
+    cloudMoshiMax.textContent=String(data.moshiMax ?? "-");
+    if(Number.isFinite(Number(data.moshiMax))){
+      S.moshiBest=Math.max(S.moshiBest||0,Number(data.moshiMax));
+      save();
+      if(focusTask()?.type==="moshi") updateFocus();
+    }
+    const rows=Array.isArray(data.records)?data.records:[];
+    if(!rows.length){ historyView.innerHTML='<div class="muted">クラウド記録はまだありません。</div>'; return; }
+    historyView.innerHTML=`<table class="historyTable"><thead><tr><th>日時</th><th>級・段位</th><th>結果</th></tr></thead><tbody>${
+      rows.map(r=>`<tr><td>${esc(r.finishedAt||"")}</td><td>${esc(r.rankName||"")}</td><td>${esc(r.result||"")}</td></tr>`).join("")
+    }</tbody></table>`;
   }
 
   function resetAll(){
@@ -905,6 +2851,7 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     S.focusIdx = 0;
     S.log = [];
     S.history = [];
+    S.sessionId=""; S.startedAt=null; S.finishedAt=null; S.finalShown=false; S.cloudSaved=false;
     if(!S.kyuTable) S.kyuTable = KYU_TABLE_DEFAULT;
     save();
     updateUI();
@@ -918,7 +2865,363 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     updateUI();
   }
 
-  function setupRankSelector(){
+
+  const TASK_NAME_COLORS = [
+    "#2f5d8a","#486b3f","#79546f","#8a5a32",
+    "#356f72","#6a5b92","#8b4f56","#536b2f"
+  ];
+  let lastTaskColorIndex=-1;
+  function applyRandomTaskColor(){
+    if(!focusName) return;
+    let index=Math.floor(Math.random()*TASK_NAME_COLORS.length);
+    if(TASK_NAME_COLORS.length>1 && index===lastTaskColorIndex){
+      index=(index+1+Math.floor(Math.random()*(TASK_NAME_COLORS.length-1)))%TASK_NAME_COLORS.length;
+    }
+    lastTaskColorIndex=index;
+    focusName.style.color=TASK_NAME_COLORS[index];
+    focusName.style.textShadow="0 1px 0 rgba(255,255,255,.55)";
+  }
+
+
+  const TIME_B_TRICKS = [
+    "前ふりろうそく",
+    "県一周",
+    "日本一周2回連続",
+    "世界一周2回連続",
+    "ヨーロッパ一周",
+    "地球まわし",
+    "うぐいす～けん",
+    "はねけん",
+    "一回転飛行機",
+    "さか落とし"
+  ];
+  const TIME_B_CRITERIA = [
+    {label:"五段",seconds:45},
+    {label:"四段",seconds:60},
+    {label:"三段",seconds:120}
+  ];
+  const TIME_B_COLORS = [
+    "#2f5d8a","#486b3f","#79546f","#8a5a32","#356f72",
+    "#6a5b92","#8b4f56","#536b2f","#4d6480","#735d3f"
+  ];
+
+  const timeBState = {
+    index:0,
+    running:false,finished:false,
+    elapsedBefore:0,startedPerf:0,raf:0,
+    rankingSent:false
+  };
+
+
+
+  function setTimeBRankingStatus(text,kind=""){
+    timeBRankingSendStatus.textContent=text;
+    timeBRankingSendStatus.className="mini"+(kind?` ${kind}`:"");
+  }
+
+  function getTimeBRankingCloud(){
+    return {
+      url:(S.cloud?.url||"").trim(),
+      token:(S.cloud?.token||"").trim()
+    };
+  }
+
+  function timeBRankingRecord(){
+    return {
+      action:"timeBRanking",
+      token:(S.cloud?.token||"").trim(),
+      recordId:`timeb_${Date.now()}_${Math.random().toString(36).slice(2,9)}`,
+      finishedAt:new Date().toISOString(),
+      elapsed:Number(timeBState.elapsedBefore.toFixed(1)),
+      elapsedText:formatTimeB(timeBState.elapsedBefore),
+      judgedRank:judgeTimeBRank(timeBState.elapsedBefore),
+      name:(timeBRankingName.value||"").trim() || "匿名",
+      memo:(timeBRankingMemo.value||"").trim()
+    };
+  }
+
+  async function sendTimeBRanking(){
+    const {url,token}=getTimeBRankingCloud();
+    if(!url || !token){
+      setTimeBRankingStatus("先にクラウド記録欄でApps Script URLとトークンを設定してください。","ng");
+      return;
+    }
+    if(!timeBState.finished){
+      setTimeBRankingStatus("タイム競技Bを完走してから送信してください。","ng");
+      return;
+    }
+    if(timeBState.rankingSent){
+      setTimeBRankingStatus("今回の記録は送信済みです。","ok");
+      return;
+    }
+    const name=(timeBRankingName.value||"").trim();
+    if(!name){
+      timeBRankingName.focus();
+      setTimeBRankingStatus("ランキングに表示する名前を入力してください。","ng");
+      return;
+    }
+    if(appSettings.rememberTimeBName){
+      try{ localStorage.setItem(TIME_B_NAME_STORAGE,name); }catch(e){}
+    }
+    btnTimeBSendRanking.disabled=true;
+    setTimeBRankingStatus("ランキングへ送信しています…");
+    try{
+      await fetch(url,{
+        method:"POST",
+        mode:"no-cors",
+        headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body:JSON.stringify(timeBRankingRecord())
+      });
+      timeBState.rankingSent=true;
+      setTimeBRankingStatus("送信要求を完了しました。ランキングを更新します。","ok");
+      setTimeout(loadTimeBRanking,1000);
+    }catch(e){
+      btnTimeBSendRanking.disabled=false;
+      setTimeBRankingStatus(`送信できませんでした：${e.message}`,"ng");
+    }
+  }
+
+  function loadTimeBRanking(){
+    const {url,token}=getTimeBRankingCloud();
+    if(!url || !token){
+      timeBRankingView.innerHTML='<div class="muted">クラウド記録欄でApps Script URLとトークンを設定してください。</div>';
+      return;
+    }
+    timeBRankingView.innerHTML='<div class="muted">ランキングを読み込んでいます…</div>';
+    const cb="kendamaTimeBRanking_"+Date.now();
+    const script=document.createElement("script");
+    const timer=setTimeout(()=>{
+      delete window[cb]; script.remove();
+      timeBRankingView.innerHTML='<div class="muted">ランキングの読込がタイムアウトしました。</div>';
+    },12000);
+    window[cb]=(data)=>{
+      clearTimeout(timer); script.remove(); delete window[cb];
+      if(!data || data.ok===false){
+        timeBRankingView.innerHTML=`<div class="muted">${esc(data?.error||"ランキングを読み込めませんでした。")}</div>`;
+        return;
+      }
+      renderTimeBRanking(data.records||[]);
+    };
+    const sep=url.includes("?")?"&":"?";
+    script.src=`${url}${sep}action=timeBRanking&token=${encodeURIComponent(token)}&callback=${encodeURIComponent(cb)}&limit=100&_=${Date.now()}`;
+    script.onerror=()=>{
+      clearTimeout(timer); delete window[cb]; script.remove();
+      timeBRankingView.innerHTML='<div class="muted">ランキングを読み込めませんでした。</div>';
+    };
+    document.body.appendChild(script);
+  }
+
+  function renderTimeBRanking(records){
+    const rows=Array.isArray(records)?records:[];
+    if(!rows.length){
+      timeBRankingView.innerHTML='<div class="muted">ランキング記録はまだありません。</div>';
+      return;
+    }
+    timeBRankingView.innerHTML=`<table class="timeBRankingTable">
+      <thead><tr><th>順位</th><th>名前</th><th>記録</th><th>判定</th><th>日時</th><th>一言メモ</th></tr></thead>
+      <tbody>${rows.map((r,i)=>`<tr>
+        <td class="rankNo ${i<3?"best3":""}">${i+1}</td>
+        <td>${esc(r.name||"匿名")}</td>
+        <td><strong>${esc(r.elapsedText||formatTimeB(Number(r.elapsed)||0))}</strong></td>
+        <td>${esc(r.judgedRank||judgeTimeBRank(Number(r.elapsed)||0))}</td>
+        <td>${esc(r.finishedAt||r.savedAt||"")}</td>
+        <td>${esc(r.memo||"")}</td>
+      </tr>`).join("")}</tbody>
+    </table>`;
+  }
+
+  function offerTimeBRanking(){
+    timeBRankingEntry.hidden=false;
+    timeBFinalTime.textContent=formatTimeB(timeBState.elapsedBefore);
+    timeBFinalRank.textContent=judgeTimeBRank(timeBState.elapsedBefore);
+    btnTimeBSendRanking.disabled=false;
+    setTimeBRankingStatus("");
+    if(appSettings.rememberTimeBName){
+      try{ timeBRankingName.value=localStorage.getItem(TIME_B_NAME_STORAGE)||""; }catch(e){}
+    }else{
+      timeBRankingName.value="";
+    }
+    const send=window.confirm("今回の記録をタイム競技Bランキングへ送信しますか？");
+    if(send){
+      setTimeout(()=>{
+        if(!timeBRankingName.value) timeBRankingName.focus();
+        else timeBRankingMemo.focus();
+      },80);
+    }else{
+      setTimeBRankingStatus("今回は送信しません。後からこの欄で送信できます。");
+    }
+    loadTimeBRanking();
+  }
+
+  function judgeTimeBRank(seconds){
+    const hit=TIME_B_CRITERIA.find(item=>seconds<=item.seconds);
+    return hit ? hit.label : "時間オーバー";
+  }
+
+  function currentTimeBGuide(seconds){
+    if(seconds<=45) return "五段圏内";
+    if(seconds<=60) return "四段圏内";
+    if(seconds<=120) return "三段圏内";
+    return "120秒超過";
+  }
+
+  function formatTimeB(seconds){
+    const safe=Math.max(0,Number(seconds)||0);
+    const mins=Math.floor(safe/60);
+    const secs=safe-mins*60;
+    return `${String(mins).padStart(2,"0")}:${secs.toFixed(1).padStart(4,"0")}`;
+  }
+
+  function getTimeBElapsed(){
+    if(!timeBState.running) return timeBState.elapsedBefore;
+    return timeBState.elapsedBefore+(performance.now()-timeBState.startedPerf)/1000;
+  }
+
+  function setTimeBStatus(text,kind=""){
+    timeBStatus.textContent=text;
+    timeBStatus.className="timeBStatus"+(kind?` ${kind}`:"");
+  }
+
+  function renderTimeBList(){
+    timeBList.innerHTML="";
+    TIME_B_TRICKS.forEach((name,i)=>{
+      const li=document.createElement("li");
+      li.textContent=name;
+      if(i<timeBState.index) li.classList.add("done");
+      if(i===timeBState.index && !timeBState.finished) li.classList.add("current");
+      timeBList.appendChild(li);
+    });
+  }
+
+  function applyTimeBTrick(){
+    const i=Math.min(timeBState.index,TIME_B_TRICKS.length-1);
+    timeBCurrentName.textContent=TIME_B_TRICKS[i] || "全種目クリア";
+    timeBCurrentName.style.color=TIME_B_COLORS[i % TIME_B_COLORS.length];
+    restartClass(timeBCurrentName,"change",450);
+    timeBProgress.textContent=timeBState.finished ? "10 / 10 完了" : `${i+1} / 10`;
+    renderTimeBList();
+  }
+
+  function updateTimeBClock(){
+    const elapsed=getTimeBElapsed();
+    timeBTimer.textContent=formatTimeB(elapsed);
+    timeBRemaining.textContent=currentTimeBGuide(elapsed);
+
+    if(elapsed<=45) timeBTimer.style.color="#356f72";
+    else if(elapsed<=60) timeBTimer.style.color="#6a5b92";
+    else if(elapsed<=120) timeBTimer.style.color="#8a6b32";
+    else timeBTimer.style.color="#8b4f56";
+
+    if(timeBState.running) timeBState.raf=requestAnimationFrame(updateTimeBClock);
+  }
+
+  function prepareTimeB(){
+    cancelAnimationFrame(timeBState.raf);
+    timeBState.index=0;
+    timeBState.running=false;
+    timeBState.finished=false;
+    timeBState.elapsedBefore=0;
+    timeBState.startedPerf=0;
+    timeBState.rankingSent=false;
+    timeBRankingEntry.hidden=true;
+    timeBRankingMemo.value="";
+    setTimeBRankingStatus("");
+    btnTimeBStart.disabled=false;
+    btnTimeBStart.textContent="スタート";
+    btnTimeBPause.disabled=true;
+    btnTimeBPause.textContent="一時停止";
+    btnTimeBSuccess.disabled=true;
+    timeBTimer.textContent="00:00.0";
+    timeBRemaining.textContent="五段圏内";
+    setTimeBStatus("スタートで計測を始めます。クリアタイムから段位を自動判定します。");
+    applyTimeBTrick();
+  }
+
+  function startOrResumeTimeB(){
+    if(timeBState.finished) return;
+    if(timeBState.running) return;
+    timeBState.startedPerf=performance.now();
+    timeBState.running=true;
+    btnTimeBStart.disabled=true;
+    btnTimeBPause.disabled=false;
+    btnTimeBSuccess.disabled=false;
+    btnTimeBPause.textContent="一時停止";
+    setTimeBStatus("計測中です。成功したら「成功・次の技へ」を押してください。");
+    updateTimeBClock();
+  }
+
+  function pauseTimeB(){
+    if(timeBState.running){
+      timeBState.elapsedBefore=getTimeBElapsed();
+      timeBState.running=false;
+      cancelAnimationFrame(timeBState.raf);
+      btnTimeBStart.disabled=false;
+      btnTimeBStart.textContent="再開";
+      btnTimeBPause.disabled=true;
+      btnTimeBSuccess.disabled=true;
+      setTimeBStatus("一時停止中です。");
+      updateTimeBClock();
+    }
+  }
+
+  function successTimeB(){
+    if(!timeBState.running || timeBState.finished) return;
+    animateFeedbackButton(btnTimeBSuccess,true);
+    vibrate([40,20,50]);
+    timeBState.index+=1;
+
+    if(timeBState.index>=TIME_B_TRICKS.length){
+      timeBState.elapsedBefore=getTimeBElapsed();
+      timeBState.running=false;
+      timeBState.finished=true;
+      cancelAnimationFrame(timeBState.raf);
+      btnTimeBStart.disabled=true;
+      btnTimeBPause.disabled=true;
+      btnTimeBSuccess.disabled=true;
+      timeBCurrentName.textContent="全種目クリア";
+      timeBCurrentName.style.color="#356f72";
+      timeBProgress.textContent="10 / 10 完了";
+      renderTimeBList();
+      const judgedRank=judgeTimeBRank(timeBState.elapsedBefore);
+      setTimeBStatus(
+        `${formatTimeB(timeBState.elapsedBefore)}でクリア。判定：${judgedRank}`,
+        judgedRank==="時間オーバー" ? "ng" : "ok"
+      );
+      runConfetti();
+      vibrate([55,35,75,35,95]);
+      setTimeout(offerTimeBRanking,650);
+      return;
+    }
+    applyTimeBTrick();
+    setTimeBStatus(`${timeBState.index}種目成功。次は「${TIME_B_TRICKS[timeBState.index]}」です。`);
+  }
+
+  function openTimeB(){
+    timeBOverlay.classList.add("show");
+    timeBOverlay.setAttribute("aria-hidden","false");
+    prepareTimeB();
+    loadTimeBRanking();
+  }
+
+  function closeTimeB(){
+    if(timeBState.running) pauseTimeB();
+    timeBOverlay.classList.remove("show");
+    timeBOverlay.setAttribute("aria-hidden","true");
+  }
+
+  btnOpenTimeB.addEventListener("click",openTimeB);
+  btnCloseTimeB.addEventListener("click",closeTimeB);
+  btnTimeBStart.addEventListener("click",startOrResumeTimeB);
+  btnTimeBPause.addEventListener("click",pauseTimeB);
+  btnTimeBSuccess.addEventListener("click",successTimeB);
+  btnTimeBReset.addEventListener("click",prepareTimeB);
+  btnTimeBSendRanking.addEventListener("click",sendTimeBRanking);
+  btnTimeBLoadRanking.addEventListener("click",loadTimeBRanking);
+  timeBOverlay.addEventListener("click",e=>{
+    if(e.target===timeBOverlay) closeTimeB();
+  });
+
+  function setupRankSelector(preferredRank=null){
     rankSel.innerHTML="";
     if(mode.value==="kyu"){
       rankLabel.textContent="到達目標";
@@ -943,18 +3246,46 @@ button:disabled{opacity:.45;cursor:not-allowed;}
       });
       rankSel.value="shodan";
     }
+    if(preferredRank && [...rankSel.options].some(o=>o.value===preferredRank)){
+      rankSel.value=preferredRank;
+    }
     kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
   }
 
   function buildTasksForStart(){
+    writeRankPreference();
+
+    // v3.0.8: 前回の判定オーバーレイや演出を必ず初期化する。
+    clearTimeout(tryAutoAdvance._advanceTimer);
+    clearTimeout(showJudge._t);
+    clearTimeout(showJudge._unlockTimer);
+    judgeConfirmAction = null;
+    judgeRequiresConfirmation = false;
+    if(judgeOverlay){
+      judgeOverlay.classList.remove("show","transient","final-result","locked");
+      judgeOverlay.setAttribute("aria-hidden","true");
+    }
+    if(btnJudgeClose) btnJudgeClose.disabled = false;
+    if(celebrationCanvas){
+      const ctx=celebrationCanvas.getContext("2d");
+      if(ctx) ctx.clearRect(0,0,celebrationCanvas.width,celebrationCanvas.height);
+    }
+
     S.mode = mode.value;
 
     if(S.mode==="kyu"){
       S.rankKey = rankSel.value;
-      S.tasks = KYU_TRICKS.map(t=>({no:t.no,name:t.name,type:t.type,required:null,attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""}));
+      const req = S.kyuTable[S.rankKey] || {};
+      S.tasks = KYU_TRICKS
+        .filter(t=>req[t.no]!=null)
+        .map(t=>({
+          no:t.no,name:t.name,type:t.type,required:req[t.no],
+          attempts:0,success:0,done:false,marks:[],timeAttempts:[],
+          freeName:"",moshiCount:null,moshiAttempts:[]
+        }));
     }else if(S.mode==="jun"){
       S.rankKey="jun";
-      S.tasks = JUN_TRICKS.map(t=>({no:t.no,name:t.name,type:t.type,required:t.req,attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""}));
+      S.tasks = JUN_TRICKS.map(t=>({no:t.no,name:t.name,type:t.type,required:t.req,attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:"",moshiCount:null}));
     }else{
       S.rankKey = rankSel.value;
       const req = DAN_RANKS[S.rankKey].req;
@@ -966,19 +3297,17 @@ button:disabled{opacity:.45;cursor:not-allowed;}
         }
       });
       // time
-      if(req[20]){
-        tasks.push({no:20,name:"タイム競技B",type:"time",required:req[20],attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""});
+      if(req[19]){
+        tasks.push({no:19,name:"タイム競技B",type:"time",required:req[19],attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""});
       }
       // moshi
-      if(req[21]){
-        tasks.push({no:21,name:"もしかめ",type:"moshi",required:1,attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""});
+      if(req[20]){
+        tasks.push({no:20,name:"もしかめ",type:"moshi",required:req[20],attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:"",moshiCount:null,moshiAttempts:[]});
       }
       // free
       if(req[18]){
         tasks.push({no:18,name:"自由種目（1）",type:"free",required:1,attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""});
-      }
-      if(req[19]){
-        tasks.push({no:19,name:"自由種目（2）",type:"free",required:1,attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""});
+        tasks.push({no:18,name:"自由種目（2）",type:"free",required:1,attempts:0,success:0,done:false,marks:[],timeAttempts:[],freeName:""});
       }
       S.tasks = tasks;
     }
@@ -986,10 +3315,16 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     S.focusIdx=0;
     S.log=[];
     S.history=[];
+    S.sessionId = (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+    S.startedAt = Date.now();
+    S.finishedAt = null;
+    S.finalShown = false;
+    S.cloudSaved = false;
     addLog("開始", `モード：${S.mode}`, rankSel.options[rankSel.selectedIndex]?.textContent || "");
   }
 
   function updateUI(){
+    const previousRenderedFocus=updateUI._lastRenderedFocus;
     calcCounts();
     renderList();
     renderLog();
@@ -998,7 +3333,23 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   }
 
   // events
-  mode.addEventListener("change", setupRankSelector);
+  btnVersion.addEventListener("click",openChangelog);
+  btnSettings.addEventListener("click",openSettings);
+  btnSettingsClose.addEventListener("click",closeSettings);
+  btnChangelogClose.addEventListener("click",closeChangelog);
+  btnSaveAppSettings.addEventListener("click",saveAppSettingsFromForm);
+  btnResetAppSettings.addEventListener("click",resetAppSettings);
+  btnUpdateNoticeClose.addEventListener("click",closeUpdateNotice);
+  settingsOverlay.addEventListener("click",e=>{ if(e.target===settingsOverlay) closeSettings(); });
+  changelogOverlay.addEventListener("click",e=>{ if(e.target===changelogOverlay) closeChangelog(); });
+  updateNoticeOverlay.addEventListener("click",e=>{ if(e.target===updateNoticeOverlay) closeUpdateNotice(); });
+
+  mode.addEventListener("change", ()=>{
+    const previousRank = rankSel.value;
+    setupRankSelector(previousRank);
+    writeRankPreference();
+  });
+  rankSel.addEventListener("change", writeRankPreference);
 
   btnStart.addEventListener("click", ()=>{
     pushHistory();
@@ -1010,8 +3361,15 @@ button:disabled{opacity:.45;cursor:not-allowed;}
   btnNg.addEventListener("click", ()=>recordCount(false));
   btnNext.addEventListener("click", next);
 
-  btnMoshiPass.addEventListener("click", ()=>recordMoshiQuick(true));
-  btnMoshiFail.addEventListener("click", ()=>recordMoshiQuick(false));
+  btnMoshiRecord.addEventListener("click", recordMoshiCount);
+  if(moshiPresetRow){
+    moshiPresetRow.addEventListener("click",(e)=>{
+      const button=e.target.closest("button[data-moshi]");
+      if(!button) return;
+      moshiCount.value=button.dataset.moshi;
+      moshiCount.focus();
+    });
+  }
 
   btnTime.addEventListener("click", recordTime);
   btnFree.addEventListener("click", saveFree);
@@ -1042,24 +3400,101 @@ button:disabled{opacity:.45;cursor:not-allowed;}
     updateUI();
   });
 
+  if(btnFinalScreenClose){
+    btnFinalScreenClose.addEventListener("click",(e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      finalScreen.classList.remove("show");
+      finalScreen.setAttribute("aria-hidden","true");
+      document.body.classList.remove("final-screen-open");
+      // 完走後のメイン画面へ確実に戻す。
+      window.scrollTo({top:0,behavior:"smooth"});
+    });
+  }
+
   if(btnJudgeClose){
-    btnJudgeClose.addEventListener("click", ()=>judgeOverlay.classList.remove("show"));
+    btnJudgeClose.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      if(btnJudgeClose.disabled) return;
+      if(!judgeRequiresConfirmation) return;
+      clearTimeout(showJudge._t);
+      clearTimeout(showJudge._unlockTimer);
+      const action = judgeConfirmAction;
+      judgeConfirmAction = null;
+      judgeOverlay.classList.remove("show","transient","final-result","locked");
+      judgeOverlay.setAttribute("aria-hidden","true");
+      judgeRequiresConfirmation = false;
+      if(typeof action === "function"){
+        setTimeout(action, 40);
+      }
+    });
   }
   if(judgeOverlay){
-    judgeOverlay.addEventListener("click", (e)=>{ if(e.target===judgeOverlay) judgeOverlay.classList.remove("show"); });
+    judgeOverlay.addEventListener("click", (e)=>{
+      if(e.target!==judgeOverlay) return;
+      // 通常判定も最終結果も、背景タップでは閉じない。
+      // 通常判定は所定時間後、最終結果はOKボタンでのみ閉じる。
+      e.preventDefault();
+    });
   }
+
+
+  btnPracticeOk.addEventListener("click", ()=>{
+    if(!practice.active) return;
+    practice.success += 1;
+    practiceSuccess.textContent=String(practice.success);
+    animateFeedbackButton(btnPracticeOk,true);
+    vibrate([45,25,55]);
+    if(practice.success>=10){
+      setTimeout(closeRecovery,650);
+    }
+  });
+  btnPracticeNg.addEventListener("click", ()=>{
+    if(!practice.active) return;
+    animateFeedbackButton(btnPracticeNg,false);
+    vibrate([65,30,65]);
+  });
+  btnPracticeSkip.addEventListener("click", closeRecovery);
+
+  btnSaveCloudSettings.addEventListener("click", saveCloudSettings);
+  btnCloudSave.addEventListener("click", ()=>sendCloudRecord(true));
+  btnLoadHistory.addEventListener("click", loadCloudHistory);
+  btnFxTest.addEventListener("click", ()=>{
+    const t=focusTask();
+    if(t && t.type==="count"){
+      t.flashIndex=Math.max(0,Math.min(9,(t.attempts||0)-1));
+      updateUI();
+    }
+    flashFeedback(true,"成功");
+    blinkResultSignal(true);
+    setTimeout(()=>{
+      flashFeedback(false,"失敗");
+      blinkResultSignal(false);
+    },1700);
+  });
 
   // init
   load();
-  mode.value = S.mode || "dan";
-  setupRankSelector();
-  if(S.rankKey){
-    if(mode.value==="kyu" && KYU_ORDER.some(x=>x.key===S.rankKey)) rankSel.value = S.rankKey;
-    if(mode.value==="dan" && DAN_RANKS[S.rankKey]) rankSel.value = S.rankKey;
+  if(!applyRankPreference()){
+    mode.value = S.mode || "dan";
+    setupRankSelector(S.rankKey);
+    if(S.rankKey && [...rankSel.options].some(o=>o.value===S.rankKey)){
+      rankSel.value = S.rankKey;
+    }
   }
+  writeRankPreference();
   kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
+  cloudUrl.value=S.cloud?.url||"";
+  cloudToken.value=S.cloud?.token||"";
+  if(S.cloud?.url && S.cloud?.token) setCloudStatus("クラウド保存の設定済みです。","ok");
+  console.info("[Kendama Tracker v3.0.9] ready");
+  syncSettingsForm();
   updateUI();
+  setTimeout(showUpdateNoticeOnce,250);
 })();
 </script>
+
+
+
 </body>
 </html>
