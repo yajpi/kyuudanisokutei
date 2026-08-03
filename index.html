@@ -897,8 +897,8 @@ button.ghost{background:#fff;color:#695f55;border-color:#ded2c6}
 button.good{color:#fff;border-color:#1f854a;background:linear-gradient(180deg,#35aa68,#248f55);box-shadow:0 10px 22px rgba(36,150,84,.20)}
 button.bad{color:#fff;border-color:#be3f39;background:linear-gradient(180deg,#e85b53,#ce443d);box-shadow:0 10px 22px rgba(214,75,67,.18)}
 #btnStart{min-width:112px;min-height:52px;font-size:16px}
-#btnOk,#btnNg,#btnNext,.practiceButtons button{min-height:62px;min-width:138px;border-radius:999px;font-size:20px;padding:16px 28px}
-#btnNext{background:#fff7e9;color:#9b5600;border:2px solid #f2bd66;box-shadow:0 8px 18px rgba(181,109,14,.10)}
+#btnOk,#btnNg,.practiceButtons button{min-height:62px;min-width:138px;border-radius:999px;font-size:20px;padding:16px 28px}
+#btnNext{background:#f4f2ef;color:#5f5a54;border:1px solid #cfc7bd;box-shadow:none}
 .timeBLaunch{min-height:52px;border-radius:14px;color:#fff!important;background:linear-gradient(180deg,#ffae2b,#ee8900)!important;border-color:#d97800!important;box-shadow:0 10px 22px rgba(218,124,0,.22)!important}
 .big{padding:18px;border-color:#eadfd3;background:linear-gradient(180deg,#fff,#fffaf4);border-radius:20px}
 #focusName{font-size:clamp(25px,4vw,36px);text-shadow:none;color:#2d2924}
@@ -932,14 +932,14 @@ button.bad{color:#fff;border-color:#be3f39;background:linear-gradient(180deg,#e8
   .hd>.row,.hd .row:first-child{width:100%}
   .hd select{flex:1 1 160px;min-width:0}
   #btnStart,.timeBLaunch{flex:1 1 120px}
-  #btnOk,#btnNg,#btnNext,.practiceButtons button{flex:1 1 42%;min-width:0}
+  #btnOk,#btnNg,.practiceButtons button{flex:1 1 42%;min-width:0}
   .card{border-radius:20px}
 }
 @media(max-width:430px){
   h1{font-size:23px}
   .sub{font-size:12px}
   #btnOk,#btnNg{font-size:19px;min-height:66px}
-  #btnNext{flex-basis:100%}
+  #btnNext{width:100%}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 
@@ -956,6 +956,100 @@ button.bad{color:#fff;border-color:#be3f39;background:linear-gradient(180deg,#e8
 #finalScreenSub{margin-top:10px;color:var(--muted);font-weight:800}
 #btnFinalScreenClose{display:block;width:min(360px,100%);margin:20px auto 0;min-height:58px;font-size:18px}
 body.final-screen-open{overflow:hidden}
+
+
+/* v3.2.0 スキップ誤操作防止 */
+.mainJudgeActions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.mainJudgeActions #btnOk,
+.mainJudgeActions #btnNg{
+  width:100%;
+}
+.skipActionRow{
+  margin-top:14px;
+  padding-top:13px;
+  border-top:1px dashed #e3d7ca;
+}
+#btnNext.skipActionButton{
+  display:flex;
+  width:100%;
+  min-height:64px;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:5px;
+  border-radius:18px;
+  border:1px solid #cfc7bd;
+  background:linear-gradient(180deg,#f8f7f5,#efede9);
+  color:#5f5a54;
+  box-shadow:none;
+  font-size:16px;
+  padding:11px 18px;
+}
+#btnNext.skipActionButton:not(:disabled):hover{
+  border-color:#aaa198;
+  background:linear-gradient(180deg,#f4f2ef,#e9e6e1);
+}
+#btnNext.skipActionButton:not(:disabled):active{
+  transform:translateY(1px) scale(.992);
+}
+#btnNext .skipActionTitle{
+  display:block;
+  font-size:17px;
+  font-weight:900;
+  letter-spacing:.02em;
+}
+#btnNext .skipActionNote{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  line-height:1.35;
+  opacity:.78;
+}
+#btnNext.reading-target::after{
+  margin-top:3px;
+  font-size:11px;
+}
+@media(max-width:520px){
+  .mainJudgeActions{gap:9px}
+  #btnNext.skipActionButton{min-height:68px}
+}
+
+/* v3.1.0 読み表示・もしかめワンタップ判定 */
+#btnReadingMode{min-width:112px}
+.reading-target{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.08}
+.reading-target::after{content:attr(data-active-reading);display:none;margin-top:.24em;font-size:.54em;font-weight:700;letter-spacing:.04em;line-height:1;color:currentColor;opacity:.78}
+body.reading-furigana .reading-target::after,body.reading-romaji .reading-target::after{display:block}
+.trick-reading{display:inline-flex;flex-direction:column;align-items:flex-start;line-height:1.08}
+.trick-reading .reading-sub{display:none;margin-top:.25em;font-size:.48em;font-weight:700;letter-spacing:.035em;line-height:1.1;opacity:.72}
+body.reading-furigana .trick-reading .reading-sub.furigana,body.reading-romaji .trick-reading .reading-sub.romaji{display:block}
+.moshiDecisionRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:4px}
+.moshiDecision{min-height:62px;border-radius:999px;font-size:19px;font-weight:1000}
+#moshiQuick>label{flex-basis:100%}
+@media(max-width:520px){.moshiDecisionRow{grid-template-columns:1fr}.moshiDecision{min-height:58px}}
+
+
+/* v3.2.0: AI分析用エクスポート */
+button.aiExportButton{
+  color:#8b4e00;
+  background:linear-gradient(180deg,#fff8ea,#ffefd1);
+  border:2px solid #efb353;
+  box-shadow:0 8px 18px rgba(190,112,8,.12);
+  font-weight:900;
+}
+button.aiExportButton:hover:not(:disabled){
+  border-color:#e69619;
+  background:linear-gradient(180deg,#fff5df,#ffe7bd);
+}
+@media(max-width:720px){
+  #btnExport,#btnAIExport{
+    flex:1 1 100%;
+    width:100%;
+  }
+}
 
 </style>
 </head>
@@ -975,7 +1069,8 @@ body.final-screen-open{overflow:hidden}
       <div class="pill">保存：端末内</div>
     </div>
     <div class="appVersionRow">
-      <button class="versionChip" id="btnVersion">v3.0.9</button>
+      <button class="versionChip" id="btnVersion">v3.2.0</button>
+      <button class="versionChip" id="btnReadingMode" type="button">ふりがな表示</button>
       <button class="settingsChip" id="btnSettings">⚙ 設定</button>
     </div>
   </div>
@@ -997,7 +1092,8 @@ body.final-screen-open{overflow:hidden}
         <button class="timeBLaunch" id="btnOpenTimeB">タイム競技B</button>
       </div>
       <div class="row">
-        <button class="ghost" id="btnExport">出力</button>
+        <button class="ghost" id="btnExport">結果をコピー</button>
+        <button class="aiExportButton" id="btnAIExport">AI分析用データをコピー</button>
         <button class="ghost" id="btnUndo">戻す</button>
         <button class="ghost" id="btnReset">リセット</button>
       </div>
@@ -1029,7 +1125,11 @@ body.final-screen-open{overflow:hidden}
         </div>
 
         <div class="moshiPanel" id="moshiQuick" style="margin-top:10px; display:none;">
-          <label class="mini">今回のもしかめ回数</label>
+          <div class="moshiDecisionRow" id="moshiDecisionRow">
+            <button type="button" class="good moshiDecision" id="btnMoshiPassed">できた</button>
+            <button type="button" class="bad moshiDecision" id="btnMoshiFailed">できなかった</button>
+          </div>
+          <label class="mini">今回のもしかめ回数（任意入力）</label>
           <input id="moshiCount" inputmode="numeric" min="0" step="1" placeholder="例 245"/>
           <button class="good" id="btnMoshiRecord">記録</button>
           <span class="badge">規定：<strong id="moshiRequired">-</strong>回</span>
@@ -1044,10 +1144,15 @@ body.final-screen-open{overflow:hidden}
           </div>
         </div>
 
-        <div class="row" style="margin-top:12px;">
+        <div class="row mainJudgeActions" style="margin-top:12px;">
           <button class="good" id="btnOk" disabled>成功</button>
           <button class="bad" id="btnNg" disabled>失敗</button>
-          <button class="ghost" id="btnNext" disabled>次へ</button>
+        </div>
+        <div class="skipActionRow">
+          <button class="ghost skipActionButton" id="btnNext" disabled>
+            <span class="skipActionTitle">スキップ</span>
+            <span class="skipActionNote">残りをすべて失敗として記録</span>
+          </button>
         </div>
         </div>
 
@@ -1294,7 +1399,7 @@ body.final-screen-open{overflow:hidden}
     </div>
     <div id="changelogList"></div>
     <div class="appInfoBox">
-      <strong>Version 3.0.9</strong>
+      <strong>Version 3.2.0</strong>
       <span>公開版：v3.0</span>
     </div>
   </div>
@@ -1312,7 +1417,7 @@ body.final-screen-open{overflow:hidden}
 
 <footer class="appFooter">
   <strong>けん玉認定練習トラッカー</strong>
-  <span>Version 3.0.9</span>
+  <span>Version 3.2.0</span>
   <small>練習の記録は、次の一回を少しだけ強くします。</small>
 </footer>
 <div id="judgeOverlay" aria-hidden="true">
@@ -1380,10 +1485,35 @@ body.final-screen-open{overflow:hidden}
 
   const el = (id)=>document.getElementById(id);
 
-  const APP_VERSION = "3.0.9";
+  const APP_VERSION = "3.2.0";
   const APP_SETTINGS_KEY = "kendama_tracker_app_settings_v28";
   const APP_UPDATE_SEEN_KEY = "kendama_tracker_update_seen";
   const TIME_B_NAME_STORAGE = "kendama_timeb_ranking_name";
+  const READING_MODE_STORAGE = "kendama_reading_mode_v1";
+  const READING_MODES = ["off","furigana","romaji"];
+  const TRICK_READINGS = {
+    "大皿":["おおざら","ozara"],"小皿":["こざら","kozara"],"中皿":["ちゅうざら","chuzara"],"ろうそく":["ろうそく","rosoku"],
+    "とめけん":["とめけん","tomeken"],"飛行機":["ひこうき","hikoki"],"ふりけん":["ふりけん","furiken"],"日本一周":["にほんいっしゅう","nihon isshu"],
+    "世界一周":["せかいいっしゅう","sekai isshu"],"灯台":["とうだい","todai"],"もしかめ":["もしかめ","moshikame"],"県一周":["けんいっしゅう","ken isshu"],
+    "けん先すべり":["けんさきすべり","kensaki suberi"],"地球まわし":["ちきゅうまわし","chikyu mawashi"],"さか落とし":["さかおとし","saka otoshi"],
+    "うらふりけん":["うらふりけん","ura furiken"],"宇宙一周":["うちゅういっしゅう","uchu isshu"],"うぐいす":["うぐいす","uguisu"],
+    "つるしとめけん":["つるしとめけん","tsurushi tomeken"],"はねけん":["はねけん","haneken"],"一回転飛行機":["いっかいてんひこうき","ikkaiten hikoki"],
+    "一回転灯台":["いっかいてんとうだい","ikkaiten todai"],"すべり止め極意":["すべりどめごくい","suberidome gokui"],
+    "うぐいすの谷渡り":["うぐいすのたにわたり","uguisu no taniwatari"],"灯台とんぼ返り":["とうだいとんぼがえり","todai tonbogaeri"],
+    "つるし一回転飛行":["つるしいっかいてんひこう","tsurushi ikkaiten hiko"],"二回転灯台":["にかいてんとうだい","nikaiten todai"],
+    "自由種目":["じゆうしゅもく","jiyu shumoku"],"自由種目（1）":["じゆうしゅもく いち","jiyu shumoku 1"],"自由種目（2）":["じゆうしゅもく に","jiyu shumoku 2"],
+    "タイム競技B":["たいむきょうぎ びー","time kyogi B"],"前ふりろうそく":["まえふりろうそく","maefuri rosoku"],
+    "日本一周2回連続":["にほんいっしゅう にかいれんぞく","nihon isshu nikai renzoku"],"世界一周2回連続":["せかいいっしゅう にかいれんぞく","sekai isshu nikai renzoku"],
+    "ヨーロッパ一周":["よーろっぱいっしゅう","yoroppa isshu"],"うぐいす～けん":["うぐいす から けん","uguisu to ken"]
+  };
+  const BUTTON_READINGS = {
+    btnStart:["かいし","kaishi"],btnOpenTimeB:["たいむきょうぎ びー","time kyogi B"],btnExport:["けっかをこぴー","copy result"],btnAIExport:["えーあいぶんせきようでーたをこぴー","copy data for AI analysis"],btnUndo:["もどす","modosu"],btnReset:["りせっと","reset"],
+    btnOk:["せいこう","seiko"],btnNg:["しっぱい","shippai"],btnNext:["すきっぷ・のこりをすべてしっぱいとしてきろく","skip / record remaining as failures"],btnTime:["きろく","kiroku"],btnFree:["とうろく","toroku"],
+    btnMoshiRecord:["きろく","kiroku"],btnMoshiPassed:["できた","dekita"],btnMoshiFailed:["できなかった","dekinakatta"],
+    btnTimeBStart:["すたーと","start"],btnTimeBPause:["いちじていし","pause"],btnTimeBSuccess:["せいこう・つぎのわざへ","success / next"],btnTimeBReset:["りせっと","reset"],
+    btnCloseTimeB:["とじる","tojiru"],btnFinalScreenClose:["けっかをとじる","close result"],btnSettings:["せってい","settings"]
+  };
+  let readingMode = (()=>{try{return localStorage.getItem(READING_MODE_STORAGE)||"off"}catch(e){return "off"}})();
 
   const DEFAULT_APP_SETTINGS = {
     rememberMode:true,
@@ -1394,6 +1524,24 @@ body.final-screen-open{overflow:hidden}
   };
 
   const CHANGELOG = [
+    {version:"3.2.0",date:"2026-08-03",current:true,items:[
+      "AI分析用の詳細データをクリップボードへコピーする機能を追加",
+      "各技の試技順、序盤・中盤・後半、連続成功・連続失敗、規定到達回を出力",
+      "技の系統別集計と、記録から読み取れる今回の特徴を自動生成",
+      "AIへそのまま貼り付けられる分析依頼文を自動付加"
+    ]},
+    {version:"3.1.1",date:"2026-08-02",current:true,items:[
+      "『次へ』を『スキップ』へ変更し、残りをすべて失敗として記録する動作を明記",
+      "成功・失敗の主操作からスキップを分離し、誤操作しにくい配置へ変更",
+      "スキップを控えめなグレー系の補助ボタンへ変更",
+      "ふりがな・ローマ字表示でも新しいスキップ表記に対応"
+    ]},
+    {version:"3.1.0",date:"2026-08-02",items:[
+      "技名と主要ボタンにふりがな・ローマ字表示を追加",
+      "読み表示の選択をブラウザに保存し、次回起動時も保持",
+      "もしかめに『できた』『できなかった』のワンタップ記録を追加",
+      "従来の回数入力・入力補助ボタンも維持"
+    ]},
     {version:"3.0.9", date:"2026-07-29", current:true, items:[
       "完走リザルトの「結果を閉じる」ボタンが確実に動作するようイベント登録位置を修正",
       "成功時に紙吹雪と「成功しました。次の種目へ進みます。」を表示",
@@ -1577,6 +1725,7 @@ body.final-screen-open{overflow:hidden}
   const timeBRankingSendStatus = el("timeBRankingSendStatus");
   const timeBRankingView = el("timeBRankingView");
   const btnExport = el("btnExport");
+  const btnAIExport = el("btnAIExport");
   const btnUndo = el("btnUndo");
   const btnReset = el("btnReset");
 
@@ -1606,6 +1755,7 @@ body.final-screen-open{overflow:hidden}
   const btnFinalScreenClose = el("btnFinalScreenClose");
 
   const btnVersion = el("btnVersion");
+  const btnReadingMode = el("btnReadingMode");
   const btnSettings = el("btnSettings");
   const settingsOverlay = el("settingsOverlay");
   const btnSettingsClose = el("btnSettingsClose");
@@ -1637,6 +1787,8 @@ body.final-screen-open{overflow:hidden}
   const moshiRequired = el("moshiRequired");
   const moshiMax = el("moshiMax");
   const moshiPresetRow = el("moshiPresetRow");
+  const btnMoshiPassed = el("btnMoshiPassed");
+  const btnMoshiFailed = el("btnMoshiFailed");
 
   const practiceOverlay = el("practiceOverlay");
   const practiceTitle = el("practiceTitle");
@@ -1806,6 +1958,37 @@ body.final-screen-open{overflow:hidden}
   function pushHistory(){ S.history.push(snapshot()); if(S.history.length>60) S.history.shift(); }
 
   function esc(s){ return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;"); }
+
+  function readingFor(text){
+    const key=String(text||"").replace(/：追加練習$/,'').replace(/：.*$/,'');
+    return TRICK_READINGS[key] || [key,key];
+  }
+  function readingLabelHTML(text){
+    const [furigana,romaji]=readingFor(text);
+    return `<span class="trick-reading"><span>${esc(text)}</span><span class="reading-sub furigana">${esc(furigana)}</span><span class="reading-sub romaji">${esc(romaji)}</span></span>`;
+  }
+  function applyReadingMode(){
+    if(!READING_MODES.includes(readingMode)) readingMode="off";
+    document.body.classList.remove("reading-furigana","reading-romaji");
+    if(readingMode==="furigana") document.body.classList.add("reading-furigana");
+    if(readingMode==="romaji") document.body.classList.add("reading-romaji");
+    if(btnReadingMode){
+      btnReadingMode.textContent=readingMode==="off"?"ふりがな表示":readingMode==="furigana"?"ローマ字表示":"読み表示なし";
+    }
+    Object.entries(BUTTON_READINGS).forEach(([id,values])=>{
+      const node=el(id); if(!node) return;
+      if(!node.dataset.baseLabel) node.dataset.baseLabel=node.textContent.trim();
+      node.classList.add("reading-target");
+      node.setAttribute("data-active-reading",readingMode==="furigana"?values[0]:readingMode==="romaji"?values[1]:"");
+    });
+    try{localStorage.setItem(READING_MODE_STORAGE,readingMode)}catch(e){}
+    updateFocus(); renderList(); applyTimeBTrick();
+  }
+  function cycleReadingMode(){
+    const i=READING_MODES.indexOf(readingMode);
+    readingMode=READING_MODES[(i+1)%READING_MODES.length];
+    applyReadingMode();
+  }
 
 
   function syncSettingsForm(){
@@ -2131,7 +2314,7 @@ body.final-screen-open{overflow:hidden}
       div.innerHTML = `
         <div class="row" style="justify-content:space-between;">
           <div>
-            <div class="k">${idx===S.focusIdx ? "▶ " : ""}${esc(t.name)} <span class="mini">(No.${t.no})</span></div>
+            <div class="k">${idx===S.focusIdx ? "▶ " : ""}${readingLabelHTML(t.name)} <span class="mini">(No.${t.no})</span></div>
             <div class="mini">${esc(reqTxt)} / ${t.type==="moshi" ? `記録 ${t.moshiCount ?? "-"}回` : `成功 ${t.success||0} / 試技 ${t.attempts||0}`}</div>
           </div>
           <span class="badge"><strong>${verdict}</strong></span>
@@ -2178,7 +2361,7 @@ body.final-screen-open{overflow:hidden}
       return;
     }
 
-    focusName.textContent=t.name;
+    focusName.innerHTML=readingLabelHTML(t.name);
 
     const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
 
@@ -2204,6 +2387,8 @@ body.final-screen-open{overflow:hidden}
       const moshiLimit = moshiAttemptLimit();
       btnMoshiRecord.disabled=t.done || (t.attempts||0)>=moshiLimit;
       moshiCount.disabled=t.done || (t.attempts||0)>=moshiLimit;
+      if(btnMoshiPassed) btnMoshiPassed.disabled=t.done || (t.attempts||0)>=moshiLimit;
+      if(btnMoshiFailed) btnMoshiFailed.disabled=t.done || (t.attempts||0)>=moshiLimit;
       btnNext.disabled = !(t.done || (t.attempts||0)>=moshiLimit);
       moshiRequired.textContent = String(req || "-");
       moshiMax.textContent = String(Math.max(S.moshiBest||0, t.moshiCount||0) || "-");
@@ -2583,6 +2768,15 @@ body.final-screen-open{overflow:hidden}
     }
   }
 
+  function recordMoshiDecision(passed){
+    const t=focusTask();
+    if(!t || t.type!=="moshi" || t.done) return;
+    const req=(S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
+    t._pendingMoshiInputMethod = passed ? "できたボタン" : "できなかったボタン";
+    moshiCount.value=passed ? String(req||0) : "0";
+    recordMoshiCount();
+  }
+
   function recordMoshiCount(){
     const t=focusTask();
     if(!t || t.type!=="moshi" || t.done) return;
@@ -2596,6 +2790,9 @@ body.final-screen-open{overflow:hidden}
     pushHistory();
     t.moshiAttempts = Array.isArray(t.moshiAttempts) ? t.moshiAttempts : [];
     t.moshiAttempts.push(v);
+    t.moshiInputMethods = Array.isArray(t.moshiInputMethods) ? t.moshiInputMethods : [];
+    t.moshiInputMethods.push(t._pendingMoshiInputMethod || "回数入力");
+    delete t._pendingMoshiInputMethod;
     t.attempts=t.moshiAttempts.length;
     t.moshiCount=Math.max(...t.moshiAttempts);
     t.success=t.moshiCount;
@@ -2727,6 +2924,251 @@ body.final-screen-open{overflow:hidden}
     }else{
       prompt("コピーしてお使いください。", out);
     }
+  }
+
+
+  function copyPlainText(text, successMessage){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text)
+        .then(()=>alert(successMessage))
+        .catch(()=>prompt("コピーしてお使いください。", text));
+    }else{
+      prompt("コピーしてお使いください。", text);
+    }
+  }
+
+  function percent(part,total){
+    return total>0 ? Math.round((part/total)*1000)/10 : null;
+  }
+
+  function formatPercent(value){
+    return value==null ? "試技なし" : `${value.toFixed(1)}%`;
+  }
+
+  function longestStreak(marks,target){
+    let best=0,current=0;
+    for(const mark of marks){
+      if(mark===target){ current+=1; best=Math.max(best,current); }
+      else current=0;
+    }
+    return best;
+  }
+
+  function trialSegment(marks,start,end){
+    const segment=marks.slice(start,end);
+    const success=segment.filter(v=>v===1).length;
+    return {
+      success,
+      attempts:segment.length,
+      rate:percent(success,segment.length)
+    };
+  }
+
+  function classifyTrick(name,type){
+    const categories=[];
+    const add=(value)=>{ if(!categories.includes(value)) categories.push(value); };
+
+    if(type==="moshi"){ add("連続系"); add("持久・リズム"); return categories; }
+    if(type==="time"){ add("複合競技"); add("速度・安定"); return categories; }
+    if(type==="free"){ add("自由種目"); return categories; }
+
+    if(/一周|県一周/.test(name)) add("一周系");
+    if(/灯台|さか落とし/.test(name)) add("灯台・玉上系");
+    if(/飛行機|はねけん/.test(name)) add("飛行機系");
+    if(/地球まわし|回転|とんぼ返り/.test(name)) add("回転系");
+    if(/うぐいす|ろうそく|すべり止め/.test(name)) add("静止・バランス系");
+    if(/とめけん|ふりけん|けん先すべり/.test(name)) add("けん先系");
+    if(/つるし/.test(name)) add("つるし系");
+    if(categories.length===0) add("基礎・その他");
+    return categories;
+  }
+
+  function analyzeCountTask(t,req){
+    const marks=Array.isArray(t.marks) ? t.marks.map(v=>v===1?1:0) : [];
+    const firstSuccessIndex=marks.findIndex(v=>v===1);
+    let reachedAt=null;
+    if(Number(req)>0){
+      let total=0;
+      for(let i=0;i<marks.length;i++){
+        if(marks[i]===1) total+=1;
+        if(total>=Number(req)){ reachedAt=i+1; break; }
+      }
+    }
+    return {
+      marks,
+      sequence:marks.length ? marks.map(v=>v===1?"○":"×").join(" ") : "試技なし",
+      early:trialSegment(marks,0,3),
+      middle:trialSegment(marks,3,7),
+      late:trialSegment(marks,7,10),
+      firstSuccess:firstSuccessIndex>=0 ? firstSuccessIndex+1 : null,
+      longestSuccess:longestStreak(marks,1),
+      longestFailure:longestStreak(marks,0),
+      reachedAt
+    };
+  }
+
+  function buildCategorySummary(){
+    const summary=new Map();
+    for(const t of S.tasks){
+      const req=taskRequirement(t);
+      const categories=classifyTrick(t.name,t.type);
+      const attempts=Number(t.attempts||0);
+      const success=t.type==="count" ? Number(t.success||0) : (taskPassedByRecord(t)?1:0);
+      const denominator=t.type==="count" ? attempts : (attempts>0?1:0);
+      for(const category of categories){
+        if(!summary.has(category)){
+          summary.set(category,{names:[],passed:0,total:0,success:0,attempts:0});
+        }
+        const item=summary.get(category);
+        item.names.push(t.name);
+        item.total+=1;
+        if(taskPassedByRecord(t)) item.passed+=1;
+        item.success+=success;
+        item.attempts+=denominator;
+      }
+    }
+    return [...summary.entries()].map(([category,item])=>({
+      category,
+      ...item,
+      rate:percent(item.success,item.attempts)
+    }));
+  }
+
+  function buildAutomaticFeatures(categorySummary){
+    const features=[];
+    const countTasks=S.tasks.filter(t=>t.type==="count" && Array.isArray(t.marks) && t.marks.length);
+    let earlySuccess=0,earlyAttempts=0,lateSuccess=0,lateAttempts=0;
+    for(const t of countTasks){
+      const a=analyzeCountTask(t,taskRequirement(t));
+      earlySuccess+=a.early.success; earlyAttempts+=a.early.attempts;
+      lateSuccess+=a.late.success; lateAttempts+=a.late.attempts;
+    }
+    const earlyRate=percent(earlySuccess,earlyAttempts);
+    const lateRate=percent(lateSuccess,lateAttempts);
+    if(earlyRate!=null && lateRate!=null){
+      if(lateRate-earlyRate>=15) features.push(`後半の成功率が序盤より${(lateRate-earlyRate).toFixed(1)}ポイント高く、試技中に調子を上げる傾向があります。`);
+      else if(earlyRate-lateRate>=15) features.push(`後半の成功率が序盤より${(earlyRate-lateRate).toFixed(1)}ポイント低く、後半で精度が落ちる傾向があります。`);
+      else features.push("序盤と後半の成功率に大きな差はありません。");
+    }
+
+    const weakest=[...categorySummary]
+      .filter(x=>x.attempts>0)
+      .sort((a,b)=>(a.rate??101)-(b.rate??101))[0];
+    const strongest=[...categorySummary]
+      .filter(x=>x.attempts>0)
+      .sort((a,b)=>(b.rate??-1)-(a.rate??-1))[0];
+    if(weakest) features.push(`${weakest.category}の集計成功率が${formatPercent(weakest.rate)}で、今回の記録では優先確認候補です。`);
+    if(strongest && strongest.category!==weakest?.category) features.push(`${strongest.category}は集計成功率${formatPercent(strongest.rate)}で、比較的安定しています。`);
+
+    const longFailure=countTasks
+      .map(t=>({name:t.name,value:analyzeCountTask(t,taskRequirement(t)).longestFailure}))
+      .sort((a,b)=>b.value-a.value)[0];
+    if(longFailure && longFailure.value>=3){
+      features.push(`${longFailure.name}では最大${longFailure.value}回の連続失敗が記録されています。`);
+    }
+    if(features.length===0) features.push("分析に十分な試技記録がまだありません。");
+    return features;
+  }
+
+  function exportAIAnalysisText(){
+    if(!S.tasks.length){
+      alert("分析用にコピーできる試技記録がありません。");
+      return;
+    }
+
+    refreshAllTaskVerdicts();
+    const lines=[];
+    const categorySummary=buildCategorySummary();
+    const features=buildAutomaticFeatures(categorySummary);
+
+    lines.push("【けん玉認定練習トラッカー：AI分析用詳細データ】");
+    lines.push(`出力日時：${new Date().toLocaleString("ja-JP")}`);
+    lines.push("アプリVersion：3.2.0");
+    lines.push(`モード：${S.mode}`);
+    lines.push(`受審設定：${rankName()}`);
+    lines.push(`最終判定：${sessionPassed()?"合格":"不合格"}`);
+    if(S.startedAt) lines.push(`開始日時：${new Date(S.startedAt).toLocaleString("ja-JP")}`);
+    if(S.finishedAt) lines.push(`終了日時：${new Date(S.finishedAt).toLocaleString("ja-JP")}`);
+    lines.push("");
+
+    lines.push("【今回の特徴（アプリによる簡易集計）】");
+    features.forEach(text=>lines.push(`・${text}`));
+    lines.push("");
+
+    lines.push("【技ごとの詳細】");
+    S.tasks.forEach((t,index)=>{
+      const req=taskRequirement(t);
+      const passed=taskPassedByRecord(t);
+      const categories=classifyTrick(t.name,t.type);
+      lines.push("");
+      lines.push(`■ ${index+1}. ${t.name}`);
+      lines.push(`技の系統：${categories.join(" / ")}`);
+      lines.push(`種別：${t.type}`);
+      lines.push(`規定：${req==null?"対象外":req}`);
+      lines.push(`判定：${passed?"成功":"未達"}`);
+
+      if(t.type==="count"){
+        const attempts=Number(t.attempts||0);
+        const success=Number(t.success||0);
+        const a=analyzeCountTask(t,req);
+        lines.push(`成功数：${success}回`);
+        lines.push(`試技数：${attempts}回`);
+        lines.push(`成功率：${formatPercent(percent(success,attempts))}`);
+        lines.push(`試技順：${a.sequence}`);
+        a.marks.forEach((mark,i)=>lines.push(`${i+1}回目：${mark===1?"成功":"失敗"}`));
+        lines.push(`序盤（1〜3回目）：${a.early.success}成功 / ${a.early.attempts}試技 / ${formatPercent(a.early.rate)}`);
+        lines.push(`中盤（4〜7回目）：${a.middle.success}成功 / ${a.middle.attempts}試技 / ${formatPercent(a.middle.rate)}`);
+        lines.push(`後半（8〜10回目）：${a.late.success}成功 / ${a.late.attempts}試技 / ${formatPercent(a.late.rate)}`);
+        lines.push(`最初の成功：${a.firstSuccess ? `${a.firstSuccess}回目` : "成功なし"}`);
+        lines.push(`最長連続成功：${a.longestSuccess}回`);
+        lines.push(`最長連続失敗：${a.longestFailure}回`);
+        lines.push(`規定到達：${a.reachedAt ? `${a.reachedAt}回目` : "未到達"}`);
+      }else if(t.type==="moshi"){
+        const values=Array.isArray(t.moshiAttempts)?t.moshiAttempts:[];
+        const methods=Array.isArray(t.moshiInputMethods)?t.moshiInputMethods:[];
+        const best=values.length?Math.max(...values):Number(t.moshiCount||0);
+        lines.push(`規定回数：${req}回`);
+        lines.push(`最高記録：${best}回`);
+        lines.push(`達成率：${Number(req)>0?formatPercent(Math.min(100,percent(best,Number(req)))):"算出不可"}`);
+        lines.push(`試技記録：${values.length?values.map((v,i)=>`${i+1}回目 ${v}回（${methods[i]||"入力方法不明"}）`).join(" / "):"記録なし"}`);
+        if(methods.some(m=>m!=="回数入力")){
+          lines.push("注意：できた／できなかったボタンによる記録は、実際の細かな回数ではなく判定用の値です。");
+        }
+      }else if(t.type==="time"){
+        const values=Array.isArray(t.timeAttempts)?t.timeAttempts:[];
+        const best=values.length?Math.min(...values):null;
+        lines.push(`制限時間：${req}秒以内`);
+        lines.push(`記録：${values.length?values.map(v=>`${v}秒`).join(" / "):"記録なし"}`);
+        lines.push(`最速：${best==null?"記録なし":`${best}秒`}`);
+        lines.push("各技の通過時刻：このバージョンでは記録していません。");
+      }else if(t.type==="free"){
+        lines.push(`登録技：${t.freeName||"未登録"}`);
+      }
+    });
+
+    lines.push("");
+    lines.push("【系統別集計】");
+    categorySummary.forEach(item=>{
+      lines.push("");
+      lines.push(`■ ${item.category}`);
+      lines.push(`対象技：${item.names.join("、")}`);
+      lines.push(`達成技：${item.passed} / ${item.total}`);
+      lines.push(`集計成功率：${formatPercent(item.rate)}`);
+    });
+
+    lines.push("");
+    lines.push("【AIへの分析依頼】");
+    lines.push("上記は、けん玉の級・段位練習の試技記録です。次の観点から分析してください。");
+    lines.push("1. 優先して練習すべき技");
+    lines.push("2. 序盤・中盤・後半の成功率の変化");
+    lines.push("3. 連続失敗と、失敗後の立て直し傾向");
+    lines.push("4. 苦手な技の系統と、比較的安定している系統");
+    lines.push("5. 次回15分間の具体的な練習メニュー");
+    lines.push("6. 良かった点と、次回に一つだけ意識する点");
+    lines.push("記録にないフォーム上の原因を断定せず、推測する場合は推測と明記してください。");
+    lines.push("『できた／できなかった』ボタンによるもしかめ記録は、具体的回数ではなく自己申告判定として扱ってください。");
+
+    copyPlainText(lines.join("\n"),"AI分析用の詳細データをコピーしました。");
   }
 
 
@@ -3095,7 +3537,7 @@ body.final-screen-open{overflow:hidden}
 
   function applyTimeBTrick(){
     const i=Math.min(timeBState.index,TIME_B_TRICKS.length-1);
-    timeBCurrentName.textContent=TIME_B_TRICKS[i] || "全種目クリア";
+    timeBCurrentName.innerHTML=readingLabelHTML(TIME_B_TRICKS[i] || "全種目クリア");
     timeBCurrentName.style.color=TIME_B_COLORS[i % TIME_B_COLORS.length];
     restartClass(timeBCurrentName,"change",450);
     timeBProgress.textContent=timeBState.finished ? "10 / 10 完了" : `${i+1} / 10`;
@@ -3178,7 +3620,7 @@ body.final-screen-open{overflow:hidden}
       btnTimeBStart.disabled=true;
       btnTimeBPause.disabled=true;
       btnTimeBSuccess.disabled=true;
-      timeBCurrentName.textContent="全種目クリア";
+      timeBCurrentName.innerHTML=readingLabelHTML("全種目クリア");
       timeBCurrentName.style.color="#356f72";
       timeBProgress.textContent="10 / 10 完了";
       renderTimeBList();
@@ -3334,6 +3776,7 @@ body.final-screen-open{overflow:hidden}
 
   // events
   btnVersion.addEventListener("click",openChangelog);
+  if(btnReadingMode) btnReadingMode.addEventListener("click",cycleReadingMode);
   btnSettings.addEventListener("click",openSettings);
   btnSettingsClose.addEventListener("click",closeSettings);
   btnChangelogClose.addEventListener("click",closeChangelog);
@@ -3362,6 +3805,8 @@ body.final-screen-open{overflow:hidden}
   btnNext.addEventListener("click", next);
 
   btnMoshiRecord.addEventListener("click", recordMoshiCount);
+  if(btnMoshiPassed) btnMoshiPassed.addEventListener("click",()=>recordMoshiDecision(true));
+  if(btnMoshiFailed) btnMoshiFailed.addEventListener("click",()=>recordMoshiDecision(false));
   if(moshiPresetRow){
     moshiPresetRow.addEventListener("click",(e)=>{
       const button=e.target.closest("button[data-moshi]");
@@ -3375,6 +3820,7 @@ body.final-screen-open{overflow:hidden}
   btnFree.addEventListener("click", saveFree);
 
   btnExport.addEventListener("click", exportText);
+  btnAIExport.addEventListener("click", exportAIAnalysisText);
   btnUndo.addEventListener("click", undo);
   btnReset.addEventListener("click", ()=>{
     const ok = confirm("全リセットいたします。よろしいですか？");
@@ -3487,9 +3933,10 @@ body.final-screen-open{overflow:hidden}
   cloudUrl.value=S.cloud?.url||"";
   cloudToken.value=S.cloud?.token||"";
   if(S.cloud?.url && S.cloud?.token) setCloudStatus("クラウド保存の設定済みです。","ok");
-  console.info("[Kendama Tracker v3.0.9] ready");
+  console.info("[Kendama Tracker v3.2.0] ready");
   syncSettingsForm();
   updateUI();
+  applyReadingMode();
   setTimeout(showUpdateNoticeOnce,250);
 })();
 </script>
