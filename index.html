@@ -15,7 +15,7 @@ h1{margin:0;font-size:20px;letter-spacing:.02em;}
 .pill{display:inline-flex;align-items:center;gap:8px;background:rgba(125,187,45,.12);border:1px solid rgba(125,187,45,.35);color:var(--txt);padding:8px 12px;border-radius:999px;font-size:13px;white-space:nowrap;}
 .pill.ok{border-color:rgba(125,187,45,.55);background:rgba(125,187,45,.10);}
 .grid{display:grid;grid-template-columns:1fr;gap:12px;}
-@media(min-width:940px){.grid{grid-template-columns:1.25fr .75fr;}}
+
 .card{background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.85));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
 .hd{padding:14px 16px 10px;background:linear-gradient(180deg, rgba(125,187,45,.18), rgba(255,255,255,.0) 70%);border-bottom:1px solid rgba(125,187,45,.18);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
 .bd{padding:14px 16px 16px;}
@@ -1184,6 +1184,92 @@ button.aiExportButton:hover:not(:disabled){
 #focusMeta{line-height:1.7}
 @media(max-width:520px){#focusMeta{font-size:12px}}
 
+
+
+/* v3.3.4: レイアウト再調整
+   すべての主要領域を同じ幅・単一カラムに統一 */
+:root{
+  --app-content-max: 980px;
+}
+
+body{
+  overflow-x:hidden;
+}
+
+.wrap{
+  width:min(100%, var(--app-content-max));
+  max-width:var(--app-content-max);
+  margin:0 auto;
+}
+
+/* ヘッダー、操作、ログ、フッターをすべて同じ基準幅にする */
+.wrap > header,
+.wrap > .grid,
+.wrap > .footer,
+footer{
+  width:100%;
+  max-width:100%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+/* PCでも2カラムにせず、ログを操作欄の下に積む */
+.grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) !important;
+  gap:12px;
+  width:100%;
+}
+
+.grid > *{
+  min-width:0;
+  width:100%;
+  max-width:100%;
+}
+
+/* カードやログが独自に狭くならないよう統一 */
+.card,
+section.card,
+.exportTools,
+details{
+  width:100%;
+  max-width:100%;
+  margin-left:0;
+  margin-right:0;
+}
+
+/* ログ一覧はカード幅いっぱいを利用し、横方向へはみ出さない */
+#log,
+.log,
+.logList,
+#logList,
+.logWrap,
+#logWrap{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  overflow-x:hidden;
+  overflow-wrap:anywhere;
+}
+
+/* ヘッダーも下のカードとぴったり揃える */
+.wrap > header{
+  box-sizing:border-box;
+}
+
+/* モットー */
+.heroTagline{
+  color:var(--accent-deep);
+  font-weight:900;
+  letter-spacing:.12em;
+}
+
+@media(max-width:640px){
+  .wrap{
+    width:100%;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1192,7 +1278,7 @@ button.aiExportButton:hover:not(:disabled){
   <div>
     <h1>けん玉認定練習トラッカー</h1>
     <div class="sub">
-      <span class="heroTagline">Challenge. Practice. Improve.</span><br>
+      <span class="heroTagline">あせらず、あわてず、あきらめず</span><br>
       級・準初段・段の認定練習と、タイム競技Bの計測をひとつにまとめた練習アプリです。
     </div>
   </div>
@@ -1202,7 +1288,7 @@ button.aiExportButton:hover:not(:disabled){
       <div class="pill">保存：端末内</div>
     </div>
     <div class="appVersionRow">
-      <button class="versionChip" id="btnVersion">v3.3.1</button>
+      <button class="versionChip" id="btnVersion">v3.3.4</button>
       <button class="versionChip" id="btnReadingMode" type="button">ふりがな表示</button>
       <button class="settingsChip" id="btnSettings">⚙ 設定</button>
     </div>
@@ -1294,11 +1380,6 @@ button.aiExportButton:hover:not(:disabled){
           </button>
         </div>
         </div>
-
-        <div class="note" style="margin-top:12px;">
-          級の規程では希望級位の受審が可能ですが、飛び越した級位の分もその場で認定表どおり合格が必要です。<br>
-          このアプリの級モードは、練習用途として成功の積み上げで「到達可能」を表示します。
-        </div>
       </div>
 
       <div class="exportTools" aria-label="記録の出力">
@@ -1343,67 +1424,6 @@ button.aiExportButton:hover:not(:disabled){
     </div>
   </aside>
 </div>
-
-<section class="card cloudCard">
-  <div class="hd">
-    <div>
-      <div class="k">クラウド記録</div>
-      <div class="mini">各利用者が設定したGoogleスプレッドシートへ確定記録を保存します。試技中は端末内にも自動保存します。</div>
-    </div>
-    <span class="badge">保存方式：<strong>端末＋Google Sheets</strong></span>
-  </div>
-  <div class="bd">
-    <div class="cloudGrid">
-      <div>
-        <label>Apps Script ウェブアプリURL</label>
-        <input id="cloudUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec"/>
-        <div class="fixedSheet">
-          保存先は固定されません。各利用者が自分のGoogleドライブで作成した
-          スプレッドシートのApps ScriptウェブアプリURLを保存して使用します。
-        </div>
-      </div>
-      <div>
-        <label>個人用トークン</label>
-        <input id="cloudToken" type="password" placeholder="自分で決めた合言葉"/>
-      </div>
-      <div class="cloudActions">
-        <button class="primary" id="btnSaveCloudSettings">設定保存</button>
-        <button class="good" id="btnCloudSave">現在結果を保存</button>
-        <button class="ghost" id="btnLoadHistory">履歴読込</button>
-        <button class="ghost" id="btnFxTest">演出テスト</button>
-      </div>
-    </div>
-    <div id="cloudStatus" class="cloudStatus" style="margin-top:10px;">未設定です。Apps ScriptのURLとトークンを入力してください。</div>
-
-    <details class="cloudHelp">
-      <summary>クラウド同期の設定方法</summary>
-      <div class="cloudHelpBody">
-        <ol>
-          <li>自分のGoogleドライブで新しいGoogleスプレッドシートを作成します。</li>
-          <li><strong>拡張機能 → Apps Script</strong>を開きます。</li>
-          <li>用意したApps Scriptコードを貼り付け、コード内の個人用トークンを自分専用の合言葉へ変更します。</li>
-          <li><strong>デプロイ → 新しいデプロイ → ウェブアプリ</strong>を選びます。</li>
-          <li>実行ユーザーを自分、アクセスできるユーザーを利用環境に合う設定にしてデプロイします。</li>
-          <li>発行された<code>https://script.google.com/macros/s/.../exec</code>のURLを、この欄の「Apps Script ウェブアプリURL」に貼ります。</li>
-          <li>Apps Script側と同じ個人用トークンを入力し、「設定保存」を押します。</li>
-          <li>「現在結果を保存」を押し、「保存しました」と表示されれば同期完了です。</li>
-        </ol>
-        <div class="mini">
-          スプレッドシートのURLそのものではなく、Apps Scriptをデプロイして発行された
-          <code>/exec</code>で終わるURLを入力します。この設定はブラウザに保存され、次回以降も同じ保存先を使用します。記録用シートと見出しは、最初の保存時に自動作成されます。
-        </div>
-      </div>
-    </details>
-
-    <div style="margin-top:14px;">
-      <div class="row" style="justify-content:space-between;">
-        <div class="k">最近の記録</div>
-        <span class="badge">もしかめ最大：<strong id="cloudMoshiMax">-</strong>回</span>
-      </div>
-      <div id="historyView" class="historyScroll" style="margin-top:8px;"><div class="muted">履歴を読み込むと表示されます。</div></div>
-    </div>
-  </div>
-</section>
 
 </div>
 
@@ -1454,7 +1474,7 @@ button.aiExportButton:hover:not(:disabled){
           <div class="k">タイム競技B ランキング</div>
           <div class="mini">送信した記録を、この画面内で確認できます。</div>
         </div>
-        <button class="ghost" id="btnTimeBLoadRanking">ランキング更新</button>
+        <button class="ghost" id="btnTimeBLoadRanking">端末ランキング更新</button>
       </div>
 
       <div class="timeBRankingEntry" id="timeBRankingEntry" hidden>
@@ -1472,13 +1492,13 @@ button.aiExportButton:hover:not(:disabled){
             一言メモ
             <input id="timeBRankingMemo" maxlength="60" placeholder="例：はねけんで少し詰まりました">
           </label>
-          <button class="primary" id="btnTimeBSendRanking">ランキングへ送信</button>
+          <button class="primary" id="btnTimeBSendRanking">端末ランキングへ登録</button>
         </div>
         <div class="mini" id="timeBRankingSendStatus"></div>
       </div>
 
       <div class="timeBRankingView" id="timeBRankingView">
-        <div class="muted">「ランキング更新」を押すと記録を読み込みます。</div>
+        <div class="muted">「端末ランキング更新」を押すと記録を読み込みます。</div>
       </div>
     </section>
   </section>
@@ -1513,10 +1533,6 @@ button.aiExportButton:hover:not(:disabled){
         <input type="checkbox" id="settingRememberRank">
       </label>
       <label class="settingSwitch">
-        <span><strong>クラウド設定</strong><small>Apps Script URLとトークンを記憶します。</small></span>
-        <input type="checkbox" id="settingRememberCloud">
-      </label>
-      <label class="settingSwitch">
         <span><strong>ランキング表示名</strong><small>タイム競技Bで使った名前を記憶します。</small></span>
         <input type="checkbox" id="settingRememberTimeBName">
       </label>
@@ -1549,7 +1565,7 @@ button.aiExportButton:hover:not(:disabled){
     </div>
     <div id="changelogList"></div>
     <div class="appInfoBox">
-      <strong>Version 3.3.1</strong>
+      <strong>Version 3.3.4</strong>
       <span>公開版：v3.0</span>
     </div>
   </div>
@@ -1567,7 +1583,7 @@ button.aiExportButton:hover:not(:disabled){
 
 <footer class="appFooter">
   <strong>けん玉認定練習トラッカー</strong>
-  <span>Version 3.3.1</span>
+  <span>Version 3.3.4</span>
   <small>練習の記録は、次の一回を少しだけ強くします。</small>
 </footer>
 <div id="judgeOverlay" aria-hidden="true">
@@ -1639,10 +1655,11 @@ button.aiExportButton:hover:not(:disabled){
 
   const el = (id)=>document.getElementById(id);
 
-  const APP_VERSION = "3.3.1";
+  const APP_VERSION = "3.3.4";
   const APP_SETTINGS_KEY = "kendama_tracker_app_settings_v28";
   const APP_UPDATE_SEEN_KEY = "kendama_tracker_update_seen";
   const TIME_B_NAME_STORAGE = "kendama_timeb_ranking_name";
+  const TIME_B_LOCAL_RANKING_STORAGE = "kendama_timeb_local_ranking_v1";
   const READING_MODE_STORAGE = "kendama_reading_mode_v1";
   const READING_MODES = ["off","furigana","romaji"];
   const TRICK_READINGS = {
@@ -1672,13 +1689,30 @@ button.aiExportButton:hover:not(:disabled){
   const DEFAULT_APP_SETTINGS = {
     rememberMode:true,
     rememberRank:true,
-    rememberCloud:true,
     rememberTimeBName:true,
     vibration:true
   };
 
   const CHANGELOG = [
-    {version:"3.3.1",date:"2026-08-26",current:true,items:[
+    {version:"3.3.4",date:"2026-08-26",current:true,items:[
+      "PC表示でログが細い右カラムになる原因だった2カラムレイアウトを廃止",
+      "ヘッダー、操作カード、ログ、フッターを同一幅の1カラムへ統一",
+      "級モードの不要な説明文を完全削除",
+      "横方向のはみ出しを抑え、スマホ・PC双方で同じレイアウト基準に調整"
+    ]},
+    {version:"3.3.3",date:"2026-08-26",items:[
+      "ヘッダー、記録操作部、ログ部の横幅を統一",
+      "長くなりすぎていたログ表示の横幅を調整",
+      "級モードの説明文を削除",
+      "英語のモットーを『あせらず、あわてず、あきらめず』へ変更"
+    ]},
+    {version:"3.3.2",date:"2026-08-26",items:[
+      "Googleスプレッドシート・Apps Scriptとのクラウド同期機能を削除",
+      "クラウドURL・トークン設定、端末履歴読込、クラウド自動保存を削除",
+      "タイム競技Bランキングを、この端末内だけに保存する個人ランキングへ変更",
+      "結果コピー・AI分析用コピー・端末内の試技自動保存は従来どおり維持"
+    ]},
+    {version:"3.3.1",date:"2026-08-26",items:[
       "再現性チェックで、各技の成功回数から技単体の段位相当を表示",
       "上位段位で規定対象外になる技は、その旨を補足表示",
       "最終リザルトとAI分析用データにも技別段位相当を追加"
@@ -1758,7 +1792,7 @@ button.aiExportButton:hover:not(:disabled){
       "右上にバージョン番号と設定ボタンを追加",
       "更新履歴画面を追加",
       "モードと段位・級位の記憶設定を追加",
-      "クラウド設定とランキング表示名の記憶を個別に設定可能",
+      "端末設定とランキング表示名の記憶を個別に設定可能",
       "初回起動時の更新案内を追加"
     ]},
     {version:"2.7.0",date:"2026-07-28",items:[
@@ -1946,7 +1980,6 @@ const btnResultAIExport=el("btnResultAIExport");
   const btnSettingsClose = el("btnSettingsClose");
   const settingRememberMode = el("settingRememberMode");
   const settingRememberRank = el("settingRememberRank");
-  const settingRememberCloud = el("settingRememberCloud");
   const settingRememberTimeBName = el("settingRememberTimeBName");
   const settingVibration = el("settingVibration");
   const btnSaveAppSettings = el("btnSaveAppSettings");
@@ -1983,15 +2016,6 @@ const btnResultAIExport=el("btnResultAIExport");
   const btnPracticeNg = el("btnPracticeNg");
   const btnPracticeSkip = el("btnPracticeSkip");
 
-  const cloudUrl = el("cloudUrl");
-  const cloudToken = el("cloudToken");
-  const btnSaveCloudSettings = el("btnSaveCloudSettings");
-  const btnCloudSave = el("btnCloudSave");
-  const btnLoadHistory = el("btnLoadHistory");
-  const btnFxTest = el("btnFxTest");
-  const cloudStatus = el("cloudStatus");
-  const historyView = el("historyView");
-  const cloudMoshiMax = el("cloudMoshiMax");
 
   const btnOk = el("btnOk");
   const btnNg = el("btnNg");
@@ -2011,52 +2035,11 @@ const btnResultAIExport=el("btnResultAIExport");
   const S = {
     mode:"dan", rankKey:"shodan", kyuTable:KYU_TABLE_DEFAULT, tasks:[], focusIdx:0,
     log:[], history:[], sessionId:"", startedAt:null, finishedAt:null,
-    finalShown:false, cloudSaved:false, moshiBest:0,
-    cloud:{url:"",token:"",kendama:""}
+    finalShown:false, moshiBest:0
   };
   const practice = {active:false, success:0, failedTaskIndex:-1};
 
 
-
-  const CLOUD_PREF_COOKIE = "kendama_cloud_destination";
-  const CLOUD_PREF_STORAGE = "kendama_cloud_destination_v1";
-
-  function writeCloudPreference(cloud){
-    if(!appSettings.rememberCloud) return;
-    const value={
-      url:String(cloud?.url||"").trim(),
-      token:String(cloud?.token||"").trim(),
-      kendama:String(cloud?.kendama||"競技用けん玉")
-    };
-    try{ localStorage.setItem(CLOUD_PREF_STORAGE,JSON.stringify(value)); }catch(e){}
-    try{
-      document.cookie=`${CLOUD_PREF_COOKIE}=${encodeURIComponent(JSON.stringify(value))}; Max-Age=31536000; Path=/; SameSite=Lax`;
-    }catch(e){}
-  }
-
-  function readCloudPreference(){
-    if(!appSettings.rememberCloud) return null;
-    try{
-      const raw=localStorage.getItem(CLOUD_PREF_STORAGE);
-      if(raw){
-        const value=JSON.parse(raw);
-        if(value && typeof value==="object") return value;
-      }
-    }catch(e){}
-    try{
-      const hit=document.cookie.split("; ").find(row=>row.startsWith(CLOUD_PREF_COOKIE+"="));
-      if(hit){
-        const value=JSON.parse(decodeURIComponent(hit.slice(CLOUD_PREF_COOKIE.length+1)));
-        if(value && typeof value==="object") return value;
-      }
-    }catch(e){}
-    return null;
-  }
-
-  const PREF_COOKIE = "kendama_rank_preference";
-  const PREF_FALLBACK = "kendama_last_mode_and_rank";
-  const PREF_MODE_ONLY = "kendama_last_mode";
-  const PREF_RANK_ONLY = "kendama_last_rank";
 
   function writeRankPreference(){
     if(!appSettings.rememberMode && !appSettings.rememberRank) return;
@@ -2119,18 +2102,13 @@ const btnResultAIExport=el("btnResultAIExport");
   function load(){
     try{
       const raw = localStorage.getItem(LS);
-      if(!raw){
-        const cloudPref=readCloudPreference();
-        if(cloudPref) S.cloud={...S.cloud,...cloudPref};
-        return false;
-      }
+      if(!raw) return false;
       const obj = JSON.parse(raw);
       if(!obj || typeof obj!=="object") return false;
       Object.assign(S, obj);
+      delete S.cloud;
+      delete S.cloudSaved;
       if(!S.kyuTable) S.kyuTable = KYU_TABLE_DEFAULT;
-      if(!S.cloud) S.cloud = {url:"",token:"",kendama:""};
-      const cloudPref=readCloudPreference();
-      if(cloudPref) S.cloud={...S.cloud,...cloudPref};
       if(!Number.isFinite(S.moshiBest)) S.moshiBest = 0;
       return true;
     }catch(e){ return false; }
@@ -2138,8 +2116,8 @@ const btnResultAIExport=el("btnResultAIExport");
   function snapshot(){ return JSON.parse(JSON.stringify({
     mode:S.mode, rankKey:S.rankKey, kyuTable:S.kyuTable, tasks:S.tasks,
     focusIdx:S.focusIdx, log:S.log, sessionId:S.sessionId, startedAt:S.startedAt,
-    finishedAt:S.finishedAt, finalShown:S.finalShown, cloudSaved:S.cloudSaved,
-    moshiBest:S.moshiBest, cloud:S.cloud
+    finishedAt:S.finishedAt, finalShown:S.finalShown,
+    moshiBest:S.moshiBest
   })); }
   function pushHistory(){ S.history.push(snapshot()); if(S.history.length>60) S.history.shift(); }
 
@@ -2180,7 +2158,6 @@ const btnResultAIExport=el("btnResultAIExport");
   function syncSettingsForm(){
     settingRememberMode.checked=!!appSettings.rememberMode;
     settingRememberRank.checked=!!appSettings.rememberRank;
-    settingRememberCloud.checked=!!appSettings.rememberCloud;
     settingRememberTimeBName.checked=!!appSettings.rememberTimeBName;
     settingVibration.checked=!!appSettings.vibration;
   }
@@ -2196,7 +2173,6 @@ const btnResultAIExport=el("btnResultAIExport");
     appSettings={
       rememberMode:settingRememberMode.checked,
       rememberRank:settingRememberRank.checked,
-      rememberCloud:settingRememberCloud.checked,
       rememberTimeBName:settingRememberTimeBName.checked,
       vibration:settingVibration.checked
     };
@@ -2213,12 +2189,6 @@ const btnResultAIExport=el("btnResultAIExport");
       document.cookie=`${PREF_COOKIE}=; Max-Age=0; Path=/; SameSite=Lax`;
     }
 
-    if(appSettings.rememberCloud){
-      writeCloudPreference(S.cloud||{});
-    }else{
-      try{ localStorage.removeItem(CLOUD_PREF_STORAGE); }catch(e){}
-      document.cookie=`${CLOUD_PREF_COOKIE}=; Max-Age=0; Path=/; SameSite=Lax`;
-    }
 
     if(appSettings.rememberTimeBName){
       const name=(timeBRankingName?.value||"").trim();
@@ -2236,7 +2206,6 @@ const btnResultAIExport=el("btnResultAIExport");
     persistAppSettings();
     syncSettingsForm();
     writeRankPreference();
-    writeCloudPreference(S.cloud||{});
     appSettingsStatus.textContent="初期設定に戻しました。";
     appSettingsStatus.className="mini ok";
   }
@@ -3010,7 +2979,6 @@ const btnResultAIExport=el("btnResultAIExport");
     S.finalShown = true;
     showFinalResult();
     save();
-    autoCloudSave();
   }
 
   function clearNormalJudgeOverlay(){
@@ -3567,116 +3535,6 @@ const btnResultAIExport=el("btnResultAIExport");
     return KYU_ORDER.find(x=>x.key===S.rankKey)?.label || S.rankKey || "-";
   }
 
-  function currentRecord(){
-    const passed = sessionPassed();
-    return {
-      action:"save",
-      token:S.cloud?.token || "",
-      sessionId:S.sessionId || `${Date.now()}-manual`,
-      startedAt:S.startedAt ? new Date(S.startedAt).toISOString() : "",
-      finishedAt:new Date(S.finishedAt || Date.now()).toISOString(),
-      mode:S.mode,
-      rankKey:S.rankKey || "",
-      rankName:rankName(),
-      result:S.mode==="repeat10"
-        ? `再現性チェック：規定達成${S.tasks.filter(taskPassedByRecord).length}/${S.tasks.length}・平均${totalSessionSuccessRate()}%`
-        : (passed ? "合格" : "不合格"),
-      kendama:"競技用けん玉",
-      moshiMax:S.moshiBest || 0,
-      tasks:S.tasks.map(t=>({
-        no:t.no,name:t.name,type:t.type,required:(S.mode==="kyu"?kyuRequirementFor(t.no):t.required),
-        attempts:t.attempts||0,success:t.success||0,done:!!t.done,
-        moshiCount:t.moshiCount ?? "",moshiAttempts:t.moshiAttempts||[],timeAttempts:t.timeAttempts||[],freeName:t.freeName||""
-      }))
-    };
-  }
-
-  function setCloudStatus(message, kind=""){
-    cloudStatus.textContent=message;
-    cloudStatus.className="cloudStatus"+(kind?` ${kind}`:"");
-  }
-
-  function saveCloudSettings(){
-    S.cloud = {
-      url:(cloudUrl.value||"").trim(),
-      token:(cloudToken.value||"").trim(),
-      kendama:"競技用けん玉"
-    };
-    writeCloudPreference(S.cloud);
-    save();
-    setCloudStatus(S.cloud.url && S.cloud.token ? "このブラウザの保存先として設定しました。" : "URLまたはトークンが未入力です。", S.cloud.url&&S.cloud.token?"ok":"ng");
-  }
-
-  async function sendCloudRecord(manual=false){
-    const url=(S.cloud?.url||"").trim();
-    const token=(S.cloud?.token||"").trim();
-    if(!url || !token){
-      if(manual) setCloudStatus("Apps ScriptのURLとトークンを設定してください。","ng");
-      return false;
-    }
-    if(!S.tasks.length){
-      if(manual) setCloudStatus("保存する試技記録がありません。","ng");
-      return false;
-    }
-    try{
-      setCloudStatus("Googleスプレッドシートへ送信しています…");
-      await fetch(url,{
-        method:"POST",
-        mode:"no-cors",
-        headers:{"Content-Type":"text/plain;charset=utf-8"},
-        body:JSON.stringify(currentRecord())
-      });
-      S.cloudSaved=true;
-      save();
-      setCloudStatus("送信要求を完了しました。スプレッドシート側で記録をご確認ください。","ok");
-      return true;
-    }catch(e){
-      setCloudStatus(`送信できませんでした：${e.message}`,"ng");
-      return false;
-    }
-  }
-
-  function autoCloudSave(){
-    if(S.cloudSaved) return;
-    sendCloudRecord(false);
-  }
-
-  function loadCloudHistory(){
-    const url=(S.cloud?.url||"").trim();
-    const token=(S.cloud?.token||"").trim();
-    if(!url || !token){ setCloudStatus("Apps ScriptのURLとトークンを設定してください。","ng"); return; }
-    const cb="kendamaHistory_"+Date.now();
-    const script=document.createElement("script");
-    const timer=setTimeout(()=>{
-      delete window[cb]; script.remove();
-      setCloudStatus("履歴の読込がタイムアウトしました。","ng");
-    },12000);
-    window[cb]=(data)=>{
-      clearTimeout(timer); script.remove(); delete window[cb];
-      if(!data || data.ok===false){ setCloudStatus(data?.error || "履歴を読み込めませんでした。","ng"); return; }
-      renderCloudHistory(data);
-      setCloudStatus("クラウド履歴を読み込みました。","ok");
-    };
-    const sep=url.includes("?")?"&":"?";
-    script.src=`${url}${sep}action=history&token=${encodeURIComponent(token)}&callback=${encodeURIComponent(cb)}&limit=50&_=${Date.now()}`;
-    script.onerror=()=>{clearTimeout(timer);delete window[cb];script.remove();setCloudStatus("履歴を読み込めませんでした。","ng");};
-    document.body.appendChild(script);
-  }
-
-  function renderCloudHistory(data){
-    cloudMoshiMax.textContent=String(data.moshiMax ?? "-");
-    if(Number.isFinite(Number(data.moshiMax))){
-      S.moshiBest=Math.max(S.moshiBest||0,Number(data.moshiMax));
-      save();
-      if(focusTask()?.type==="moshi") updateFocus();
-    }
-    const rows=Array.isArray(data.records)?data.records:[];
-    if(!rows.length){ historyView.innerHTML='<div class="muted">クラウド記録はまだありません。</div>'; return; }
-    historyView.innerHTML=`<table class="historyTable"><thead><tr><th>日時</th><th>級・段位</th><th>結果</th></tr></thead><tbody>${
-      rows.map(r=>`<tr><td>${esc(r.finishedAt||"")}</td><td>${esc(r.rankName||"")}</td><td>${esc(r.result||"")}</td></tr>`).join("")
-    }</tbody></table>`;
-  }
-
   function resetAll(){
     S.mode = mode.value;
     S.rankKey = null;
@@ -3684,7 +3542,7 @@ const btnResultAIExport=el("btnResultAIExport");
     S.focusIdx = 0;
     S.log = [];
     S.history = [];
-    S.sessionId=""; S.startedAt=null; S.finishedAt=null; S.finalShown=false; S.cloudSaved=false;
+    S.sessionId=""; S.startedAt=null; S.finishedAt=null; S.finalShown=false;
     if(!S.kyuTable) S.kyuTable = KYU_TABLE_DEFAULT;
     save();
     updateUI();
@@ -3752,19 +3610,10 @@ const btnResultAIExport=el("btnResultAIExport");
     timeBRankingSendStatus.className="mini"+(kind?` ${kind}`:"");
   }
 
-  function getTimeBRankingCloud(){
-    return {
-      url:(S.cloud?.url||"").trim(),
-      token:(S.cloud?.token||"").trim()
-    };
-  }
-
   function timeBRankingRecord(){
     return {
-      action:"timeBRanking",
-      token:(S.cloud?.token||"").trim(),
       recordId:`timeb_${Date.now()}_${Math.random().toString(36).slice(2,9)}`,
-      finishedAt:new Date().toISOString(),
+      finishedAt:new Date().toLocaleString("ja-JP"),
       elapsed:Number(timeBState.elapsedBefore.toFixed(1)),
       elapsedText:formatTimeB(timeBState.elapsedBefore),
       judgedRank:judgeTimeBRank(timeBState.elapsedBefore),
@@ -3773,18 +3622,32 @@ const btnResultAIExport=el("btnResultAIExport");
     };
   }
 
-  async function sendTimeBRanking(){
-    const {url,token}=getTimeBRankingCloud();
-    if(!url || !token){
-      setTimeBRankingStatus("先にクラウド記録欄でApps Script URLとトークンを設定してください。","ng");
-      return;
+  function readLocalTimeBRanking(){
+    try{
+      const raw=localStorage.getItem(TIME_B_LOCAL_RANKING_STORAGE);
+      const rows=raw ? JSON.parse(raw) : [];
+      return Array.isArray(rows) ? rows : [];
+    }catch(e){
+      return [];
     }
+  }
+
+  function writeLocalTimeBRanking(rows){
+    try{
+      localStorage.setItem(TIME_B_LOCAL_RANKING_STORAGE,JSON.stringify(rows));
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function sendTimeBRanking(){
     if(!timeBState.finished){
-      setTimeBRankingStatus("タイム競技Bを完走してから送信してください。","ng");
+      setTimeBRankingStatus("タイム競技Bを完走してから登録してください。","ng");
       return;
     }
     if(timeBState.rankingSent){
-      setTimeBRankingStatus("今回の記録は送信済みです。","ok");
+      setTimeBRankingStatus("今回の記録は端末ランキングへ登録済みです。","ok");
       return;
     }
     const name=(timeBRankingName.value||"").trim();
@@ -3796,52 +3659,25 @@ const btnResultAIExport=el("btnResultAIExport");
     if(appSettings.rememberTimeBName){
       try{ localStorage.setItem(TIME_B_NAME_STORAGE,name); }catch(e){}
     }
-    btnTimeBSendRanking.disabled=true;
-    setTimeBRankingStatus("ランキングへ送信しています…");
-    try{
-      await fetch(url,{
-        method:"POST",
-        mode:"no-cors",
-        headers:{"Content-Type":"text/plain;charset=utf-8"},
-        body:JSON.stringify(timeBRankingRecord())
-      });
-      timeBState.rankingSent=true;
-      setTimeBRankingStatus("送信要求を完了しました。ランキングを更新します。","ok");
-      setTimeout(loadTimeBRanking,1000);
-    }catch(e){
-      btnTimeBSendRanking.disabled=false;
-      setTimeBRankingStatus(`送信できませんでした：${e.message}`,"ng");
+
+    const rows=readLocalTimeBRanking();
+    rows.push(timeBRankingRecord());
+    rows.sort((a,b)=>Number(a.elapsed||0)-Number(b.elapsed||0));
+    const trimmed=rows.slice(0,100);
+
+    if(!writeLocalTimeBRanking(trimmed)){
+      setTimeBRankingStatus("端末内にランキングを保存できませんでした。","ng");
+      return;
     }
+
+    timeBState.rankingSent=true;
+    btnTimeBSendRanking.disabled=true;
+    setTimeBRankingStatus("この端末のランキングへ登録しました。","ok");
+    renderTimeBRanking(trimmed);
   }
 
   function loadTimeBRanking(){
-    const {url,token}=getTimeBRankingCloud();
-    if(!url || !token){
-      timeBRankingView.innerHTML='<div class="muted">クラウド記録欄でApps Script URLとトークンを設定してください。</div>';
-      return;
-    }
-    timeBRankingView.innerHTML='<div class="muted">ランキングを読み込んでいます…</div>';
-    const cb="kendamaTimeBRanking_"+Date.now();
-    const script=document.createElement("script");
-    const timer=setTimeout(()=>{
-      delete window[cb]; script.remove();
-      timeBRankingView.innerHTML='<div class="muted">ランキングの読込がタイムアウトしました。</div>';
-    },12000);
-    window[cb]=(data)=>{
-      clearTimeout(timer); script.remove(); delete window[cb];
-      if(!data || data.ok===false){
-        timeBRankingView.innerHTML=`<div class="muted">${esc(data?.error||"ランキングを読み込めませんでした。")}</div>`;
-        return;
-      }
-      renderTimeBRanking(data.records||[]);
-    };
-    const sep=url.includes("?")?"&":"?";
-    script.src=`${url}${sep}action=timeBRanking&token=${encodeURIComponent(token)}&callback=${encodeURIComponent(cb)}&limit=100&_=${Date.now()}`;
-    script.onerror=()=>{
-      clearTimeout(timer); delete window[cb]; script.remove();
-      timeBRankingView.innerHTML='<div class="muted">ランキングを読み込めませんでした。</div>';
-    };
-    document.body.appendChild(script);
+    renderTimeBRanking(readLocalTimeBRanking());
   }
 
   function renderTimeBRanking(records){
@@ -3874,14 +3710,14 @@ const btnResultAIExport=el("btnResultAIExport");
     }else{
       timeBRankingName.value="";
     }
-    const send=window.confirm("今回の記録をタイム競技Bランキングへ送信しますか？");
+    const send=window.confirm("今回の記録をタイム競技B端末ランキングへ登録しますか？");
     if(send){
       setTimeout(()=>{
         if(!timeBRankingName.value) timeBRankingName.focus();
         else timeBRankingMemo.focus();
       },80);
     }else{
-      setTimeBRankingStatus("今回は送信しません。後からこの欄で送信できます。");
+      setTimeBRankingStatus("今回は登録しません。後からこの欄で登録できます。");
     }
     loadTimeBRanking();
   }
@@ -4162,7 +3998,6 @@ const btnResultAIExport=el("btnResultAIExport");
     S.startedAt = Date.now();
     S.finishedAt = null;
     S.finalShown = false;
-    S.cloudSaved = false;
     addLog("開始", `モード：${S.mode}`, rankSel.options[rankSel.selectedIndex]?.textContent || "");
   }
 
@@ -4326,23 +4161,6 @@ btnFinalScreenClose.addEventListener("click",(e)=>{
   });
   btnPracticeSkip.addEventListener("click", closeRecovery);
 
-  btnSaveCloudSettings.addEventListener("click", saveCloudSettings);
-  btnCloudSave.addEventListener("click", ()=>sendCloudRecord(true));
-  btnLoadHistory.addEventListener("click", loadCloudHistory);
-  btnFxTest.addEventListener("click", ()=>{
-    const t=focusTask();
-    if(t && t.type==="count"){
-      t.flashIndex=Math.max(0,Math.min(9,(t.attempts||0)-1));
-      updateUI();
-    }
-    flashFeedback(true,"成功");
-    blinkResultSignal(true);
-    setTimeout(()=>{
-      flashFeedback(false,"失敗");
-      blinkResultSignal(false);
-    },1700);
-  });
-
   // init
   load();
   if(!applyRankPreference()){
@@ -4354,10 +4172,7 @@ btnFinalScreenClose.addEventListener("click",(e)=>{
   }
   writeRankPreference();
   kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
-  cloudUrl.value=S.cloud?.url||"";
-  cloudToken.value=S.cloud?.token||"";
-  if(S.cloud?.url && S.cloud?.token) setCloudStatus("クラウド保存の設定済みです。","ok");
-  console.info("[Kendama Tracker v3.3.1] ready");
+  console.info("[Kendama Tracker v3.3.4] ready");
   syncSettingsForm();
   updateUI();
   applyReadingMode();
