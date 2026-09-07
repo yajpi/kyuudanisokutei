@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>けん玉認定練習トラッカー v3.0</title>
+<title>けん玉認定練習トラッカー v3.3.12 完成版</title>
 <style>
 :root{--txt:#1f2430;--muted:#5a6475;--line:#cfd6e3;--accent:#7dbb2d;--good:#2aa84a;--bad:#d64545;--radius:18px;--shadow:0 10px 24px rgba(0,0,0,.12);}
 *{box-sizing:border-box}
@@ -1360,6 +1360,235 @@ details{
   }
 }
 
+/* v3.3.8: 10回練習の現在位置をスマホでも一目で確認 */
+.attemptPosition{
+  display:none;
+  align-items:baseline;
+  justify-content:center;
+  gap:8px;
+  min-height:24px;
+  margin:7px 0 -4px;
+  color:#3f4856;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.02em;
+  line-height:1.2;
+}
+.attemptPosition.show{display:flex}
+.attemptPosition strong{
+  color:#252b35;
+  font-size:17px;
+  font-weight:1000;
+}
+.attemptPosition.complete strong{color:#26794c}
+.dots{
+  flex-wrap:nowrap;
+  justify-content:space-between;
+  align-items:center;
+  gap:clamp(4px,2vw,8px);
+}
+.dot{
+  flex:0 0 auto;
+  position:relative;
+}
+.dot.current{
+  border-color:#718296;
+  box-shadow:0 0 0 3px #fff,0 0 0 5px rgba(78,96,117,.55);
+  transform:scale(1.08);
+  animation:currentAttemptPulse 1.9s ease-in-out infinite;
+}
+@keyframes currentAttemptPulse{
+  0%,100%{box-shadow:0 0 0 3px #fff,0 0 0 5px rgba(78,96,117,.45);transform:scale(1.06)}
+  50%{box-shadow:0 0 0 3px #fff,0 0 0 6px rgba(78,96,117,.68);transform:scale(1.11)}
+}
+@media(prefers-reduced-motion:reduce){
+  .dot.current{animation:none}
+}
+@media(max-width:380px){
+  .dots{padding-left:8px;padding-right:8px;gap:3px}
+}
+
+/* v3.3.9: 成功・失敗ランプ内に試技番号を表示 */
+.dot{
+  width:clamp(18px,5vw,22px);
+  height:clamp(18px,5vw,22px);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:#616976;
+  font-size:clamp(8px,2.5vw,10px);
+  font-weight:1000;
+  line-height:1;
+  letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;
+}
+.dot.s{color:#174c31}
+.dot.f{color:#6b2522}
+.dot.current{color:#303b49}
+.dot[data-trial="10"]{font-size:8px;letter-spacing:-.12em;padding-right:1px}
+@media(max-width:380px){
+  .dot{width:18px;height:18px;font-size:8px}
+  .dot[data-trial="10"]{font-size:7px}
+}
+
+/* v3.3.10: 補助操作を練習ボタンの近くへ再配置 */
+.resetActionRow{
+  display:flex;
+  justify-content:flex-end;
+  min-height:22px;
+  margin:3px 0 -3px;
+}
+#btnReset.compactUtilityButton,
+#btnUndo.compactUtilityButton{
+  width:auto !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  height:24px !important;
+  padding:2px 8px !important;
+  border-radius:8px !important;
+  font-size:10px !important;
+  font-weight:750 !important;
+  line-height:1 !important;
+  opacity:.68;
+  box-shadow:none !important;
+}
+#btnReset.compactUtilityButton:hover,
+#btnUndo.compactUtilityButton:hover{opacity:.9}
+.undoActionRow{
+  display:flex;
+  justify-content:flex-end;
+  min-height:24px;
+  margin-top:4px;
+}
+#btnUndo.compactUtilityButton{
+  margin-right:4px;
+}
+@media(max-width:520px){
+  .resetActionRow{margin-top:2px}
+  .undoActionRow{margin-top:3px}
+  #btnReset.compactUtilityButton,
+  #btnUndo.compactUtilityButton{height:22px !important;padding:2px 7px !important;font-size:9px !important}
+}
+
+/* v3.3.11: 補助ボタンを色とアイコンで判別しやすくする */
+#btnReset.compactUtilityButton{
+  height:28px !important;
+  padding:3px 10px !important;
+  border:1px solid #e5b46a !important;
+  border-radius:10px !important;
+  background:#fff3dd !important;
+  color:#87500b !important;
+  opacity:.88;
+}
+#btnNext.skipActionButton{
+  border:1px solid #b9b0d5 !important;
+  background:#f2effa !important;
+  color:#554875 !important;
+  opacity:.78 !important;
+}
+#btnUndo.compactUtilityButton{
+  height:36px !important;
+  min-width:92px !important;
+  margin-right:2px;
+  padding:6px 15px !important;
+  border:1px solid #8db8dc !important;
+  border-radius:999px !important;
+  background:linear-gradient(180deg,#f1f8ff,#dceeff) !important;
+  color:#245b87 !important;
+  font-size:13px !important;
+  font-weight:900 !important;
+  opacity:1;
+  box-shadow:0 4px 10px rgba(50,105,150,.12) !important;
+}
+.utilityIcon{
+  display:inline-block;
+  margin-right:4px;
+  font-size:1.05em;
+  line-height:1;
+  vertical-align:-.06em;
+}
+.utilityLabel{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+#btnReset:focus-visible,
+#btnNext:focus-visible,
+#btnUndo:focus-visible{
+  outline:3px solid rgba(52,116,171,.24);
+  outline-offset:2px;
+}
+@media(max-width:520px){
+  #btnReset.compactUtilityButton{height:26px !important;font-size:9px !important}
+  #btnUndo.compactUtilityButton{height:34px !important;min-width:88px !important;padding:5px 13px !important;font-size:12px !important}
+}
+
+/* v3.3.12: iPhoneのリザルト画面で右端が崩れない最終調整 */
+#finalScreen,
+.finalScreenInner,
+.finalScreenCard,
+#finalScreenContent,
+#finalScreenContent .finalResultPanel,
+#finalScreenContent .finalResultSection,
+#finalSkillResults{
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+#finalScreen{overflow-x:hidden}
+#finalScreenContent,
+#finalSkillResults{overflow-wrap:anywhere}
+.finalResultTable{table-layout:fixed}
+.finalResultTable th:nth-child(1){width:25%}
+.finalResultTable th:nth-child(2){width:31%}
+.finalResultTable th:nth-child(3){width:29%}
+.finalResultTable th:nth-child(4){width:15%}
+.finalResultTable td{
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+@media(max-width:560px){
+  #finalScreen{
+    padding-top:max(10px,env(safe-area-inset-top));
+    padding-right:max(8px,env(safe-area-inset-right));
+    padding-bottom:max(14px,env(safe-area-inset-bottom));
+    padding-left:max(8px,env(safe-area-inset-left));
+  }
+  .finalScreenInner{width:100%;padding:6px 0 20px}
+  .finalScreenCard{width:100%;padding:14px 12px;border-radius:19px;overflow:hidden}
+  #finalScreenTitle{font-size:clamp(34px,10vw,48px);letter-spacing:.02em}
+  #finalScreenSub{font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+  .finalResultSection{padding:10px;margin-top:10px}
+  .finalResultTable,
+  .finalResultTable tbody{display:block;width:100%}
+  .finalResultTable thead{display:none}
+  .finalResultTable tr{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:5px 8px;
+    width:100%;
+    min-width:0;
+    margin-top:8px;
+    padding:10px;
+    border:1px solid #eadfd3;
+    border-radius:13px;
+    background:#fffaf5;
+  }
+  .finalResultTable td{
+    display:block;
+    min-width:0;
+    padding:0 !important;
+    border:0 !important;
+    white-space:normal !important;
+    line-height:1.45;
+  }
+  .finalResultTable td:nth-child(1){grid-column:1;grid-row:1}
+  .finalResultTable td:nth-child(2){grid-column:1/-1;grid-row:2}
+  .finalResultTable td:nth-child(3){grid-column:1/-1;grid-row:3;color:var(--muted)}
+  .finalResultTable td:nth-child(4){grid-column:2;grid-row:1;align-self:start}
+  .finalResultTable td:nth-child(2)::before{content:"結果：";font-size:10px;font-weight:900;color:var(--muted)}
+  .finalResultTable td:nth-child(3)::before{content:"達成度：";font-size:10px;font-weight:900;color:var(--muted)}
+  .finalResultStatus{min-width:0;white-space:nowrap;font-size:11px;padding:3px 6px}
+  .finalFailedItem{overflow-wrap:anywhere}
+  .resultExportArea,.resultBottomActions{width:100%;min-width:0}
+}
+
 </style>
 </head>
 <body>
@@ -1378,7 +1607,7 @@ details{
       <div class="pill">保存：端末内</div>
     </div>
     <div class="appVersionRow">
-      <button class="versionChip" id="btnVersion">v3.3.7</button>
+      <button class="versionChip" id="btnVersion">v3.3.12</button>
       <button class="versionChip" id="btnReadingMode" type="button">ふりがな表示</button>
       <button class="settingsChip" id="btnSettings">⚙ 設定</button>
     </div>
@@ -1401,10 +1630,6 @@ details{
         <button class="primary" id="btnStart">開始</button>
         <button class="timeBLaunch" id="btnOpenTimeB">タイム競技B</button>
       </div>
-      <div class="row">
-        <button class="ghost" id="btnUndo">戻す</button>
-        <button class="ghost" id="btnReset">リセット</button>
-      </div>
     </div>
 
     <div class="bd">
@@ -1420,13 +1645,17 @@ details{
         <div id="focusName">開始してください</div>
         <div class="mini" id="focusMeta" style="margin-top:8px;"></div>
 
+        <div class="resetActionRow">
+          <button class="ghost compactUtilityButton" id="btnReset"><span class="utilityLabel"><span class="utilityIcon" aria-hidden="true">🧽</span>リセット</span></button>
+        </div>
         <div class="row statusActionRow" style="margin-top:10px;">
           <div class="resultBadge wait" id="resultBadge">判定：未判定</div>
           <span class="badge">到達可能：<strong id="bestRank">-</strong></span>
-          <button class="ghost skipActionButton" id="btnNext" disabled aria-label="スキップ">スキップ</button>
+          <button class="ghost skipActionButton" id="btnNext" disabled aria-label="スキップ"><span class="utilityLabel"><span class="utilityIcon" aria-hidden="true">⏭️</span>スキップ</span></button>
         </div>
 
-        <div class="dots" id="dotsRow" style="display:none;"></div>
+        <div class="attemptPosition" id="attemptPosition" aria-live="polite"></div>
+        <div class="dots" id="dotsRow" style="display:none;" role="group" aria-label="10回の試技記録"></div>
 
         <div class="inlineForm" id="timeBox" style="display:none;">
           <label class="mini">記録（秒）</label>
@@ -1463,6 +1692,9 @@ details{
         <div class="row mainJudgeActions" style="margin-top:12px;">
           <button class="good" id="btnOk" disabled>成功</button>
           <button class="bad" id="btnNg" disabled>失敗</button>
+        </div>
+        <div class="undoActionRow">
+          <button class="ghost compactUtilityButton" id="btnUndo"><span class="utilityLabel"><span class="utilityIcon" aria-hidden="true">↩️</span>戻す</span></button>
         </div>
         </div>
       </div>
@@ -1650,7 +1882,7 @@ details{
     </div>
     <div id="changelogList"></div>
     <div class="appInfoBox">
-      <strong>Version 3.3.7</strong>
+      <strong>Version 3.3.12</strong>
       <span>公開版：v3.0</span>
     </div>
   </div>
@@ -1668,7 +1900,7 @@ details{
 
 <footer class="appFooter">
   <strong>けん玉認定練習トラッカー</strong>
-  <span>Version 3.3.7</span>
+  <span>Version 3.3.12</span>
   <small>練習の記録は、次の一回を少しだけ強くします。</small>
 </footer>
 <div id="judgeOverlay" aria-hidden="true">
@@ -1743,7 +1975,7 @@ details{
 
   const el = (id)=>document.getElementById(id);
 
-  const APP_VERSION = "3.3.7";
+  const APP_VERSION = "3.3.12";
   const APP_SETTINGS_KEY = "kendama_tracker_app_settings_v28";
   const APP_UPDATE_SEEN_KEY = "kendama_tracker_update_seen";
   const TIME_B_NAME_STORAGE = "kendama_timeb_ranking_name";
@@ -1782,7 +2014,32 @@ details{
   };
 
   const CHANGELOG = [
-    {version:"3.3.7",date:"2026-08-30",current:true,items:[
+    {version:"3.3.12",date:"2026-09-07",current:true,items:[
+      "iPhone 17 Pro表示でリザルト画面の右端が崩れる問題を修正",
+      "スマホでは種目別リザルトを横長表から1種目ずつのカード表示へ自動切り替え",
+      "セーフエリアと長い結果文に対応し、画面内へ確実に収まるよう最終調整"
+    ]},
+    {version:"3.3.11",date:"2026-09-07",items:[
+      "戻すボタンを押しやすい丸型デザインへ変更",
+      "リセット・スキップ・戻すを役割別に色分け",
+      "リセットに消去、スキップに早送り、戻すにUターンのアイコンを追加"
+    ]},
+    {version:"3.3.10",date:"2026-09-07",items:[
+      "リセットをスキップ近辺の上側へ移動",
+      "戻すを失敗ボタンの右下へ移動",
+      "成功・失敗ボタンとスキップの大きさ・位置は変更せず維持"
+    ]},
+    {version:"3.3.9",date:"2026-09-07",items:[
+      "10個の成功・失敗ランプ内に1〜10の試技番号を追加",
+      "成功・失敗後も番号が消えず、何投目の結果か確認しやすい表示へ改善",
+      "スマホで10個一列を維持できるよう番号とランプの大きさを調整"
+    ]},
+    {version:"3.3.8",date:"2026-09-04",items:[
+      "10回練習のランプ直前に『第○投　○ / 10』を追加",
+      "次に記録するランプだけを二重リングと控えめな脈動で強調",
+      "10回終了時に『測定完了　10 / 10』へ切り替わるよう改善"
+    ]},
+    {version:"3.3.7",date:"2026-08-30",items:[
       "スキップボタンの説明文を削除",
       "スキップを極小サイズに変更し、誤操作しにくく調整",
       "スキップを『到達可能』表示の隣へ移動"
@@ -2053,6 +2310,7 @@ details{
   const focusMeta = el("focusMeta");
   const resultBadge = el("resultBadge");
   const bestRank = el("bestRank");
+  const attemptPosition = el("attemptPosition");
   const dotsRow = el("dotsRow");
   const judgeOverlay = document.getElementById("judgeOverlay");
   const judgeBox = document.getElementById("judgeBox");
@@ -2507,17 +2765,33 @@ const btnResultAIExport=el("btnResultAIExport");
   function focusTask(){ return S.tasks[S.focusIdx] || null; }
 
   function renderDots(t){
-    if(!t || t.type!=="count"){ dotsRow.style.display="none"; dotsRow.innerHTML=""; return; }
+    if(!t || t.type!=="count"){
+      attemptPosition.classList.remove("show","complete");
+      attemptPosition.textContent="";
+      dotsRow.style.display="none";
+      dotsRow.innerHTML="";
+      return;
+    }
     const marks = Array.isArray(t.marks) ? t.marks : [];
+    const attempts = Math.min(10, Number(t.attempts || marks.length || 0));
+    const completed = attempts >= 10;
+    attemptPosition.classList.toggle("complete",completed);
+    attemptPosition.classList.add("show");
+    attemptPosition.innerHTML = completed
+      ? '<strong>測定完了</strong><span>10 / 10</span>'
+      : `<strong>第${attempts + 1}投</strong><span>${attempts + 1} / 10</span>`;
     let html="";
     for(let i=0;i<10;i++){
       const m = marks[i];
+      const isCurrent = !completed && i===attempts;
+      const currentClass = isCurrent ? " current" : "";
       const flashClass = (t.flashIndex===i)
         ? (m===1 ? " blink-success" : (m===0 ? " blink-failure" : ""))
         : "";
-      if(m===1) html += `<span class="dot s${flashClass}" title="成功"></span>`;
-      else if(m===0) html += `<span class="dot f${flashClass}" title="失敗"></span>`;
-      else html += '<span class="dot e" title="未実施"></span>';
+      const state = m===1 ? "成功" : (m===0 ? "失敗" : (isCurrent ? "次の試技" : "未実施"));
+      const ariaCurrent = isCurrent ? ' aria-current="step"' : "";
+      const stateClass = m===1 ? "s" : (m===0 ? "f" : "e");
+      html += `<span class="dot ${stateClass}${flashClass}${currentClass}" data-trial="${i+1}" title="${i+1}投目：${state}" aria-label="${i+1}投目：${state}"${ariaCurrent}>${i+1}</span>`;
     }
     dotsRow.style.display="flex";
     dotsRow.innerHTML=html;
@@ -4286,7 +4560,7 @@ btnResultUndo.addEventListener("click", ()=>{
   }
   writeRankPreference();
   kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
-  console.info("[Kendama Tracker v3.3.7] ready");
+  console.info("[Kendama Tracker v3.3.12] ready");
   syncSettingsForm();
   updateUI();
   applyReadingMode();
