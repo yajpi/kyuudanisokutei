@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>けん玉認定練習トラッカー v3.3.12 完成版</title>
+<title>けん玉認定練習トラッカー v4.1.8 皿根元ソフト形状版</title>
 <style>
 :root{--txt:#1f2430;--muted:#5a6475;--line:#cfd6e3;--accent:#7dbb2d;--good:#2aa84a;--bad:#d64545;--radius:18px;--shadow:0 10px 24px rgba(0,0,0,.12);}
 *{box-sizing:border-box}
@@ -445,6 +445,27 @@ button:disabled{opacity:.45;cursor:not-allowed;}
 
 /* v26: 成功紙吹雪・失敗しょんぼり演出 */
 #celebrationCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998}
+#rainCloudEffect{position:fixed;left:50%;top:29%;width:126px;height:116px;transform:translate(-50%,-50%);pointer-events:none;opacity:0;visibility:hidden;z-index:9998}
+#rainCloudEffect.play{visibility:visible;animation:rainCloudScene 1.9s ease both}
+.rainCloudBody{position:absolute;left:20px;top:24px;width:86px;height:34px;border-radius:22px;background:#aab5bf}
+.rainCloudBody::before,.rainCloudBody::after{content:"";position:absolute;border-radius:50%;background:#aab5bf}
+.rainCloudBody::before{left:13px;top:-19px;width:43px;height:43px}
+.rainCloudBody::after{right:10px;top:-12px;width:32px;height:32px}
+.rainDrop{position:absolute;top:67px;width:4px;height:13px;border-radius:999px;background:#73b9df;opacity:0}
+.rainDrop:nth-child(2){left:35px;animation-delay:.05s}
+.rainDrop:nth-child(3){left:53px;animation-delay:.26s}
+.rainDrop:nth-child(4){left:72px;animation-delay:.13s}
+.rainDrop:nth-child(5){left:91px;animation-delay:.34s}
+#rainCloudEffect.play .rainDrop{animation:lightRain .62s ease-in infinite}
+#rainCloudEffect.heavy{transform:translate(-50%,-50%) scale(1.18)}
+#rainCloudEffect.heavy .rainCloudBody,#rainCloudEffect.heavy .rainCloudBody::before,#rainCloudEffect.heavy .rainCloudBody::after{background:#778694}
+#rainCloudEffect.heavy .rainDrop{display:block;width:5px;height:19px;background:#438fbd;animation-name:heavyRain;animation-duration:.34s}
+.rainDrop:nth-child(6){display:none;left:44px;animation-delay:.17s}
+.rainDrop:nth-child(7){display:none;left:63px;animation-delay:.03s}
+.rainDrop:nth-child(8){display:none;left:81px;animation-delay:.23s}
+@keyframes rainCloudScene{0%{opacity:0;transform:translate(-50%,-56%)}14%,72%{opacity:1;transform:translate(-50%,-50%)}100%{opacity:0;transform:translate(-50%,-46%)}}
+@keyframes lightRain{0%{opacity:0;transform:translateY(-4px)}22%{opacity:.75}100%{opacity:0;transform:translateY(25px)}}
+@keyframes heavyRain{0%{opacity:.15;transform:translateY(-5px)}100%{opacity:1;transform:translateY(31px)}}
 #gentleFailEffect{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;visibility:hidden;z-index:9997}
 #gentleFailEffect .failBubble{min-width:230px;padding:20px 24px;border-radius:24px;text-align:center;color:#6f6260;background:rgba(245,239,237,.94);border:1px solid rgba(196,174,170,.55);box-shadow:0 8px 28px rgba(83,67,64,.10)}
 #gentleFailEffect .failText{font-size:15px;font-weight:800}
@@ -454,6 +475,11 @@ button:disabled{opacity:.45;cursor:not-allowed;}
 #gentleFailEffect.play .failBubble{animation:gentleFailBubble 1.15s ease both}
 @keyframes gentleFailScene{0%{opacity:0}18%{opacity:1}72%{opacity:1}100%{opacity:0}}
 @keyframes gentleFailBubble{0%{transform:translateY(-8px) scale(.96);opacity:0}22%{transform:translateY(0) scale(1);opacity:1}55%{transform:translateY(5px) scale(.995);opacity:1}100%{transform:translateY(12px) scale(.98);opacity:0}}
+@media(prefers-reduced-motion:reduce){
+  #rainCloudEffect.play{animation:rainCloudFade 1.9s ease both}
+  #rainCloudEffect.play .rainDrop{animation:none;opacity:.55}
+  @keyframes rainCloudFade{0%,100%{opacity:0}18%,72%{opacity:1}}
+}
 
 
 /* v26: 各ボタン押下時のやさしい色変化 */
@@ -805,6 +831,152 @@ button.timeBLaunch:active{
   .finalResultStats div:last-child{grid-column:1/-1}
   .finalResultTable{font-size:12px}
   .finalResultTable th,.finalResultTable td{padding:8px 5px}
+}
+
+/* v4.0.0: GLOKENけん玉検定のクラスカラー */
+body[data-gloken-class="medal"]{--gloken:#f00018;--gloken-soft:#fff0f2}
+body[data-gloken-class="basic"]{--gloken:#49b4d4;--gloken-soft:#edfaff}
+body[data-gloken-class="advance"]{--gloken:#9d9d9d;--gloken-soft:#f4f4f4}
+body[data-gloken-class="expert"]{--gloken:#e9a12d;--gloken-soft:#fff7e8}
+body[data-gloken-class="master"]{--gloken:#251817;--gloken-soft:#f5f0ef}
+body[data-gloken-class] #mainPracticePanel{
+  border-color:color-mix(in srgb,var(--gloken) 55%,white);
+  background:linear-gradient(180deg,#fff,var(--gloken-soft));
+}
+body[data-gloken-class] .challengeBadge{
+  border-color:var(--gloken);
+  background:var(--gloken-soft);
+}
+body[data-gloken-class] .challengeBadge strong,
+body[data-gloken-class] #focusName{color:var(--gloken)}
+body[data-gloken-class] .dot.current{
+  border-color:var(--gloken);
+  box-shadow:0 0 0 3px #fff,0 0 0 5px color-mix(in srgb,var(--gloken) 58%,transparent);
+}
+.dots.twenty{
+  display:grid !important;
+  grid-template-columns:repeat(10,minmax(0,1fr));
+  row-gap:10px;
+}
+.dots.twenty .dot{justify-self:center}
+
+/* v4.0.2: ラベルと選択欄を一組にして折り返し崩れを防止 */
+.setupSelectors{align-items:flex-end !important}
+.selectorField{
+  display:flex;
+  flex:1 1 190px;
+  min-width:0;
+  flex-direction:column;
+  align-items:stretch;
+  gap:5px;
+}
+.selectorField label{
+  display:block;
+  white-space:nowrap;
+  line-height:1.2;
+}
+.selectorField select{width:100%;min-width:0;max-width:100%}
+.selectorActions{display:flex;align-items:center;gap:10px;flex:0 1 auto}
+@media(max-width:720px){
+  .setupSelectors{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:end !important}
+  .selectorField{width:100%}
+  .selectorField.rankField,.selectorActions{grid-column:1/-1}
+  .selectorActions{display:grid;grid-template-columns:1fr 1fr;width:100%}
+}
+@media(max-width:480px){
+  .setupSelectors{grid-template-columns:minmax(0,1fr)}
+  .selectorField,.selectorField.rankField,.selectorActions{grid-column:1}
+}
+
+/* v4.0.3: 検定種類・モード・段位を薄い1列バーに集約 */
+.setupSelectors{
+  display:grid !important;
+  grid-template-columns:minmax(0,1.18fr) minmax(0,1fr) minmax(0,.92fr) !important;
+  width:100%;
+  gap:6px 7px !important;
+  align-items:end !important;
+}
+.selectorField,
+.selectorField.rankField{
+  grid-column:auto !important;
+  width:100%;
+  gap:3px;
+}
+.selectorField label{
+  padding-left:2px;
+  overflow:hidden;
+  font-size:10px;
+  line-height:1.1;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.selectorField select{
+  width:100%;
+  min-height:36px !important;
+  height:36px;
+  padding:5px 24px 5px 8px;
+  border-radius:9px;
+  font-size:12px;
+  line-height:1.15;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.selectorActions{
+  grid-column:1/-1 !important;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  width:100%;
+  gap:7px;
+  margin-top:1px;
+}
+.selectorActions #btnStart,
+.selectorActions .timeBLaunch{
+  width:100%;
+  min-height:40px;
+  height:40px;
+  padding:6px 10px;
+  font-size:13px;
+}
+@media(max-width:390px){
+  .setupSelectors{gap:5px !important}
+  .selectorField label{font-size:9px}
+  .selectorField select{height:34px;min-height:34px !important;padding-left:6px;font-size:11px}
+}
+
+/* v4.0.5: モバイル用のflex指定による選択欄の縦伸びを停止 */
+.setupSelectors .selectorField select{
+  flex:0 0 36px !important;
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+}
+@media(max-width:390px){
+  .setupSelectors .selectorField select{
+    flex-basis:34px !important;
+    height:34px !important;
+    min-height:34px !important;
+    max-height:34px !important;
+  }
+}
+
+/* v4.0.6: リザルト先頭に検定情報と合否を固定表示 */
+.finalScreenContext{
+  display:inline-flex;
+  max-width:100%;
+  margin:0 auto 11px;
+  padding:7px 12px;
+  border:1px solid #decdbb;
+  border-radius:999px;
+  background:#fff8ef;
+  color:#5d544b;
+  font-size:12px;
+  font-weight:900;
+  line-height:1.4;
+  overflow-wrap:anywhere;
+}
+@media(max-width:560px){
+  .finalScreenContext{display:flex;border-radius:13px;font-size:11px;padding:6px 9px}
+  .finalScreenHeader{margin-bottom:12px}
 }
 
 
@@ -1598,7 +1770,7 @@ details{
     <h1>けん玉認定練習トラッカー</h1>
     <div class="sub">
       <span class="heroTagline">あせらず、あわてず、あきらめず</span><br>
-      級・準初段・段の認定練習と、タイム競技Bの計測をひとつにまとめた練習アプリです。
+      日本けん玉協会とGLOKENけん玉検定の本番想定・反復練習、タイム競技Bをひとつにまとめた練習アプリです。
     </div>
   </div>
   <div class="appHeaderTools">
@@ -1607,7 +1779,7 @@ details{
       <div class="pill">保存：端末内</div>
     </div>
     <div class="appVersionRow">
-      <button class="versionChip" id="btnVersion">v3.3.12</button>
+      <button class="versionChip" id="btnVersion">v4.1.8</button>
       <button class="versionChip" id="btnReadingMode" type="button">ふりがな表示</button>
       <button class="settingsChip" id="btnSettings">⚙ 設定</button>
     </div>
@@ -1617,18 +1789,26 @@ details{
 <div class="grid">
   <section class="card">
     <div class="hd">
-      <div class="row">
-        <label>モード</label>
-        <select id="mode">
-          <option value="kyu">級（10級→1級 連続）</option>
-          <option value="jun">準初段（固定）</option>
-          <option value="dan">段（初段〜六段 固定）</option>
-          <option value="repeat10">再現性チェック（各技10回）</option>
-        </select>
-        <label id="rankLabel">級位</label>
-        <select id="rankSel"></select>
-        <button class="primary" id="btnStart">開始</button>
-        <button class="timeBLaunch" id="btnOpenTimeB">タイム競技B</button>
+      <div class="row setupSelectors">
+        <div class="selectorField">
+          <label for="certType">検定の種類</label>
+          <select id="certType">
+            <option value="kendamado">けん玉道（日本けん玉協会）</option>
+            <option value="kendamakentei">けん玉検定（GLOKEN）</option>
+          </select>
+        </div>
+        <div class="selectorField">
+          <label for="mode">練習モード</label>
+          <select id="mode"></select>
+        </div>
+        <div class="selectorField rankField">
+          <label id="rankLabel" for="rankSel">級位</label>
+          <select id="rankSel"></select>
+        </div>
+        <div class="selectorActions">
+          <button class="primary" id="btnStart">開始</button>
+          <button class="timeBLaunch" id="btnOpenTimeB">タイム競技B</button>
+        </div>
       </div>
     </div>
 
@@ -1650,7 +1830,7 @@ details{
         </div>
         <div class="row statusActionRow" style="margin-top:10px;">
           <div class="resultBadge wait" id="resultBadge">判定：未判定</div>
-          <span class="badge">到達可能：<strong id="bestRank">-</strong></span>
+          <span class="badge"><span id="bestRankLabel">到達可能：</span><strong id="bestRank">-</strong></span>
           <button class="ghost skipActionButton" id="btnNext" disabled aria-label="スキップ"><span class="utilityLabel"><span class="utilityIcon" aria-hidden="true">⏭️</span>スキップ</span></button>
         </div>
 
@@ -1822,6 +2002,11 @@ details{
 </div>
 
 <canvas id="celebrationCanvas" aria-hidden="true"></canvas>
+<div id="rainCloudEffect" aria-hidden="true">
+  <div class="rainCloudBody"></div>
+  <span class="rainDrop"></span><span class="rainDrop"></span><span class="rainDrop"></span><span class="rainDrop"></span>
+  <span class="rainDrop"></span><span class="rainDrop"></span><span class="rainDrop"></span>
+</div>
 <div id="gentleFailEffect" aria-hidden="true">
   <div class="failBubble">
     <div class="failText">惜しい。次の種目へ進みます。</div>
@@ -1882,7 +2067,7 @@ details{
     </div>
     <div id="changelogList"></div>
     <div class="appInfoBox">
-      <strong>Version 3.3.12</strong>
+      <strong>Version 4.1.8</strong>
       <span>公開版：v3.0</span>
     </div>
   </div>
@@ -1900,7 +2085,7 @@ details{
 
 <footer class="appFooter">
   <strong>けん玉認定練習トラッカー</strong>
-  <span>Version 3.3.12</span>
+  <span>Version 4.1.8</span>
   <small>練習の記録は、次の一回を少しだけ強くします。</small>
 </footer>
 <div id="judgeOverlay" aria-hidden="true">
@@ -1934,7 +2119,8 @@ details{
   <div class="finalScreenInner">
     <section class="finalScreenCard">
       <div class="finalScreenHeader">
-        <div id="finalScreenTitle">結果</div>
+        <div class="finalScreenContext" id="finalScreenContext">検定情報</div>
+        <div id="finalScreenTitle" tabindex="-1">結果</div>
         <div id="finalScreenSub"></div>
       </div>
       <div id="finalScreenContent"></div>
@@ -1975,7 +2161,7 @@ details{
 
   const el = (id)=>document.getElementById(id);
 
-  const APP_VERSION = "3.3.12";
+  const APP_VERSION = "4.1.8";
   const APP_SETTINGS_KEY = "kendama_tracker_app_settings_v28";
   const APP_UPDATE_SEEN_KEY = "kendama_tracker_update_seen";
   const TIME_B_NAME_STORAGE = "kendama_timeb_ranking_name";
@@ -2014,7 +2200,82 @@ details{
   };
 
   const CHANGELOG = [
-    {version:"3.3.12",date:"2026-09-07",current:true,items:[
+    {version:"4.1.8",date:"2026-09-08",current:true,items:[
+      "大皿・小皿の根元を太くし、尖って見える接続形状を解消",
+      "皿胴の中央へ丸みを追加し、左右の皿が柔らかくつながる輪郭へ変更",
+      "皿の大きさ・向きと0.5秒の成功アニメーションは維持"
+    ]},
+    {version:"4.1.7",date:"2026-09-08",items:[
+      "級モードの標準を『大皿から通し（到達目標なし）』へ変更",
+      "通しモードでは全11種目を測定し、結果から実際の到達級を判定",
+      "通しモードの下へ、10級から1級までの個別到達目標を配置"
+    ]},
+    {version:"4.1.6",date:"2026-09-08",items:[
+      "1回の成功では大皿へ玉が乗る短い演出を追加",
+      "必要成功数へ到達した瞬間だけ、剣先への着剣と紙吹雪を表示",
+      "1回の失敗は小雨、全試技終了時の規定未達は大雨へ演出を分離"
+    ]},
+    {version:"4.1.5",date:"2026-09-08",items:[
+      "糸の始点を持ち手の途中から、皿胴と剣の胴体が交わる接続部へ移動",
+      "着剣直前にけんが傾いても、糸の始点が本体の接続部へ追従するよう修正",
+      "玉側の接続位置と0.5秒の着剣動作は従来どおり維持"
+    ]},
+    {version:"4.1.4",date:"2026-09-08",items:[
+      "写真を基に、持ち手のくびれと末端の広がりを大空に近い輪郭へ変更",
+      "大皿・小皿を外周が厚く中央へ滑らかに絞られる形へ変更",
+      "剣先・皿胴・中皿を一体感のあるシンプルなシルエットへ改善"
+    ]},
+    {version:"4.1.3",date:"2026-09-08",items:[
+      "連続写真を基に、玉が真下から左側を通って剣先上へ回り込む軌道へ修正",
+      "着剣直前だけ、斜めのけん本体を起こして穴へ剣先を合わせる動きを追加",
+      "手・背景・細かな揺れを省き、0.5秒の簡潔な演出を維持"
+    ]},
+    {version:"4.1.2",date:"2026-09-08",items:[
+      "着剣アニメーションを、下・左・剣先の3段階だけで構成",
+      "けん玉本体を固定し、細かな揺れや追加演出を削除",
+      "玉が剣先へ刺さるまでの動作時間を0.5秒へ短縮"
+    ]},
+    {version:"4.1.1",date:"2026-09-08",items:[
+      "大空の赤を意識した、影のないシンプルなけん玉へ描き直し",
+      "垂らした玉が前方へ円弧を描き、紙吹雪の終了時にけん先へ収まる動きへ変更",
+      "失敗時の小雨雲と、対応端末向けの短い振動フィードバックを追加"
+    ]},
+    {version:"4.1.0",date:"2026-09-08",items:[
+      "成功時の紙吹雪に、ふりけんから玉がけん先へ入るアニメーションを追加",
+      "画面サイズに合わせてけん玉演出を自動拡縮",
+      "動きを減らす端末設定では静止した成功表示へ切り替え"
+    ]},
+    {version:"4.0.6",date:"2026-09-08",items:[
+      "合否画面を開いた際に必ず最上部から表示",
+      "リザルト先頭へ検定名・クラス／段位・練習モードを追加",
+      "合格・不合格の見出しへフォーカスし、最初に結果を確認できるよう改善"
+    ]},
+    {version:"4.0.5",date:"2026-09-08",items:[
+      "3つの選択欄の横幅と配置はv4.0.3のまま維持",
+      "スマホで選択欄が縦方向へ大きく伸びるflex指定を解除",
+      "選択欄の高さを34〜36pxへ固定"
+    ]},
+    {version:"4.0.3",date:"2026-09-08",items:[
+      "検定種類・練習モード・段位を横一列の薄型選択バーへ変更",
+      "ラベルと選択欄の高さ・余白を圧縮",
+      "スマホでも3項目を1列に保ち、練習画面の表示領域を拡大"
+    ]},
+    {version:"4.0.2",date:"2026-09-08",items:[
+      "クラス・級のラベルと選択欄が別々に折り返される問題を修正",
+      "スマホでは選択項目を一組ずつ整然と縦配置",
+      "中間幅では検定種類と練習モードを2列、クラス・級を1列で表示"
+    ]},
+    {version:"4.0.1",date:"2026-09-08",items:[
+      "最初に『けん玉道／けん玉検定』を選ぶ大項目を追加",
+      "選んだ検定に対応する練習モードだけを中項目へ表示",
+      "保存済みのモードから検定種類を自動判定する互換処理を追加"
+    ]},
+    {version:"4.0.0",date:"2026-09-08",items:[
+      "GLOKENけん玉検定の全5クラス・全15レベル・75トリックを追加",
+      "本番想定（5回中1回成功）、10回練習、20回練習を追加",
+      "メダル・ベーシック・アドバンス・エキスパート・マスターのクラスカラーを適用"
+    ]},
+    {version:"3.3.12",date:"2026-09-07",items:[
       "iPhone 17 Pro表示でリザルト画面の右端が崩れる問題を修正",
       "スマホでは種目別リザルトを横長表から1種目ずつのカード表示へ自動切り替え",
       "セーフエリアと長い結果文に対応し、画面内へ確実に収まるよう最終調整"
@@ -2223,6 +2484,14 @@ details{
     {key:"2kyu",  label:"2級"},
     {key:"1kyu",  label:"1級"}
   ];
+  const KYU_THROUGH_KEY="kyu-through";
+  const KYU_THROUGH_REQUIREMENTS=KYU_TRICKS.reduce((requirements,trick)=>{
+    const values=Object.values(KYU_TABLE_DEFAULT)
+      .map(table=>Number(table[trick.no]))
+      .filter(Number.isFinite);
+    if(values.length) requirements[trick.no]=Math.max(...values);
+    return requirements;
+  },{});
 
   // ===== 準初段 =====
   const JUN_TRICKS = [
@@ -2270,7 +2539,61 @@ details{
     rokudan:{label:"六段", req:{7:8,8:8,9:8,10:8,11:6,12:6,13:5,14:5,15:4,16:4,17:3,18:2}}
   };
 
+  // ===== GLOKENけん玉検定（公式トリック一覧・全15レベル） =====
+  const GLOKEN_LEVELS = {
+    medal3:{classKey:"medal",classLabel:"メダルチャレンジ",grade:"3級",tricks:["手のせ大皿","けん玉つみき とめけん","手のせ大皿スクワット","手のせ大皿ウォーク 5歩","大皿おとし玉"]},
+    medal2:{classKey:"medal",classLabel:"メダルチャレンジ",grade:"2級",tricks:["どじょうすくい","けん玉つみき 灯台","中皿おとし玉","つるし〜両手キャッチ","手のせ大皿ホップ"]},
+    medal1:{classKey:"medal",classLabel:"メダルチャレンジ",grade:"1級",tricks:["たこやき","手のせろうそくスクワット","手のせ大皿けんけんぱ 2回","つるし〜片手キャッチ","手のせ大皿ホップ 3回"]},
+    basic3:{classKey:"basic",classLabel:"ベーシック",grade:"3級",tricks:["大皿","小皿","中皿","もしかめ 5回","とめけん（まわしけん可）"]},
+    basic2:{classKey:"basic",classLabel:"ベーシック",grade:"2級",tricks:["野球","手のせ大皿〜けん","小皿〜大皿","もしかめ 10回","飛行機"]},
+    basic1:{classKey:"basic",classLabel:"ベーシック",grade:"1級",tricks:["フライパン〜けん","小皿〜大皿〜中皿","空中ブランコ","もしかめ 20回","日本一周"]},
+    advance3:{classKey:"advance",classLabel:"アドバンス",grade:"3級",tricks:["もしかめ 10回以上〜けん","ふりけん","世界一周","すくいけん","灯台〜さかおとし"]},
+    advance2:{classKey:"advance",classLabel:"アドバンス",grade:"2級",tricks:["うぐいす〜けん","ヨーロッパ一周","地球まわし","ダウンスパイク","はねけん"]},
+    advance1:{classKey:"advance",classLabel:"アドバンス",grade:"1級",tricks:["1回転灯台〜けん","大皿〜けんフリップ大皿〜けん","1回転飛行機","灯台とんぼ返り〜さかおとし","レジェンド"]},
+    expert3:{classKey:"expert",classLabel:"エキスパート",grade:"3級",tricks:["風車けん","ジャグル大皿〜けん","月面着陸〜1回転さかおとし","ターンテーブル〜けん","USA一周"]},
+    expert2:{classKey:"expert",classLabel:"エキスパート",grade:"2級",tricks:["2回転飛行機","たけうま〜1回転さかおとし","宇宙遊泳","けんフリップ灯台〜さかおとし","ワールウィンド"]},
+    expert1:{classKey:"expert",classLabel:"エキスパート",grade:"1級",tricks:["中皿極意〜回転けん","らせん飛行機","宇宙遊泳スワップけん","1回転月面〜さかおとし","ジャグルとめけん"]},
+    master3:{classKey:"master",classLabel:"マスター",grade:"3級",tricks:["スイーツスペシャル","飛行機〜1.5回転スワップけん","けんフリップダウンスパイク","2回転灯台〜すくいけんファストハンド","ダブルワールウィンド"]},
+    master2:{classKey:"master",classLabel:"マスター",grade:"2級",tricks:["デンマーク一周","2回転飛行機〜2回転はねけん","タップジャグルけん","ふち一周〜回転けん","稲妻おとしスワップけん"]},
+    master1:{classKey:"master",classLabel:"マスター",grade:"1級",tricks:["円月はやてけん","たけうまとんぼ返り〜1回転さかおとし","うぐいす〜ジャグルうぐいす〜回転けん","うら月面〜1回転クッションうら月面〜さかおとし","マテオチャンス"]}
+  };
+  const GLOKEN_LEVEL_ORDER=["medal3","medal2","medal1","basic3","basic2","basic1","advance3","advance2","advance1","expert3","expert2","expert1","master3","master2","master1"];
+  const isGlokenMode=()=>String(S.mode||mode.value).startsWith("gloken");
+  const glokenLimit=(m=S.mode||mode.value)=>m==="gloken20"?20:(m==="gloken10"?10:5);
+  const countAttemptLimit=t=>Number(t?.attemptLimit||10);
+  function applyGlokenTheme(levelKey=rankSel.value){
+    const level=GLOKEN_LEVELS[levelKey];
+    if(String(mode.value||S.mode).startsWith("gloken") && level) document.body.dataset.glokenClass=level.classKey;
+    else delete document.body.dataset.glokenClass;
+  }
+
+  const PRACTICE_MODE_GROUPS={
+    kendamado:[
+      ["kyu","級（10級→1級 連続）"],
+      ["jun","準初段（固定）"],
+      ["dan","段（初段〜六段 固定）"],
+      ["repeat10","再現性チェック（各技10回）"]
+    ],
+    kendamakentei:[
+      ["gloken5","本番想定（5回中1回）"],
+      ["gloken10","10回練習"],
+      ["gloken20","20回練習"]
+    ]
+  };
+  const certTypeForMode=m=>String(m||"").startsWith("gloken")?"kendamakentei":"kendamado";
+  function practiceModeDisplayName(modeKey=S.mode){
+    for(const items of Object.values(PRACTICE_MODE_GROUPS)){
+      const hit=items.find(([value])=>value===modeKey);
+      if(hit) return hit[1];
+    }
+    return modeKey||"練習";
+  }
+  function certificationDisplayName(){
+    return isGlokenMode()?"GLOKEN けん玉検定":"日本けん玉協会 けん玉道";
+  }
+
   // ===== UI =====
+  const certType = el("certType");
   const mode = el("mode");
   const rankSel = el("rankSel");
   const rankLabel = el("rankLabel");
@@ -2309,6 +2632,7 @@ details{
   const challengeProgress = el("challengeProgress");
   const focusMeta = el("focusMeta");
   const resultBadge = el("resultBadge");
+  const bestRankLabel = el("bestRankLabel");
   const bestRank = el("bestRank");
   const attemptPosition = el("attemptPosition");
   const dotsRow = el("dotsRow");
@@ -2327,6 +2651,7 @@ details{
   const btnJudgeClose = document.getElementById("btnJudgeClose");
   const confettiCanvas = document.getElementById("confetti");
   const finalScreen = el("finalScreen");
+  const finalScreenContext = el("finalScreenContext");
   const finalScreenTitle = el("finalScreenTitle");
   const finalScreenSub = el("finalScreenSub");
   const finalScreenContent = el("finalScreenContent");
@@ -2383,6 +2708,7 @@ const btnResultAIExport=el("btnResultAIExport");
   const btnNg = el("btnNg");
   const btnNext = el("btnNext");
   const celebrationCanvas=el("celebrationCanvas");
+  const rainCloudEffect=el("rainCloudEffect");
   const gentleFailEffect=el("gentleFailEffect");
 
   const list = el("list");
@@ -2400,6 +2726,18 @@ const btnResultAIExport=el("btnResultAIExport");
     finalShown:false, moshiBest:0
   };
   const practice = {active:false, success:0, failedTaskIndex:-1};
+
+  function populatePracticeModes(type=certType.value,preferredMode=null){
+    const items=PRACTICE_MODE_GROUPS[type]||PRACTICE_MODE_GROUPS.kendamado;
+    mode.innerHTML="";
+    for(const [value,label] of items){
+      const opt=document.createElement("option");
+      opt.value=value; opt.textContent=label;
+      mode.appendChild(opt);
+    }
+    if(preferredMode && items.some(([value])=>value===preferredMode)) mode.value=preferredMode;
+    else mode.value=items[0][0];
+  }
 
 
 
@@ -2449,8 +2787,9 @@ const btnResultAIExport=el("btnResultAIExport");
   function applyRankPreference(){
     const pref = readRankPreference();
     if(!pref) return false;
-    if(["kyu","jun","dan","repeat10"].includes(pref.mode)){
-      mode.value = pref.mode;
+    if(Object.values(PRACTICE_MODE_GROUPS).flat().some(([value])=>value===pref.mode)){
+      certType.value=certTypeForMode(pref.mode);
+      populatePracticeModes(certType.value,pref.mode);
       setupRankSelector(pref.rankKey);
       if([...rankSel.options].some(o=>o.value===pref.rankKey)){
         rankSel.value = pref.rankKey;
@@ -2770,18 +3109,23 @@ const btnResultAIExport=el("btnResultAIExport");
       attemptPosition.textContent="";
       dotsRow.style.display="none";
       dotsRow.innerHTML="";
+      dotsRow.classList.remove("twenty");
       return;
     }
     const marks = Array.isArray(t.marks) ? t.marks : [];
-    const attempts = Math.min(10, Number(t.attempts || marks.length || 0));
-    const completed = attempts >= 10;
+    const limit = countAttemptLimit(t);
+    const attempts = Math.min(limit, Number(t.attempts || marks.length || 0));
+    const completed = Boolean(t.completed) || attempts >= limit;
+    dotsRow.classList.toggle("twenty",limit===20);
     attemptPosition.classList.toggle("complete",completed);
     attemptPosition.classList.add("show");
     attemptPosition.innerHTML = completed
-      ? '<strong>測定完了</strong><span>10 / 10</span>'
-      : `<strong>第${attempts + 1}投</strong><span>${attempts + 1} / 10</span>`;
+      ? (attempts>=limit
+          ? `<strong>測定完了</strong><span>${limit} / ${limit}</span>`
+          : `<strong>クリア</strong><span>${attempts} / ${limit}</span>`)
+      : `<strong>第${attempts + 1}投</strong><span>${attempts + 1} / ${limit}</span>`;
     let html="";
-    for(let i=0;i<10;i++){
+    for(let i=0;i<limit;i++){
       const m = marks[i];
       const isCurrent = !completed && i===attempts;
       const currentClass = isCurrent ? " current" : "";
@@ -2801,7 +3145,7 @@ const btnResultAIExport=el("btnResultAIExport");
     if(S.mode!=="kyu") return "-";
     const m = new Map();
     S.tasks.forEach(t=>m.set(t.no, t.success||0));
-    let best="10級";
+    let best="未到達";
     for(const g of KYU_ORDER){
       const req = S.kyuTable[g.key] || {};
       const ok = Object.keys(req).every(k=>{
@@ -2818,17 +3162,19 @@ const btnResultAIExport=el("btnResultAIExport");
   }
 
   function kyuRequirementFor(trickNo){
-    const req = (S.kyuTable[S.rankKey] || {});
+    const req = S.rankKey===KYU_THROUGH_KEY
+      ? KYU_THROUGH_REQUIREMENTS
+      : (S.kyuTable[S.rankKey] || {});
     return req[trickNo] ?? null;
   }
 
   function moshiAttemptLimit(){
-    return (S.mode==="kyu" && S.rankKey==="1kyu") ? 2 : 1;
+    return (S.mode==="kyu" && (S.rankKey==="1kyu" || S.rankKey===KYU_THROUGH_KEY)) ? 2 : 1;
   }
 
   function calcCounts(){
-    const done = S.mode==="repeat10"
-      ? S.tasks.filter(t=>(t.attempts||0)>=10).length
+    const done = (S.mode==="repeat10" || (isGlokenMode() && S.mode!=="gloken5"))
+      ? S.tasks.filter(t=>t.completed).length
       : S.tasks.filter(t=>t.done).length;
     doneCnt.textContent=String(done);
     leftCnt.textContent=String(Math.max(0,S.tasks.length-done));
@@ -2845,10 +3191,10 @@ const btnResultAIExport=el("btnResultAIExport");
       if(t.type==="moshi") reqTxt = `規定：${req}回以上`;
       if(t.type==="time") reqTxt = `制限時間：${req}秒以内（2回）`;
       if(t.type==="free") reqTxt = "技名を登録";
-      const verdict = (S.mode==="repeat10" && t.type==="count")
-        ? ((t.attempts||0)>=10 ? (taskPassedByRecord(t) ? "規定達成" : "要練習") : "測定中")
+      const verdict = ((S.mode==="repeat10" || (isGlokenMode() && S.mode!=="gloken5")) && t.type==="count")
+        ? (t.completed ? (taskPassedByRecord(t) ? "1回以上成功" : "要練習") : "測定中")
         : (t.done ? "成功" :
-          (((t.type==="count" && (t.attempts||0)>=10) ||
+          (((t.type==="count" && (t.attempts||0)>=countAttemptLimit(t)) ||
             (t.type==="moshi" && (t.attempts||0)>=moshiAttemptLimit()) ||
             (t.type==="time" && (t.attempts||0)>=2)) ? "未達" : "未判定"));
       div.innerHTML = `
@@ -2886,11 +3232,16 @@ const btnResultAIExport=el("btnResultAIExport");
   function currentChallengeLabel(){
     if(!S.tasks.length) return "未開始";
     if(S.mode==="kyu"){
+      if(S.rankKey===KYU_THROUGH_KEY) return "大皿から通し";
       return KYU_ORDER.find(x=>x.key===S.rankKey)?.label || "級";
     }
     if(S.mode==="jun") return "準初段";
     if(S.mode==="dan") return DAN_RANKS[S.rankKey]?.label || "段";
     if(S.mode==="repeat10") return `${DAN_RANKS[S.rankKey]?.label || "段"}・再現性`;
+    if(isGlokenMode()){
+      const level=GLOKEN_LEVELS[S.rankKey];
+      return level ? `${level.classLabel} ${level.grade}` : "GLOKEN";
+    }
     return "練習";
   }
 
@@ -2902,6 +3253,7 @@ const btnResultAIExport=el("btnResultAIExport");
     else if(S.mode==="jun") challengeBadge.classList.add("jun");
     else if(S.mode==="dan") challengeBadge.classList.add("dan");
     else if(S.mode==="repeat10") challengeBadge.classList.add("repeat10");
+    applyGlokenTheme(S.rankKey);
 
     const total=S.tasks.length;
     const current=total ? Math.min(S.focusIdx+1,total) : 0;
@@ -2912,7 +3264,16 @@ const btnResultAIExport=el("btnResultAIExport");
   function updateFocus(){
     updateChallengeBadge();
     const t=focusTask();
-    bestRank.textContent = (S.mode==="kyu") ? (KYU_ORDER.find(x=>x.key===S.rankKey)?.label || "-") : "-";
+    if(isGlokenMode()){
+      bestRankLabel.textContent="方式：";
+      bestRank.textContent=S.mode==="gloken5"?"本番想定":`${glokenLimit()}回練習`;
+    }else{
+      const isThrough=S.mode==="kyu" && S.rankKey===KYU_THROUGH_KEY;
+      bestRankLabel.textContent=isThrough?"到達可能：":(S.mode==="kyu"?"到達目標：":"到達可能：");
+      bestRank.textContent=isThrough
+        ? kyuBest()
+        : ((S.mode==="kyu")?(KYU_ORDER.find(x=>x.key===S.rankKey)?.label||"-"):"-");
+    }
 
     // hide all special boxes by default
     timeBox.style.display="none";
@@ -2934,6 +3295,21 @@ const btnResultAIExport=el("btnResultAIExport");
     const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
 
     if(t.type==="count"){
+      if(isGlokenMode()){
+        const attempts=Number(t.attempts||0);
+        const success=Number(t.success||0);
+        const limit=countAttemptLimit(t);
+        const fixed=S.mode!=="gloken5";
+        focusMeta.textContent=fixed
+          ? `GLOKEN反復練習 / 成功 ${success} / 試技 ${attempts} / 全${limit}回`
+          : `本番想定 / 5回中1回成功でクリア / 試技 ${attempts} / 5`;
+        btnOk.disabled=t.completed || attempts>=limit;
+        btnNg.disabled=t.completed || attempts>=limit;
+        btnNext.disabled=attempts>=limit;
+        renderDots(t);
+        if(t.completed) setBadge(t.done?"ok":"ng"); else setBadge("wait");
+        return;
+      }
       if(S.mode==="repeat10"){
         const attempts=Number(t.attempts||0);
         const success=Number(t.success||0);
@@ -3020,6 +3396,136 @@ const btnResultAIExport=el("btnResultAIExport");
   }
 
 
+  function drawKendamaCelebration(ctx,width,height,progress,reducedMotion,catchType="spike"){
+    const scale=Math.min(1,Math.max(.68,width/430));
+    const cx=width/2;
+    const cy=Math.min(height*.48,390);
+    const motionProgress=reducedMotion?1:Math.max(0,Math.min(1,progress));
+    const isCup=catchType==="cup";
+    const tiltProgress=Math.max(0,Math.min(1,(motionProgress-.68)/.32));
+    const tiltEase=tiltProgress*tiltProgress*(3-2*tiltProgress);
+    const displayAngle=isCup?-Math.PI/2:-.38*(1-tiltEase);
+    const mirrorX=isCup?-1:1;
+    const pivotX=cx+18*scale;
+    const pivotY=cy+48*scale;
+    const transformPoint=(x,y)=>{
+      const dx=(x-pivotX)*mirrorX;
+      const dy=y-pivotY;
+      return {
+        x:pivotX+dx*Math.cos(displayAngle)-dy*Math.sin(displayAngle),
+        y:pivotY+dx*Math.sin(displayAngle)+dy*Math.cos(displayAngle)
+      };
+    };
+    const tipPoint=transformPoint(cx,cy-98*scale);
+    const tipX=tipPoint.x;
+    const tipY=tipPoint.y;
+    const stringLocalX=cx+7*scale;
+    const stringLocalY=cy-35*scale;
+    const stringPoint=transformPoint(stringLocalX,stringLocalY);
+    const stringX=stringPoint.x;
+    const stringY=stringPoint.y;
+    const cupLocalX=cx-86*scale;
+    const cupLocalY=cy-40*scale;
+    const cupPoint=transformPoint(cupLocalX,cupLocalY);
+    const cupX=cupPoint.x;
+    const cupY=cupPoint.y;
+    const points=isCup?[
+      {x:cupX,y:cupY+150*scale},
+      {x:cupX,y:cupY+70*scale},
+      {x:cupX,y:cupY}
+    ]:[
+      {x:cx+15*scale,y:cy+125*scale},
+      {x:cx-108*scale,y:cy+58*scale},
+      {x:cx-110*scale,y:cy-48*scale},
+      {x:tipX,y:tipY-23*scale}
+    ];
+    const cuts=isCup?[0,.48,1]:[0,.34,.68,1];
+    const segment=isCup
+      ? (motionProgress<cuts[1]?0:1)
+      : (motionProgress<cuts[1]?0:(motionProgress<cuts[2]?1:2));
+    const raw=(motionProgress-cuts[segment])/(cuts[segment+1]-cuts[segment]);
+    const eased=raw*raw*(3-2*raw);
+    const start=points[segment],end=points[segment+1];
+    const ballX=start.x+(end.x-start.x)*eased;
+    const ballY=start.y+(end.y-start.y)*eased;
+
+    ctx.save();
+    ctx.lineCap="round";
+    ctx.strokeStyle="#7f746b";
+    ctx.lineWidth=1.8*scale;
+    ctx.beginPath();
+    ctx.moveTo(stringX,stringY);
+    ctx.lineTo(ballX,ballY+24*scale);
+    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(pivotX,pivotY);
+    ctx.rotate(displayAngle);
+    ctx.scale(mirrorX,1);
+    ctx.translate(-pivotX,-pivotY);
+    ctx.fillStyle="#d4a064";
+
+    /* 剣先から皿胴まで */
+    ctx.beginPath();
+    ctx.moveTo(cx,cy-98*scale);
+    ctx.quadraticCurveTo(cx-7*scale,cy-69*scale,cx-8*scale,cy-35*scale);
+    ctx.lineTo(cx+8*scale,cy-35*scale);
+    ctx.quadraticCurveTo(cx+7*scale,cy-69*scale,cx,cy-98*scale);
+    ctx.closePath();ctx.fill();
+
+    /* 丸みのある皿胴中央 */
+    ctx.beginPath();
+    ctx.ellipse(cx,cy-40*scale,17*scale,14*scale,0,0,Math.PI*2);
+    ctx.fill();
+
+    /* 根元を太く丸めた大皿（左）と小皿（右） */
+    ctx.beginPath();
+    ctx.moveTo(cx-12*scale,cy-49*scale);
+    ctx.bezierCurveTo(cx-22*scale,cy-49*scale,cx-31*scale,cy-55*scale,cx-49*scale,cy-58*scale);
+    ctx.lineTo(cx-58*scale,cy-58*scale);
+    ctx.lineTo(cx-58*scale,cy-22*scale);
+    ctx.lineTo(cx-49*scale,cy-22*scale);
+    ctx.bezierCurveTo(cx-31*scale,cy-25*scale,cx-22*scale,cy-31*scale,cx-12*scale,cy-32*scale);
+    ctx.quadraticCurveTo(cx-7*scale,cy-40*scale,cx-12*scale,cy-49*scale);
+    ctx.closePath();ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(cx+12*scale,cy-48*scale);
+    ctx.bezierCurveTo(cx+21*scale,cy-48*scale,cx+29*scale,cy-52*scale,cx+43*scale,cy-54*scale);
+    ctx.lineTo(cx+51*scale,cy-54*scale);
+    ctx.lineTo(cx+51*scale,cy-25*scale);
+    ctx.lineTo(cx+43*scale,cy-25*scale);
+    ctx.bezierCurveTo(cx+29*scale,cy-27*scale,cx+21*scale,cy-32*scale,cx+12*scale,cy-33*scale);
+    ctx.quadraticCurveTo(cx+7*scale,cy-40*scale,cx+12*scale,cy-48*scale);
+    ctx.closePath();ctx.fill();
+
+    /* 写真の厚い皿縁 */
+    ctx.fillStyle="#bd854d";
+    ctx.fillRect(cx-61*scale,cy-58*scale,7*scale,36*scale);
+    ctx.fillRect(cx+47*scale,cy-54*scale,7*scale,29*scale);
+
+    /* くびれた持ち手と広がった中皿 */
+    ctx.fillStyle="#d4a064";
+    ctx.beginPath();
+    ctx.moveTo(cx-8*scale,cy-35*scale);
+    ctx.bezierCurveTo(cx-8*scale,cy-8*scale,cx-10*scale,cy+35*scale,cx-16*scale,cy+55*scale);
+    ctx.quadraticCurveTo(cx-20*scale,cy+68*scale,cx-24*scale,cy+75*scale);
+    ctx.lineTo(cx-24*scale,cy+87*scale);
+    ctx.lineTo(cx+24*scale,cy+87*scale);
+    ctx.lineTo(cx+24*scale,cy+75*scale);
+    ctx.quadraticCurveTo(cx+20*scale,cy+68*scale,cx+16*scale,cy+55*scale);
+    ctx.bezierCurveTo(cx+10*scale,cy+35*scale,cx+8*scale,cy-8*scale,cx+8*scale,cy-35*scale);
+    ctx.closePath();ctx.fill();
+    ctx.fillStyle="#b77d45";
+    ctx.fillRect(cx-24*scale,cy+82*scale,48*scale,7*scale);
+    ctx.restore();
+
+    ctx.fillStyle="#d93b32";
+    ctx.beginPath();ctx.arc(ballX,ballY,27*scale,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#74231e";
+    ctx.beginPath();ctx.ellipse(ballX,ballY+23*scale,7*scale,4*scale,0,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+
   function runConfetti(){
     if(!celebrationCanvas) return;
     const ctx=celebrationCanvas.getContext("2d");
@@ -3040,8 +3546,12 @@ const btnResultAIExport=el("btnResultAIExport");
       color:colors[Math.floor(Math.random()*colors.length)],
       sway:Math.random()*Math.PI*2
     }));
+    const runId=(runConfetti._runId||0)+1;
+    runConfetti._runId=runId;
+    const reducedMotion=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let frame=0;
     function draw(){
+      if(runId!==runConfetti._runId) return;
       ctx.clearRect(0,0,width,height);
       for(const p of pieces){
         p.sway+=.06;p.x+=p.vx+Math.sin(p.sway)*.55;p.y+=p.vy;p.rot+=p.spin;
@@ -3049,9 +3559,41 @@ const btnResultAIExport=el("btnResultAIExport");
         ctx.fillStyle=p.color;ctx.globalAlpha=Math.max(0,1-frame/125);
         ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();
       }
+      const elapsed=performance.now()-startedAt;
+      if(elapsed<=500) drawKendamaCelebration(ctx,width,height,reducedMotion?1:elapsed/500,reducedMotion);
       frame++;
       if(frame<125) requestAnimationFrame(draw);
       else ctx.clearRect(0,0,width,height);
+    }
+    const startedAt=performance.now();
+    requestAnimationFrame(draw);
+  }
+
+  function runKendamaCupEffect(){
+    if(!celebrationCanvas) return;
+    const ctx=celebrationCanvas.getContext("2d");
+    if(!ctx) return;
+    const dpr=Math.max(1,window.devicePixelRatio||1);
+    const width=window.innerWidth,height=window.innerHeight;
+    celebrationCanvas.width=Math.floor(width*dpr);
+    celebrationCanvas.height=Math.floor(height*dpr);
+    celebrationCanvas.style.width=width+"px";
+    celebrationCanvas.style.height=height+"px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const runId=(runConfetti._runId||0)+1;
+    runConfetti._runId=runId;
+    const reducedMotion=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const startedAt=performance.now();
+    function draw(){
+      if(runId!==runConfetti._runId) return;
+      const elapsed=performance.now()-startedAt;
+      ctx.clearRect(0,0,width,height);
+      if(elapsed<=500){
+        drawKendamaCelebration(ctx,width,height,reducedMotion?1:elapsed/500,reducedMotion,"cup");
+        requestAnimationFrame(draw);
+      }else{
+        ctx.clearRect(0,0,width,height);
+      }
     }
     requestAnimationFrame(draw);
   }
@@ -3077,6 +3619,16 @@ const btnResultAIExport=el("btnResultAIExport");
   function runGentleFailEffect(){ runOutcomeMessage(false); }
   function runGentleSuccessEffect(){ runOutcomeMessage(true); }
 
+  function runRainCloudEffect(intensity="light"){
+    if(!rainCloudEffect) return;
+    rainCloudEffect.classList.remove("play","heavy");
+    if(intensity==="heavy") rainCloudEffect.classList.add("heavy");
+    void rainCloudEffect.offsetWidth;
+    rainCloudEffect.classList.add("play");
+    clearTimeout(runRainCloudEffect._t);
+    runRainCloudEffect._t=setTimeout(()=>rainCloudEffect.classList.remove("play","heavy"),1950);
+  }
+
   function animateFeedbackButton(button, ok){
     restartClass(
       button,
@@ -3087,7 +3639,8 @@ const btnResultAIExport=el("btnResultAIExport");
 
   function flashFeedback(ok, label){
     animateFeedbackButton(ok ? btnOk : btnNg, ok);
-    vibrate(ok ? [45,25,55] : [65,30,65]);
+    vibrate(ok ? 22 : [16,18,16]);
+    if(!ok && label==="失敗") runRainCloudEffect();
   }
 
   function openRecovery(taskIndex){
@@ -3250,6 +3803,14 @@ const btnResultAIExport=el("btnResultAIExport");
     const attempts=Number(t.attempts||0);
     const success=Number(t.success||0);
     const rate=attempts>0?Math.round(success/attempts*100):0;
+    if(t.gloken){
+      const limit=countAttemptLimit(t);
+      return {
+        result:`成功 ${success} / ${limit}`,
+        rate:`成功率 ${rate}%`,
+        attempts:`${attempts} / ${limit}試技`
+      };
+    }
     if(S.mode==="repeat10"){
       const eq=equivalentDanForTask(t);
       return {
@@ -3302,7 +3863,7 @@ const btnResultAIExport=el("btnResultAIExport");
           <td>${esc(r.result)}</td>
           <td>${esc(r.rate)}</td>
           <td><span class="finalResultStatus ${taskPassedByRecord(t)?"ok":"ng"}">${
-            S.mode==="repeat10"
+            (S.mode==="repeat10" || (isGlokenMode() && S.mode!=="gloken5"))
               ? (taskPassedByRecord(t)?"規定達成":"要練習")
               : (taskPassedByRecord(t)?"合格":"未達")
           }</span></td>
@@ -3316,6 +3877,9 @@ const btnResultAIExport=el("btnResultAIExport");
     refreshAllTaskVerdicts();
     const passed=sessionPassed();
     renderFinalResult();
+    if(finalScreenContext){
+      finalScreenContext.textContent=`${certificationDisplayName()}｜${rankName()}｜${practiceModeDisplayName()}`;
+    }
 
     // 通常判定用モーダルの残骸を確実に除去する。
     clearTimeout(showJudge._t);
@@ -3328,11 +3892,15 @@ const btnResultAIExport=el("btnResultAIExport");
       judgeOverlay.setAttribute("aria-hidden","true");
     }
 
-    if(S.mode==="repeat10"){
+    if(S.mode==="kyu" && S.rankKey===KYU_THROUGH_KEY){
+      finalScreenTitle.textContent="級通し練習結果";
+      finalScreenTitle.style.color="#8a633e";
+      finalScreenSub.textContent=`大皿からの通し練習を完了しました。今回の到達級：${kyuBest()}`;
+    }else if(S.mode==="repeat10" || (isGlokenMode() && S.mode!=="gloken5")){
       const achieved=S.tasks.filter(taskPassedByRecord).length;
-      finalScreenTitle.textContent="再現性チェック結果";
-      finalScreenTitle.style.color="#6f4378";
-      finalScreenSub.textContent=`${rankName()}想定：規定達成 ${achieved} / ${S.tasks.length}技・平均成功率 ${totalSessionSuccessRate()}%`;
+      finalScreenTitle.textContent=isGlokenMode()?`${glokenLimit()}回練習結果`:"再現性チェック結果";
+      finalScreenTitle.style.color=isGlokenMode()?"var(--gloken)":"#6f4378";
+      finalScreenSub.textContent=`${rankName()}：1回以上成功 ${achieved} / ${S.tasks.length}技・平均成功率 ${totalSessionSuccessRate()}%`;
     }else{
       finalScreenTitle.textContent=passed?"合格":"不合格";
       finalScreenTitle.style.color=passed?"#249654":"#d64b43";
@@ -3341,9 +3909,13 @@ const btnResultAIExport=el("btnResultAIExport");
         : "未達の種目があります。結果を確認して次の練習につなげましょう。";
     }
     finalScreenContent.innerHTML=finalResultPanel.innerHTML;
+    finalScreen.scrollTop=0;
     finalScreen.classList.add("show");
     finalScreen.setAttribute("aria-hidden","false");
     document.body.classList.add("final-screen-open");
+    finalScreen.scrollTo({top:0,left:0,behavior:"auto"});
+    if(finalScreenTitle) finalScreenTitle.focus({preventScroll:true});
+    requestAnimationFrame(()=>finalScreen.scrollTo({top:0,left:0,behavior:"auto"}));
 
     if(passed){
       runConfetti();
@@ -3377,11 +3949,11 @@ const btnResultAIExport=el("btnResultAIExport");
     if(!t) return;
 
     const exhausted=
-      (t.type==="count" && (t.attempts||0)>=10) ||
+      (t.type==="count" && (t.attempts||0)>=countAttemptLimit(t)) ||
       (t.type==="moshi" && (t.attempts||0)>=moshiAttemptLimit()) ||
       (t.type==="time" && (t.attempts||0)>=2);
 
-    if(S.mode==="repeat10" && t.type==="count"){
+    if((S.mode==="repeat10" || (isGlokenMode() && S.mode!=="gloken5")) && t.type==="count"){
       if(!exhausted) return;
       const passed=taskPassedByRecord(t);
       t.completed=true;
@@ -3389,9 +3961,13 @@ const btnResultAIExport=el("btnResultAIExport");
       save();
       blinkResultSignal(passed);
       if(passed){
-        runConfetti();
+        if(!t.achievementEffectShown){
+          t.achievementEffectShown=true;
+          runConfetti();
+        }
         runGentleSuccessEffect();
       }else{
+        runRainCloudEffect("heavy");
         runGentleFailEffect();
       }
       tryAutoAdvance._advanceTimer=setTimeout(advanceAfterOutcome, passed ? 950 : 900);
@@ -3400,6 +3976,7 @@ const btnResultAIExport=el("btnResultAIExport");
 
     if(t.done){
       t.outcomeEffectShown=true;
+      t.achievementEffectShown=true;
       save();
       blinkResultSignal(true);
       runConfetti();
@@ -3412,6 +3989,7 @@ const btnResultAIExport=el("btnResultAIExport");
       t.outcomeEffectShown=true;
       save();
       blinkResultSignal(false);
+      if(t.type==="count") runRainCloudEffect("heavy");
       runGentleFailEffect();
       // 不合格時もモーダルを出さず、演出後に必ず次へ進む。
       tryAutoAdvance._advanceTimer=setTimeout(advanceAfterOutcome,900);
@@ -3424,8 +4002,41 @@ const btnResultAIExport=el("btnResultAIExport");
     const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
     if(req==null) return;
 
+    if(isGlokenMode()){
+      const limit=countAttemptLimit(t);
+      if(t.completed || (t.attempts||0)>=limit) return;
+      const wasDone=Boolean(t.done);
+      pushHistory();
+      flashFeedback(ok,ok?"成功":"失敗");
+      t.attempts=(t.attempts||0)+1;
+      t.marks=Array.isArray(t.marks)?t.marks:[];
+      t.marks.push(ok?1:0);
+      t.flashIndex=t.marks.length-1;
+      if(ok) t.success=(t.success||0)+1;
+      if(S.mode==="gloken5"){
+        t.done=ok;
+        t.completed=ok || t.attempts>=limit;
+      }else{
+        t.done=(t.success||0)>=1;
+        t.completed=t.attempts>=limit;
+      }
+      if(ok && S.mode!=="gloken5"){
+        if(!wasDone && t.done){
+          t.achievementEffectShown=true;
+          runConfetti();
+        }else{
+          runKendamaCupEffect();
+        }
+      }
+      addLog(t.name,ok?"成功":"失敗",`${t.success||0}/${limit}・${t.attempts}/${limit}試技`);
+      save(); updateUI();
+      if(t.completed) requestAnimationFrame(()=>requestAnimationFrame(tryAutoAdvance));
+      return;
+    }
+
     if(S.mode==="repeat10"){
       if((t.attempts||0)>=10) return;
+      const wasDone=Boolean(t.done);
 
       pushHistory();
       flashFeedback(ok, ok ? "成功" : "失敗");
@@ -3437,6 +4048,15 @@ const btnResultAIExport=el("btnResultAIExport");
       if(ok) t.success=(t.success||0)+1;
       t.done=(t.success||0)>=Number(req);
       t.completed=(t.attempts||0)>=10;
+
+      if(ok){
+        if(!wasDone && t.done){
+          t.achievementEffectShown=true;
+          runConfetti();
+        }else{
+          runKendamaCupEffect();
+        }
+      }
 
       addLog(t.name, ok?"成功":"失敗", `${t.success||0}/10・規定${req}`);
       save();
@@ -3463,6 +4083,8 @@ const btnResultAIExport=el("btnResultAIExport");
 
     addLog(t.name, ok?"成功":"失敗", `${t.success||0}/${req}`);
     if((t.success||0) >= req) t.done=true;
+
+    if(ok && !t.done) runKendamaCupEffect();
 
     save();
     updateUI();
@@ -3571,6 +4193,22 @@ const btnResultAIExport=el("btnResultAIExport");
     const t=focusTask();
     if(!t) return;
 
+    if(isGlokenMode() && t.type==="count" && !t.completed){
+      pushHistory();
+      const limit=countAttemptLimit(t);
+      t.marks=Array.isArray(t.marks)?t.marks:[];
+      const remaining=limit-(t.attempts||0);
+      for(let i=0;i<remaining;i++) t.marks.push(0);
+      t.attempts=limit;
+      t.flashIndex=limit-1;
+      t.completed=true;
+      t.done=(t.success||0)>=1;
+      addLog(t.name,"スキップ",`成功${t.success||0}回・残り${remaining}回は失敗`);
+      flashFeedback(false,"終了");
+      save(); updateUI(); tryAutoAdvance();
+      return;
+    }
+
     if(S.mode==="repeat10" && t.type==="count" && (t.attempts||0)<10){
       pushHistory();
       t.marks=Array.isArray(t.marks)?t.marks:[];
@@ -3631,7 +4269,7 @@ const btnResultAIExport=el("btnResultAIExport");
                     (t.type==="time") ? `制限${req}s` :
                     (t.type==="free") ? "登録" : "";
       const verdict = t.done ? "成功" :
-        (((t.type==="count" && (t.attempts||0)>=10) ||
+        (((t.type==="count" && (t.attempts||0)>=countAttemptLimit(t)) ||
           (t.type==="moshi" && (t.attempts||0)>=moshiAttemptLimit()) ||
           (t.type==="time" && (t.attempts||0)>=2)) ? "未達" : "未判定");
       const eqTxt = (S.mode==="repeat10" && t.type==="count") ? ` / ${equivalentDanText(t)}` : "";
@@ -3910,6 +4548,11 @@ const btnResultAIExport=el("btnResultAIExport");
   function rankName(){
     if(S.mode==="jun") return "準初段";
     if(S.mode==="dan" || S.mode==="repeat10") return DAN_RANKS[S.rankKey]?.label || S.rankKey || "-";
+    if(isGlokenMode()){
+      const level=GLOKEN_LEVELS[S.rankKey];
+      return level ? `${level.classLabel} ${level.grade}` : S.rankKey || "-";
+    }
+    if(S.rankKey===KYU_THROUGH_KEY) return "大皿から通し（到達目標なし）";
     return KYU_ORDER.find(x=>x.key===S.rankKey)?.label || S.rankKey || "-";
   }
 
@@ -4270,14 +4913,30 @@ const btnResultAIExport=el("btnResultAIExport");
 
   function setupRankSelector(preferredRank=null){
     rankSel.innerHTML="";
-    if(mode.value==="kyu"){
-      rankLabel.textContent="到達目標";
+    if(String(mode.value).startsWith("gloken")){
+      rankLabel.textContent="クラス・級";
+      for(const key of GLOKEN_LEVEL_ORDER){
+        const level=GLOKEN_LEVELS[key];
+        const opt=document.createElement("option");
+        opt.value=key; opt.textContent=`${level.classLabel} ${level.grade}`;
+        rankSel.appendChild(opt);
+      }
+      rankSel.value="basic3";
+    }else if(mode.value==="kyu"){
+      rankLabel.textContent="練習設定";
+      const throughOpt=document.createElement("option");
+      throughOpt.value=KYU_THROUGH_KEY;
+      throughOpt.textContent="大皿から通し（到達目標なし）";
+      rankSel.appendChild(throughOpt);
+      const targetGroup=document.createElement("optgroup");
+      targetGroup.label="到達目標を設定";
       KYU_ORDER.forEach(g=>{
         const opt=document.createElement("option");
-        opt.value=g.key; opt.textContent=g.label;
-        rankSel.appendChild(opt);
+        opt.value=g.key; opt.textContent=`${g.label}を目標`;
+        targetGroup.appendChild(opt);
       });
-      rankSel.value="10kyu";
+      rankSel.appendChild(targetGroup);
+      rankSel.value=KYU_THROUGH_KEY;
     }else if(mode.value==="jun"){
       rankLabel.textContent="段位";
       const opt=document.createElement("option");
@@ -4296,6 +4955,7 @@ const btnResultAIExport=el("btnResultAIExport");
     if(preferredRank && [...rankSel.options].some(o=>o.value===preferredRank)){
       rankSel.value=preferredRank;
     }
+    applyGlokenTheme(rankSel.value);
     kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
   }
 
@@ -4320,9 +4980,20 @@ const btnResultAIExport=el("btnResultAIExport");
 
     S.mode = mode.value;
 
-    if(S.mode==="kyu"){
+    if(isGlokenMode()){
+      S.rankKey=rankSel.value;
+      const level=GLOKEN_LEVELS[S.rankKey];
+      const limit=glokenLimit(S.mode);
+      S.tasks=level.tricks.map((name,index)=>({
+        no:index+1,name,type:"count",required:1,attemptLimit:limit,
+        attempts:0,success:0,done:false,completed:false,marks:[],timeAttempts:[],freeName:"",gloken:true
+      }));
+      applyGlokenTheme(S.rankKey);
+    }else if(S.mode==="kyu"){
       S.rankKey = rankSel.value;
-      const req = S.kyuTable[S.rankKey] || {};
+      const req = S.rankKey===KYU_THROUGH_KEY
+        ? KYU_THROUGH_REQUIREMENTS
+        : (S.kyuTable[S.rankKey] || {});
       S.tasks = KYU_TRICKS
         .filter(t=>req[t.no]!=null)
         .map(t=>({
@@ -4421,12 +5092,17 @@ const btnResultAIExport=el("btnResultAIExport");
   changelogOverlay.addEventListener("click",e=>{ if(e.target===changelogOverlay) closeChangelog(); });
   updateNoticeOverlay.addEventListener("click",e=>{ if(e.target===updateNoticeOverlay) closeUpdateNotice(); });
 
+  certType.addEventListener("change",()=>{
+    populatePracticeModes(certType.value);
+    setupRankSelector();
+    writeRankPreference();
+  });
   mode.addEventListener("change", ()=>{
     const previousRank = rankSel.value;
     setupRankSelector(previousRank);
     writeRankPreference();
   });
-  rankSel.addEventListener("change", writeRankPreference);
+  rankSel.addEventListener("change", ()=>{ writeRankPreference(); applyGlokenTheme(rankSel.value); });
 
   btnStart.addEventListener("click", ()=>{
     pushHistory();
@@ -4537,7 +5213,7 @@ btnResultUndo.addEventListener("click", ()=>{
     practice.success += 1;
     practiceSuccess.textContent=String(practice.success);
     animateFeedbackButton(btnPracticeOk,true);
-    vibrate([45,25,55]);
+    vibrate(22);
     if(practice.success>=10){
       setTimeout(closeRecovery,650);
     }
@@ -4545,14 +5221,17 @@ btnResultUndo.addEventListener("click", ()=>{
   btnPracticeNg.addEventListener("click", ()=>{
     if(!practice.active) return;
     animateFeedbackButton(btnPracticeNg,false);
-    vibrate([65,30,65]);
+    vibrate([16,18,16]);
+    runRainCloudEffect();
   });
   btnPracticeSkip.addEventListener("click", closeRecovery);
 
   // init
   load();
   if(!applyRankPreference()){
-    mode.value = S.mode || "dan";
+    const initialMode=S.mode||"dan";
+    certType.value=certTypeForMode(initialMode);
+    populatePracticeModes(certType.value,initialMode);
     setupRankSelector(S.rankKey);
     if(S.rankKey && [...rankSel.options].some(o=>o.value===S.rankKey)){
       rankSel.value = S.rankKey;
@@ -4560,7 +5239,7 @@ btnResultUndo.addEventListener("click", ()=>{
   }
   writeRankPreference();
   kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
-  console.info("[Kendama Tracker v3.3.12] ready");
+  console.info("[Kendama Tracker v4.1.8] ready");
   syncSettingsForm();
   updateUI();
   applyReadingMode();
