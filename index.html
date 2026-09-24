@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>けん玉認定練習トラッカー v4.1.9 タイム競技B次の技表示版</title>
+<title>けん玉認定練習トラッカー v4.2.1 タイム競技B一括終了対応版</title>
 <style>
 :root{--txt:#1f2430;--muted:#5a6475;--line:#cfd6e3;--accent:#7dbb2d;--good:#2aa84a;--bad:#d64545;--radius:18px;--shadow:0 10px 24px rgba(0,0,0,.12);}
 *{box-sizing:border-box}
@@ -603,6 +603,8 @@ button.feedback-failure{
   background:rgba(184,226,197,.28);
   color:#466950;
 }
+.timeBCompleteAllRow{display:flex;justify-content:center;margin:10px 0 4px}
+.timeBCompleteAllRow button{width:min(100%,420px);min-height:54px;border-radius:16px;font-size:16px;font-weight:900}
 @media(max-width:640px){
   .timeBCard{padding:14px;border-radius:19px}
   .timeBSetup,.timeBControls{display:grid;grid-template-columns:1fr}
@@ -759,6 +761,13 @@ button.timeBLaunch:active{
   border-radius:999px;
   background:rgba(42,168,74,.12);
 }
+.timeBLapSummary{margin-top:10px;display:grid;gap:5px;font-size:12px;color:#536072}
+.timeBLapRow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:9px;padding:5px 7px;border-radius:8px;background:rgba(255,255,255,.65)}
+.timeBLapRow strong,.timeBLapRow span{font-variant-numeric:tabular-nums}
+.timeBExportActions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px}
+.timeBList .lap{display:block;margin-top:3px;font-size:11px;font-weight:800;color:#657386;font-variant-numeric:tabular-nums}
+.timeBRankingTable details{min-width:100px}
+.timeBRankingTable details div{margin-top:4px;font-size:11px;white-space:nowrap}
 .timeBRankingForm{
   display:grid;
   grid-template-columns:1fr 1.5fr auto;
@@ -1786,7 +1795,7 @@ details{
       <div class="pill">保存：端末内</div>
     </div>
     <div class="appVersionRow">
-      <button class="versionChip" id="btnVersion">v4.1.9</button>
+      <button class="versionChip" id="btnVersion">v4.2.1</button>
       <button class="versionChip" id="btnReadingMode" type="button">ふりがな表示</button>
       <button class="settingsChip" id="btnSettings">⚙ 設定</button>
     </div>
@@ -1972,12 +1981,15 @@ details{
     <div class="timeBStatus" id="timeBStatus">スタートで計測を始めます。最後の技に成功すると自動停止します。</div>
 
     <ol class="timeBList" id="timeBList"></ol>
+    <div class="timeBCompleteAllRow">
+      <button class="good" id="btnTimeBCompleteAll" disabled>全ての技が終了</button>
+    </div>
 
     <section class="timeBRankingPanel" id="timeBRankingPanel">
       <div class="timeBRankingHead">
         <div>
           <div class="k">タイム競技B ランキング</div>
-          <div class="mini">送信した記録を、この画面内で確認できます。</div>
+          <div class="mini">記録は端末内とCookieへ保存し、実施日時とラップも確認できます。</div>
         </div>
         <button class="ghost" id="btnTimeBLoadRanking">端末ランキング更新</button>
       </div>
@@ -1987,6 +1999,11 @@ details{
           <span>今回の記録</span>
           <strong id="timeBFinalTime">--:--.-</strong>
           <b id="timeBFinalRank">未判定</b>
+        </div>
+        <div class="timeBLapSummary" id="timeBLapSummary"></div>
+        <div class="timeBExportActions">
+          <button class="ghost" id="btnTimeBCopyLaps">ラップをコピー</button>
+          <button class="aiExportButton" id="btnTimeBAICopy">AI分析用コピー</button>
         </div>
         <div class="timeBRankingForm">
           <label>
@@ -2075,7 +2092,7 @@ details{
     </div>
     <div id="changelogList"></div>
     <div class="appInfoBox">
-      <strong>Version 4.1.9</strong>
+      <strong>Version 4.2.1</strong>
       <span>公開版：v3.0</span>
     </div>
   </div>
@@ -2093,7 +2110,7 @@ details{
 
 <footer class="appFooter">
   <strong>けん玉認定練習トラッカー</strong>
-  <span>Version 4.1.9</span>
+  <span>Version 4.2.1</span>
   <small>練習の記録は、次の一回を少しだけ強くします。</small>
 </footer>
 <div id="judgeOverlay" aria-hidden="true">
@@ -2169,11 +2186,12 @@ details{
 
   const el = (id)=>document.getElementById(id);
 
-  const APP_VERSION = "4.1.9";
+  const APP_VERSION = "4.2.1";
   const APP_SETTINGS_KEY = "kendama_tracker_app_settings_v28";
   const APP_UPDATE_SEEN_KEY = "kendama_tracker_update_seen";
   const TIME_B_NAME_STORAGE = "kendama_timeb_ranking_name";
   const TIME_B_LOCAL_RANKING_STORAGE = "kendama_timeb_local_ranking_v1";
+  const TIME_B_RANKING_COOKIE = "kendama_timeb_ranking_v2";
   const READING_MODE_STORAGE = "kendama_reading_mode_v1";
   const READING_MODES = ["off","furigana","romaji"];
   const TRICK_READINGS = {
@@ -2208,7 +2226,17 @@ details{
   };
 
   const CHANGELOG = [
-    {version:"4.1.9",date:"2026-09-19",current:true,items:[
+    {version:"4.2.1",date:"2026-09-24",current:true,items:[
+      "タイム競技Bの技一覧直下へ『全ての技が終了』ボタンを追加",
+      "一人での計測向けに、技ごとの操作なしで合計タイムのみ記録可能",
+      "一括終了の記録はランキングへ保存し、コピー時にラップ未計測と明記"
+    ]},
+    {version:"4.2.0",date:"2026-09-24",items:[
+      "タイム競技Bで全10技の累計ラップと区間タイムを記録",
+      "完走後にラップ一覧、通常コピー、AI分析用コピーを追加",
+      "ランキングへ実施日時とラップを保存し、Cookieにも上位記録をバックアップ"
+    ]},
+    {version:"4.1.9",date:"2026-09-19",items:[
       "タイム競技Bの現在の技の右下に、次の技を少し小さく表示",
       "技を進めるたびに次の技も更新し、最終技と終了後は非表示"
     ]},
@@ -2623,12 +2651,16 @@ details{
   const btnTimeBPause = el("btnTimeBPause");
   const btnTimeBSuccess = el("btnTimeBSuccess");
   const btnTimeBReset = el("btnTimeBReset");
+  const btnTimeBCompleteAll = el("btnTimeBCompleteAll");
   const timeBStatus = el("timeBStatus");
   const timeBList = el("timeBList");
   const timeBRankingPanel = el("timeBRankingPanel");
   const timeBRankingEntry = el("timeBRankingEntry");
   const timeBFinalTime = el("timeBFinalTime");
   const timeBFinalRank = el("timeBFinalRank");
+  const timeBLapSummary = el("timeBLapSummary");
+  const btnTimeBCopyLaps = el("btnTimeBCopyLaps");
+  const btnTimeBAICopy = el("btnTimeBAICopy");
   const timeBRankingName = el("timeBRankingName");
   const timeBRankingMemo = el("timeBRankingMemo");
   const btnTimeBSendRanking = el("btnTimeBSendRanking");
@@ -4460,7 +4492,7 @@ const btnResultAIExport=el("btnResultAIExport");
 
     lines.push("【けん玉認定練習トラッカー：AI分析用詳細データ】");
     lines.push(`出力日時：${new Date().toLocaleString("ja-JP")}`);
-    lines.push("アプリVersion：3.2.0");
+    lines.push(`アプリVersion：${APP_VERSION}`);
     lines.push(`モード：${S.mode}`);
     lines.push(`受審設定：${rankName()}`);
     lines.push(`最終判定：${S.mode==="repeat10" ? `再現性チェック（規定達成 ${S.tasks.filter(taskPassedByRecord).length}/${S.tasks.length}技）` : (sessionPassed()?"合格":"不合格")}`);
@@ -4635,7 +4667,7 @@ const btnResultAIExport=el("btnResultAIExport");
     index:0,
     running:false,finished:false,
     elapsedBefore:0,startedPerf:0,raf:0,
-    rankingSent:false
+    rankingSent:false,laps:[],runStartedAt:null,completedAt:null,lapMode:"per-trick"
   };
 
 
@@ -4646,34 +4678,73 @@ const btnResultAIExport=el("btnResultAIExport");
   }
 
   function timeBRankingRecord(){
+    const finishedDate=timeBState.completedAt?new Date(timeBState.completedAt):new Date();
     return {
       recordId:`timeb_${Date.now()}_${Math.random().toString(36).slice(2,9)}`,
-      finishedAt:new Date().toLocaleString("ja-JP"),
+      finishedAt:finishedDate.toLocaleString("ja-JP"),
+      finishedAtIso:finishedDate.toISOString(),
+      startedAt:timeBState.runStartedAt ? new Date(timeBState.runStartedAt).toLocaleString("ja-JP") : "",
       elapsed:Number(timeBState.elapsedBefore.toFixed(1)),
       elapsedText:formatTimeB(timeBState.elapsedBefore),
       judgedRank:judgeTimeBRank(timeBState.elapsedBefore),
       name:(timeBRankingName.value||"").trim() || "匿名",
-      memo:(timeBRankingMemo.value||"").trim()
+      memo:(timeBRankingMemo.value||"").trim(),
+      lapMode:timeBState.lapMode,
+      laps:timeBState.laps.map(lap=>({...lap}))
     };
   }
 
+  function readTimeBRankingCookie(){
+    try{
+      const hit=document.cookie.split("; ").find(row=>row.startsWith(TIME_B_RANKING_COOKIE+"="));
+      if(!hit) return [];
+      const rows=JSON.parse(decodeURIComponent(hit.slice(TIME_B_RANKING_COOKIE.length+1)));
+      return Array.isArray(rows)?rows:[];
+    }catch(e){ return []; }
+  }
+
+  function writeTimeBRankingCookie(rows){
+    try{
+      const compact=rows.slice(0,20).map(r=>({
+        recordId:r.recordId,finishedAt:r.finishedAt,finishedAtIso:r.finishedAtIso,
+        elapsed:r.elapsed,elapsedText:r.elapsedText,judgedRank:r.judgedRank,
+        name:r.name,memo:r.memo,lapMode:r.lapMode
+      }));
+      while(compact.length){
+        const encoded=encodeURIComponent(JSON.stringify(compact));
+        if(encoded.length<=3500){
+          document.cookie=`${TIME_B_RANKING_COOKIE}=${encoded}; Max-Age=31536000; Path=/; SameSite=Lax`;
+          return true;
+        }
+        compact.pop();
+      }
+    }catch(e){}
+    return false;
+  }
+
   function readLocalTimeBRanking(){
+    let localRows=[];
     try{
       const raw=localStorage.getItem(TIME_B_LOCAL_RANKING_STORAGE);
       const rows=raw ? JSON.parse(raw) : [];
-      return Array.isArray(rows) ? rows : [];
-    }catch(e){
-      return [];
-    }
+      localRows=Array.isArray(rows) ? rows : [];
+    }catch(e){}
+    const merged=new Map();
+    [...localRows,...readTimeBRankingCookie()].forEach((row,index)=>{
+      const key=row.recordId||`${row.finishedAt||""}_${row.elapsed||0}_${row.name||""}_${index}`;
+      if(!merged.has(key) || (row.laps&&row.laps.length)) merged.set(key,row);
+    });
+    return [...merged.values()].sort((a,b)=>Number(a.elapsed||0)-Number(b.elapsed||0));
   }
 
   function writeLocalTimeBRanking(rows){
+    let localSaved=false;
     try{
       localStorage.setItem(TIME_B_LOCAL_RANKING_STORAGE,JSON.stringify(rows));
-      return true;
-    }catch(e){
-      return false;
-    }
+      localSaved=true;
+    }catch(e){}
+    const cookieSaved=writeTimeBRankingCookie(rows);
+    return localSaved||cookieSaved;
   }
 
   function sendTimeBRanking(){
@@ -4707,7 +4778,7 @@ const btnResultAIExport=el("btnResultAIExport");
 
     timeBState.rankingSent=true;
     btnTimeBSendRanking.disabled=true;
-    setTimeBRankingStatus("この端末のランキングへ登録しました。","ok");
+    setTimeBRankingStatus("端末ランキングへ登録し、Cookieにも記録しました。","ok");
     renderTimeBRanking(trimmed);
   }
 
@@ -4729,7 +4800,7 @@ const btnResultAIExport=el("btnResultAIExport");
         <td><strong>${esc(r.elapsedText||formatTimeB(Number(r.elapsed)||0))}</strong></td>
         <td>${esc(r.judgedRank||judgeTimeBRank(Number(r.elapsed)||0))}</td>
         <td>${esc(r.finishedAt||r.savedAt||"")}</td>
-        <td>${esc(r.memo||"")}</td>
+        <td>${esc(r.memo||"")}${Array.isArray(r.laps)&&r.laps.length?`<details><summary>ラップ</summary>${r.laps.map(l=>`<div>${esc(l.name)}：${esc(formatTimeB(l.elapsed))}（区間 ${esc(formatTimeB(l.split))}）</div>`).join("")}</details>`:(r.lapMode==="all-at-once"?'<div class="mini">ラップ未計測</div>':"")}</td>
       </tr>`).join("")}</tbody>
     </table>`;
   }
@@ -4776,6 +4847,64 @@ const btnResultAIExport=el("btnResultAIExport");
     return `${String(mins).padStart(2,"0")}:${secs.toFixed(1).padStart(4,"0")}`;
   }
 
+  function renderTimeBLaps(){
+    if(!timeBLapSummary) return;
+    if(!timeBState.laps.length){
+      timeBLapSummary.innerHTML='<div class="timeBLapRow"><span>一括終了で計測</span><strong>合計タイムのみ</strong><span>区間タイムなし</span></div>';
+      return;
+    }
+    timeBLapSummary.innerHTML=timeBState.laps.map((lap,i)=>`<div class="timeBLapRow">
+      <span>${i+1}. ${esc(lap.name)}</span>
+      <strong>${esc(formatTimeB(lap.elapsed))}</strong>
+      <span>区間 ${esc(formatTimeB(lap.split))}</span>
+    </div>`).join("");
+  }
+
+  function buildTimeBLapText(forAI=false){
+    const lines=[];
+    lines.push(forAI?"【タイム競技B：AI分析用データ】":"【タイム競技B ラップ記録】");
+    const completedDate=timeBState.completedAt?new Date(timeBState.completedAt):new Date();
+    lines.push(`実施日時：${completedDate.toLocaleString("ja-JP")}`);
+    lines.push(`合計タイム：${formatTimeB(timeBState.elapsedBefore)}`);
+    lines.push(`判定：${judgeTimeBRank(timeBState.elapsedBefore)}`);
+    lines.push("");
+    if(timeBState.laps.length){
+      lines.push("【技ごとのラップ】");
+      timeBState.laps.forEach((lap,i)=>{
+        lines.push(`${i+1}. ${lap.name}｜累計 ${formatTimeB(lap.elapsed)}｜区間 ${formatTimeB(lap.split)}`);
+      });
+    }else{
+      lines.push("ラップ：未計測（『全ての技が終了』ボタンによる一括終了）");
+    }
+    if(forAI){
+      const sorted=[...timeBState.laps].sort((a,b)=>b.split-a.split);
+      lines.push("");
+      lines.push("【分析してほしいこと】");
+      if(timeBState.laps.length){
+        lines.push("1. 区間タイムが長く、全体のボトルネックになっている技");
+        lines.push("2. 前半・中盤・後半のペース変化");
+        lines.push("3. 次回タイムを縮めるために優先すべき技と練習順");
+      }else{
+        lines.push("ラップ未計測のため、合計タイムと段位判定を中心に評価してください。");
+        lines.push("技別の得意・不得意はこの記録から断定しないでください。");
+      }
+      if(sorted[0]) lines.push(`参考：最長区間は ${sorted[0].name} ${formatTimeB(sorted[0].split)}`);
+      lines.push("記録だけでは分からない失敗回数やフォーム上の原因は断定せず、推測と明記してください。");
+    }
+    return lines.join("\n");
+  }
+
+  function copyTimeBLaps(forAI=false){
+    if(!timeBState.finished){
+      alert("タイム競技Bを完走すると記録をコピーできます。");
+      return;
+    }
+    copyPlainText(buildTimeBLapText(forAI),forAI
+      ? "タイム競技BのAI分析用データをコピーしました。"
+      : "タイム競技Bのラップをコピーしました。"
+    );
+  }
+
   function getTimeBElapsed(){
     if(!timeBState.running) return timeBState.elapsedBefore;
     return timeBState.elapsedBefore+(performance.now()-timeBState.startedPerf)/1000;
@@ -4791,6 +4920,13 @@ const btnResultAIExport=el("btnResultAIExport");
     TIME_B_TRICKS.forEach((name,i)=>{
       const li=document.createElement("li");
       li.textContent=name;
+      const lap=timeBState.laps[i];
+      if(lap){
+        const lapNode=document.createElement("span");
+        lapNode.className="lap";
+        lapNode.textContent=`累計 ${formatTimeB(lap.elapsed)} / 区間 ${formatTimeB(lap.split)}`;
+        li.appendChild(lapNode);
+      }
       if(i<timeBState.index) li.classList.add("done");
       if(i===timeBState.index && !timeBState.finished) li.classList.add("current");
       timeBList.appendChild(li);
@@ -4830,14 +4966,20 @@ const btnResultAIExport=el("btnResultAIExport");
     timeBState.elapsedBefore=0;
     timeBState.startedPerf=0;
     timeBState.rankingSent=false;
+    timeBState.laps=[];
+    timeBState.runStartedAt=null;
+    timeBState.completedAt=null;
+    timeBState.lapMode="per-trick";
     timeBRankingEntry.hidden=true;
     timeBRankingMemo.value="";
+    if(timeBLapSummary) timeBLapSummary.innerHTML="";
     setTimeBRankingStatus("");
     btnTimeBStart.disabled=false;
     btnTimeBStart.textContent="スタート";
     btnTimeBPause.disabled=true;
     btnTimeBPause.textContent="一時停止";
     btnTimeBSuccess.disabled=true;
+    btnTimeBCompleteAll.disabled=true;
     timeBTimer.textContent="00:00.0";
     timeBRemaining.textContent="五段圏内";
     setTimeBStatus("スタートで計測を始めます。クリアタイムから段位を自動判定します。");
@@ -4847,11 +4989,13 @@ const btnResultAIExport=el("btnResultAIExport");
   function startOrResumeTimeB(){
     if(timeBState.finished) return;
     if(timeBState.running) return;
+    if(!timeBState.runStartedAt) timeBState.runStartedAt=Date.now();
     timeBState.startedPerf=performance.now();
     timeBState.running=true;
     btnTimeBStart.disabled=true;
     btnTimeBPause.disabled=false;
     btnTimeBSuccess.disabled=false;
+    btnTimeBCompleteAll.disabled=false;
     btnTimeBPause.textContent="一時停止";
     setTimeBStatus("計測中です。成功したら「成功・次の技へ」を押してください。");
     updateTimeBClock();
@@ -4866,6 +5010,7 @@ const btnResultAIExport=el("btnResultAIExport");
       btnTimeBStart.textContent="再開";
       btnTimeBPause.disabled=true;
       btnTimeBSuccess.disabled=true;
+      btnTimeBCompleteAll.disabled=true;
       setTimeBStatus("一時停止中です。");
       updateTimeBClock();
     }
@@ -4875,33 +5020,58 @@ const btnResultAIExport=el("btnResultAIExport");
     if(!timeBState.running || timeBState.finished) return;
     animateFeedbackButton(btnTimeBSuccess,true);
     vibrate([40,20,50]);
+    const elapsed=getTimeBElapsed();
+    const previousElapsed=timeBState.laps.length?timeBState.laps[timeBState.laps.length-1].elapsed:0;
+    timeBState.laps.push({
+      index:timeBState.index,
+      name:TIME_B_TRICKS[timeBState.index],
+      elapsed:Number(elapsed.toFixed(1)),
+      split:Number(Math.max(0,elapsed-previousElapsed).toFixed(1))
+    });
     timeBState.index+=1;
 
     if(timeBState.index>=TIME_B_TRICKS.length){
-      timeBState.elapsedBefore=getTimeBElapsed();
-      timeBState.running=false;
-      timeBState.finished=true;
-      cancelAnimationFrame(timeBState.raf);
-      btnTimeBStart.disabled=true;
-      btnTimeBPause.disabled=true;
-      btnTimeBSuccess.disabled=true;
-      timeBCurrentName.innerHTML=readingLabelHTML("全種目クリア");
-      timeBCurrentName.style.color="#356f72";
-      timeBProgress.textContent="10 / 10 完了";
-      timeBNext.hidden=true;
-      renderTimeBList();
-      const judgedRank=judgeTimeBRank(timeBState.elapsedBefore);
-      setTimeBStatus(
-        `${formatTimeB(timeBState.elapsedBefore)}でクリア。判定：${judgedRank}`,
-        judgedRank==="時間オーバー" ? "ng" : "ok"
-      );
-      runConfetti();
-      vibrate([55,35,75,35,95]);
-      setTimeout(offerTimeBRanking,650);
+      finishTimeB(elapsed,false);
       return;
     }
     applyTimeBTrick();
     setTimeBStatus(`${timeBState.index}種目成功。次は「${TIME_B_TRICKS[timeBState.index]}」です。`);
+  }
+
+  function finishTimeB(elapsed,withoutLaps=false){
+    if(timeBState.finished) return;
+    timeBState.elapsedBefore=elapsed;
+    timeBState.running=false;
+    timeBState.finished=true;
+    timeBState.completedAt=new Date().toISOString();
+    timeBState.lapMode=withoutLaps?"all-at-once":"per-trick";
+    if(withoutLaps) timeBState.laps=[];
+    timeBState.index=TIME_B_TRICKS.length;
+    cancelAnimationFrame(timeBState.raf);
+    btnTimeBStart.disabled=true;
+    btnTimeBPause.disabled=true;
+    btnTimeBSuccess.disabled=true;
+    btnTimeBCompleteAll.disabled=true;
+    timeBCurrentName.innerHTML=readingLabelHTML("全種目クリア");
+    timeBCurrentName.style.color="#356f72";
+    timeBProgress.textContent="10 / 10 完了";
+    timeBNext.hidden=true;
+    renderTimeBLaps();
+    renderTimeBList();
+    const judgedRank=judgeTimeBRank(timeBState.elapsedBefore);
+    setTimeBStatus(
+      `${formatTimeB(timeBState.elapsedBefore)}でクリア。判定：${judgedRank}${withoutLaps?"（ラップ未計測）":""}`,
+      judgedRank==="時間オーバー" ? "ng" : "ok"
+    );
+    runConfetti();
+    vibrate([55,35,75,35,95]);
+    setTimeout(offerTimeBRanking,650);
+  }
+
+  function completeAllTimeB(){
+    if(!timeBState.running || timeBState.finished) return;
+    animateFeedbackButton(btnTimeBCompleteAll,true);
+    finishTimeB(getTimeBElapsed(),true);
   }
 
   function openTimeB(){
@@ -4922,9 +5092,12 @@ const btnResultAIExport=el("btnResultAIExport");
   btnTimeBStart.addEventListener("click",startOrResumeTimeB);
   btnTimeBPause.addEventListener("click",pauseTimeB);
   btnTimeBSuccess.addEventListener("click",successTimeB);
+  btnTimeBCompleteAll.addEventListener("click",completeAllTimeB);
   btnTimeBReset.addEventListener("click",prepareTimeB);
   btnTimeBSendRanking.addEventListener("click",sendTimeBRanking);
   btnTimeBLoadRanking.addEventListener("click",loadTimeBRanking);
+  btnTimeBCopyLaps.addEventListener("click",()=>copyTimeBLaps(false));
+  btnTimeBAICopy.addEventListener("click",()=>copyTimeBLaps(true));
   timeBOverlay.addEventListener("click",e=>{
     if(e.target===timeBOverlay) closeTimeB();
   });
@@ -5257,7 +5430,7 @@ btnResultUndo.addEventListener("click", ()=>{
   }
   writeRankPreference();
   kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
-  console.info("[Kendama Tracker v4.1.9] ready");
+  console.info("[Kendama Tracker v4.2.1] ready");
   syncSettingsForm();
   updateUI();
   applyReadingMode();
