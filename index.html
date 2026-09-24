@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>けん玉認定練習トラッカー v4.2.1 タイム競技B一括終了対応版</title>
+<title>けん玉認定練習トラッカー v4.2.2 iPhone技一覧2列版</title>
 <style>
 :root{--txt:#1f2430;--muted:#5a6475;--line:#cfd6e3;--accent:#7dbb2d;--good:#2aa84a;--bad:#d64545;--radius:18px;--shadow:0 10px 24px rgba(0,0,0,.12);}
 *{box-sizing:border-box}
@@ -610,7 +610,9 @@ button.feedback-failure{
   .timeBSetup,.timeBControls{display:grid;grid-template-columns:1fr}
   .timeBSetup label{display:none}
   .timeBControls button,.timeBSetup select,.timeBSetup button{width:100%}
-  .timeBList{grid-template-columns:1fr}
+  .timeBList{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .timeBList li{min-width:0;padding:8px 6px;font-size:12px;line-height:1.3;overflow-wrap:anywhere}
+  .timeBList .lap{font-size:9.5px;line-height:1.3}
 }
 
 
@@ -1795,7 +1797,7 @@ details{
       <div class="pill">保存：端末内</div>
     </div>
     <div class="appVersionRow">
-      <button class="versionChip" id="btnVersion">v4.2.1</button>
+      <button class="versionChip" id="btnVersion">v4.2.2</button>
       <button class="versionChip" id="btnReadingMode" type="button">ふりがな表示</button>
       <button class="settingsChip" id="btnSettings">⚙ 設定</button>
     </div>
@@ -2092,7 +2094,7 @@ details{
     </div>
     <div id="changelogList"></div>
     <div class="appInfoBox">
-      <strong>Version 4.2.1</strong>
+      <strong>Version 4.2.2</strong>
       <span>公開版：v3.0</span>
     </div>
   </div>
@@ -2110,7 +2112,7 @@ details{
 
 <footer class="appFooter">
   <strong>けん玉認定練習トラッカー</strong>
-  <span>Version 4.2.1</span>
+  <span>Version 4.2.2</span>
   <small>練習の記録は、次の一回を少しだけ強くします。</small>
 </footer>
 <div id="judgeOverlay" aria-hidden="true">
@@ -2186,7 +2188,7 @@ details{
 
   const el = (id)=>document.getElementById(id);
 
-  const APP_VERSION = "4.2.1";
+  const APP_VERSION = "4.2.2";
   const APP_SETTINGS_KEY = "kendama_tracker_app_settings_v28";
   const APP_UPDATE_SEEN_KEY = "kendama_tracker_update_seen";
   const TIME_B_NAME_STORAGE = "kendama_timeb_ranking_name";
@@ -2226,7 +2228,12 @@ details{
   };
 
   const CHANGELOG = [
-    {version:"4.2.1",date:"2026-09-24",current:true,items:[
+    {version:"4.2.2",date:"2026-09-24",current:true,items:[
+      "iPhoneを含むスマホ表示でもタイム競技Bの技一覧を2列に変更",
+      "長い技名は各枠内で折り返し、文字と余白をスマホ向けに調整",
+      "10技を5段で確認でき、一括終了ボタンまでの縦移動を短縮"
+    ]},
+    {version:"4.2.1",date:"2026-09-24",items:[
       "タイム競技Bの技一覧直下へ『全ての技が終了』ボタンを追加",
       "一人での計測向けに、技ごとの操作なしで合計タイムのみ記録可能",
       "一括終了の記録はランキングへ保存し、コピー時にラップ未計測と明記"
@@ -5430,7 +5437,7 @@ btnResultUndo.addEventListener("click", ()=>{
   }
   writeRankPreference();
   kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
-  console.info("[Kendama Tracker v4.2.1] ready");
+  console.info("[Kendama Tracker v4.2.2] ready");
   syncSettingsForm();
   updateUI();
   applyReadingMode();
