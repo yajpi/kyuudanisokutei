@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>けん玉認定練習トラッカー v4.2.2 iPhone技一覧2列版</title>
+<title>けん玉認定練習トラッカー v4.2.4 スリープ防止・タイム競技安定版</title>
 <style>
 :root{--txt:#1f2430;--muted:#5a6475;--line:#cfd6e3;--accent:#7dbb2d;--good:#2aa84a;--bad:#d64545;--radius:18px;--shadow:0 10px 24px rgba(0,0,0,.12);}
 *{box-sizing:border-box}
@@ -548,6 +548,9 @@ button.feedback-failure{
   color:#315d7b;
 }
 .timeBRemaining{margin-top:8px;color:#5a6372}
+.timeBWakeStatus{margin-top:3px;color:#687789;font-size:11px;line-height:1.25}
+.timeBWakeStatus.active{color:#35704b;font-weight:800}
+.timeBWakeStatus.warn{color:#8a5a32}
 .timeBCurrent{
   margin:14px 0;padding:18px;text-align:center;
   border-radius:18px;background:rgba(72,99,130,.055);
@@ -603,8 +606,9 @@ button.feedback-failure{
   background:rgba(184,226,197,.28);
   color:#466950;
 }
-.timeBCompleteAllRow{display:flex;justify-content:center;margin:10px 0 4px}
-.timeBCompleteAllRow button{width:min(100%,420px);min-height:54px;border-radius:16px;font-size:16px;font-weight:900}
+.timeBCompleteAllRow{display:grid;grid-template-columns:minmax(92px,.34fr) minmax(0,1fr);gap:8px;margin:10px 0 4px}
+.timeBCompleteAllRow button{min-height:54px;border-radius:16px;font-size:16px;font-weight:900}
+.timeBCompleteAllRow #btnTimeBStart{min-height:54px;padding:8px 10px;border-radius:16px;font-size:15px;box-shadow:0 6px 14px rgba(31,36,48,.13)}
 @media(max-width:640px){
   .timeBCard{padding:14px;border-radius:19px}
   .timeBSetup,.timeBControls{display:grid;grid-template-columns:1fr}
@@ -645,7 +649,7 @@ button.feedback-failure{
   display:grid;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   grid-template-areas:
-    "start success"
+    "success success"
     "pause reset";
   gap:12px;
   align-items:stretch;
@@ -699,15 +703,30 @@ button.feedback-failure{
   filter:saturate(.45);
 }
 @media(max-width:640px){
+  .timeBOverlay{align-items:flex-start;padding:4px}
+  .timeBCard{max-height:calc(100dvh - 8px);padding:9px;border-radius:16px}
+  .timeBHead .mini{display:none}
+  .timeBHead h2{font-size:18px}
+  .timeBHead button{min-height:34px;padding:6px 10px}
+  .timeBTimerWrap{margin:7px 0 6px}
+  .timeBTimer{font-size:44px}
+  .timeBRemaining{margin-top:3px;font-size:12px}
+  .timeBWakeStatus{font-size:9.5px;margin-top:1px}
+  .timeBCurrent{margin:7px 0;padding:9px 11px;border-radius:14px}
+  .timeBCurrentName{margin:3px 0}
   .timeBControls{
     grid-template-columns:1fr 1fr;
     grid-template-areas:
-      "start start"
       "success success"
       "pause reset";
+    gap:7px;
   }
-  #btnTimeBStart,#btnTimeBSuccess{min-height:88px;font-size:26px}
-  #btnTimeBPause,#btnTimeBReset{min-height:54px;font-size:16px}
+  #btnTimeBSuccess{min-height:88px;font-size:26px}
+  #btnTimeBPause,#btnTimeBReset{min-height:44px;font-size:14px}
+  .timeBStatus{margin-top:7px;padding:7px 9px;font-size:11px}
+  .timeBList{margin-top:6px;gap:4px 6px}
+  .timeBList li{padding:6px 6px;line-height:1.2}
+  .timeBCompleteAllRow{margin-top:7px}
 }
 
 /* v26: タイム競技Bの起動ボタン */
@@ -1797,7 +1816,7 @@ details{
       <div class="pill">保存：端末内</div>
     </div>
     <div class="appVersionRow">
-      <button class="versionChip" id="btnVersion">v4.2.2</button>
+      <button class="versionChip" id="btnVersion">v4.2.4</button>
       <button class="versionChip" id="btnReadingMode" type="button">ふりがな表示</button>
       <button class="settingsChip" id="btnSettings">⚙ 設定</button>
     </div>
@@ -1954,16 +1973,11 @@ details{
       <button class="ghost" id="btnCloseTimeB">閉じる</button>
     </div>
 
-    <div class="timeBCriteria" aria-label="段位判定基準">
-      <div><strong>五段</strong><span>45秒以内</span></div>
-      <div><strong>四段</strong><span>60秒以内</span></div>
-      <div><strong>三段</strong><span>120秒以内</span></div>
-    </div>
-
     <div class="timeBTimerWrap">
       <div class="mini">経過時間</div>
       <div class="timeBTimer" id="timeBTimer">00:00.0</div>
       <div class="timeBRemaining">判定目安：<strong id="timeBRemaining">五段圏内</strong></div>
+      <div class="timeBWakeStatus" id="timeBWakeStatus" aria-live="polite">画面スリープ防止：スタート時に有効</div>
     </div>
 
     <div class="timeBCurrent">
@@ -1974,9 +1988,8 @@ details{
     </div>
 
     <div class="timeBControls">
-      <button class="primary" id="btnTimeBStart">スタート</button>
-      <button class="ghost" id="btnTimeBPause" disabled>一時停止</button>
       <button class="good" id="btnTimeBSuccess" disabled>成功・次の技へ</button>
+      <button class="ghost" id="btnTimeBPause" disabled>一時停止</button>
       <button class="ghost" id="btnTimeBReset">リセット</button>
     </div>
 
@@ -1984,7 +1997,14 @@ details{
 
     <ol class="timeBList" id="timeBList"></ol>
     <div class="timeBCompleteAllRow">
+      <button class="primary" id="btnTimeBStart">スタート</button>
       <button class="good" id="btnTimeBCompleteAll" disabled>全ての技が終了</button>
+    </div>
+
+    <div class="timeBCriteria" aria-label="段位判定基準">
+      <div><strong>五段</strong><span>45秒以内</span></div>
+      <div><strong>四段</strong><span>60秒以内</span></div>
+      <div><strong>三段</strong><span>120秒以内</span></div>
     </div>
 
     <section class="timeBRankingPanel" id="timeBRankingPanel">
@@ -2094,7 +2114,7 @@ details{
     </div>
     <div id="changelogList"></div>
     <div class="appInfoBox">
-      <strong>Version 4.2.2</strong>
+      <strong>Version 4.2.4</strong>
       <span>公開版：v3.0</span>
     </div>
   </div>
@@ -2112,7 +2132,7 @@ details{
 
 <footer class="appFooter">
   <strong>けん玉認定練習トラッカー</strong>
-  <span>Version 4.2.2</span>
+  <span>Version 4.2.4</span>
   <small>練習の記録は、次の一回を少しだけ強くします。</small>
 </footer>
 <div id="judgeOverlay" aria-hidden="true">
@@ -2188,7 +2208,7 @@ details{
 
   const el = (id)=>document.getElementById(id);
 
-  const APP_VERSION = "4.2.2";
+  const APP_VERSION = "4.2.4";
   const APP_SETTINGS_KEY = "kendama_tracker_app_settings_v28";
   const APP_UPDATE_SEEN_KEY = "kendama_tracker_update_seen";
   const TIME_B_NAME_STORAGE = "kendama_timeb_ranking_name";
@@ -2228,7 +2248,17 @@ details{
   };
 
   const CHANGELOG = [
-    {version:"4.2.2",date:"2026-09-24",current:true,items:[
+    {version:"4.2.4",date:"2026-09-25",current:true,items:[
+      "タイム競技Bの計測中は、対応端末で最大10分間の画面スリープを防止",
+      "ストップウォッチを実時刻基準に改め、画面描画が一時停止しても復帰後に正しい経過時間を表示",
+      "技一覧を左列1〜5、右列6〜10の縦順に変更し、iPhoneの一画面配置を追加調整"
+    ]},
+    {version:"4.2.3",date:"2026-09-24",items:[
+      "タイム競技Bのスタートを『全ての技が終了』の隣へ移動し小型化",
+      "段位ごとの制限時間表を主要操作の下へ移動",
+      "iPhoneで時計・現在技・操作・2列技一覧・一括終了が一画面に収まりやすいよう余白を圧縮"
+    ]},
+    {version:"4.2.2",date:"2026-09-24",items:[
       "iPhoneを含むスマホ表示でもタイム競技Bの技一覧を2列に変更",
       "長い技名は各枠内で折り返し、文字と余白をスマホ向けに調整",
       "10技を5段で確認でき、一括終了ボタンまでの縦移動を短縮"
@@ -2650,6 +2680,7 @@ details{
   const btnCloseTimeB = el("btnCloseTimeB");
   const timeBTimer = el("timeBTimer");
   const timeBRemaining = el("timeBRemaining");
+  const timeBWakeStatus = el("timeBWakeStatus");
   const timeBCurrentName = el("timeBCurrentName");
   const timeBNext = el("timeBNext");
   const timeBNextName = el("timeBNextName");
@@ -4673,9 +4704,13 @@ const btnResultAIExport=el("btnResultAIExport");
   const timeBState = {
     index:0,
     running:false,finished:false,
-    elapsedBefore:0,startedPerf:0,raf:0,
+    elapsedBefore:0,startedEpochMs:0,raf:0,clockInterval:0,
     rankingSent:false,laps:[],runStartedAt:null,completedAt:null,lapMode:"per-trick"
   };
+  let timeBWakeLock=null;
+  let timeBWakeCheckTimer=0;
+  let timeBWakeReleaseTimer=0;
+  let timeBWakeUntil=0;
 
 
 
@@ -4914,7 +4949,58 @@ const btnResultAIExport=el("btnResultAIExport");
 
   function getTimeBElapsed(){
     if(!timeBState.running) return timeBState.elapsedBefore;
-    return timeBState.elapsedBefore+(performance.now()-timeBState.startedPerf)/1000;
+    return timeBState.elapsedBefore+Math.max(0,(Date.now()-timeBState.startedEpochMs)/1000);
+  }
+
+  function setTimeBWakeStatus(text,kind=""){
+    if(!timeBWakeStatus) return;
+    timeBWakeStatus.textContent=text;
+    timeBWakeStatus.className="timeBWakeStatus"+(kind?` ${kind}`:"");
+  }
+
+  async function ensureTimeBWakeLock(){
+    if(!timeBWakeUntil || Date.now()>=timeBWakeUntil){
+      stopTimeBWakeLock("画面スリープ防止：10分経過のため解除");
+      return;
+    }
+    if(document.visibilityState!=="visible") return;
+    if(!("wakeLock" in navigator)){
+      setTimeBWakeStatus("画面スリープ防止：この端末では非対応","warn");
+      return;
+    }
+    if(timeBWakeLock && !timeBWakeLock.released) return;
+    try{
+      timeBWakeLock=await navigator.wakeLock.request("screen");
+      setTimeBWakeStatus("画面スリープ防止：有効（最大10分）","active");
+      timeBWakeLock.addEventListener("release",()=>{
+        timeBWakeLock=null;
+        if(timeBWakeUntil>Date.now()) setTimeBWakeStatus("画面スリープ防止：再取得待ち","warn");
+      },{once:true});
+    }catch(e){
+      timeBWakeLock=null;
+      setTimeBWakeStatus("画面スリープ防止：端末の設定で使用できません","warn");
+    }
+  }
+
+  function beginTimeBWakeLock(){
+    if(!timeBWakeUntil || Date.now()>=timeBWakeUntil) timeBWakeUntil=Date.now()+10*60*1000;
+    clearInterval(timeBWakeCheckTimer);
+    clearTimeout(timeBWakeReleaseTimer);
+    ensureTimeBWakeLock();
+    timeBWakeCheckTimer=setInterval(ensureTimeBWakeLock,10000);
+    timeBWakeReleaseTimer=setTimeout(()=>stopTimeBWakeLock("画面スリープ防止：10分経過のため解除"),Math.max(0,timeBWakeUntil-Date.now()));
+  }
+
+  function stopTimeBWakeLock(label="画面スリープ防止：待機中"){
+    clearInterval(timeBWakeCheckTimer);
+    clearTimeout(timeBWakeReleaseTimer);
+    timeBWakeCheckTimer=0;
+    timeBWakeReleaseTimer=0;
+    timeBWakeUntil=0;
+    const lock=timeBWakeLock;
+    timeBWakeLock=null;
+    if(lock && !lock.released) lock.release().catch(()=>{});
+    setTimeBWakeStatus(label);
   }
 
   function setTimeBStatus(text,kind=""){
@@ -4927,6 +5013,8 @@ const btnResultAIExport=el("btnResultAIExport");
     TIME_B_TRICKS.forEach((name,i)=>{
       const li=document.createElement("li");
       li.textContent=name;
+      li.style.gridColumn=i<5?"1":"2";
+      li.style.gridRow=String((i%5)+1);
       const lap=timeBState.laps[i];
       if(lap){
         const lapNode=document.createElement("span");
@@ -4952,7 +5040,7 @@ const btnResultAIExport=el("btnResultAIExport");
     renderTimeBList();
   }
 
-  function updateTimeBClock(){
+  function renderTimeBClock(){
     const elapsed=getTimeBElapsed();
     timeBTimer.textContent=formatTimeB(elapsed);
     timeBRemaining.textContent=currentTimeBGuide(elapsed);
@@ -4961,17 +5049,23 @@ const btnResultAIExport=el("btnResultAIExport");
     else if(elapsed<=60) timeBTimer.style.color="#6a5b92";
     else if(elapsed<=120) timeBTimer.style.color="#8a6b32";
     else timeBTimer.style.color="#8b4f56";
+  }
 
+  function updateTimeBClock(){
+    renderTimeBClock();
     if(timeBState.running) timeBState.raf=requestAnimationFrame(updateTimeBClock);
   }
 
   function prepareTimeB(){
     cancelAnimationFrame(timeBState.raf);
+    clearInterval(timeBState.clockInterval);
+    stopTimeBWakeLock("画面スリープ防止：スタート時に有効");
     timeBState.index=0;
     timeBState.running=false;
     timeBState.finished=false;
     timeBState.elapsedBefore=0;
-    timeBState.startedPerf=0;
+    timeBState.startedEpochMs=0;
+    timeBState.clockInterval=0;
     timeBState.rankingSent=false;
     timeBState.laps=[];
     timeBState.runStartedAt=null;
@@ -4997,7 +5091,7 @@ const btnResultAIExport=el("btnResultAIExport");
     if(timeBState.finished) return;
     if(timeBState.running) return;
     if(!timeBState.runStartedAt) timeBState.runStartedAt=Date.now();
-    timeBState.startedPerf=performance.now();
+    timeBState.startedEpochMs=Date.now();
     timeBState.running=true;
     btnTimeBStart.disabled=true;
     btnTimeBPause.disabled=false;
@@ -5005,6 +5099,9 @@ const btnResultAIExport=el("btnResultAIExport");
     btnTimeBCompleteAll.disabled=false;
     btnTimeBPause.textContent="一時停止";
     setTimeBStatus("計測中です。成功したら「成功・次の技へ」を押してください。");
+    beginTimeBWakeLock();
+    clearInterval(timeBState.clockInterval);
+    timeBState.clockInterval=setInterval(renderTimeBClock,500);
     updateTimeBClock();
   }
 
@@ -5013,13 +5110,15 @@ const btnResultAIExport=el("btnResultAIExport");
       timeBState.elapsedBefore=getTimeBElapsed();
       timeBState.running=false;
       cancelAnimationFrame(timeBState.raf);
+      clearInterval(timeBState.clockInterval);
+      timeBState.clockInterval=0;
       btnTimeBStart.disabled=false;
       btnTimeBStart.textContent="再開";
       btnTimeBPause.disabled=true;
       btnTimeBSuccess.disabled=true;
       btnTimeBCompleteAll.disabled=true;
       setTimeBStatus("一時停止中です。");
-      updateTimeBClock();
+      renderTimeBClock();
     }
   }
 
@@ -5055,6 +5154,9 @@ const btnResultAIExport=el("btnResultAIExport");
     if(withoutLaps) timeBState.laps=[];
     timeBState.index=TIME_B_TRICKS.length;
     cancelAnimationFrame(timeBState.raf);
+    clearInterval(timeBState.clockInterval);
+    timeBState.clockInterval=0;
+    stopTimeBWakeLock("画面スリープ防止：計測完了");
     btnTimeBStart.disabled=true;
     btnTimeBPause.disabled=true;
     btnTimeBSuccess.disabled=true;
@@ -5090,6 +5192,7 @@ const btnResultAIExport=el("btnResultAIExport");
 
   function closeTimeB(){
     if(timeBState.running) pauseTimeB();
+    stopTimeBWakeLock("画面スリープ防止：待機中");
     timeBOverlay.classList.remove("show");
     timeBOverlay.setAttribute("aria-hidden","true");
   }
@@ -5107,6 +5210,12 @@ const btnResultAIExport=el("btnResultAIExport");
   btnTimeBAICopy.addEventListener("click",()=>copyTimeBLaps(true));
   timeBOverlay.addEventListener("click",e=>{
     if(e.target===timeBOverlay) closeTimeB();
+  });
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible"){
+      renderTimeBClock();
+      if(timeBWakeUntil>Date.now()) ensureTimeBWakeLock();
+    }
   });
 
   function setupRankSelector(preferredRank=null){
@@ -5437,7 +5546,7 @@ btnResultUndo.addEventListener("click", ()=>{
   }
   writeRankPreference();
   kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
-  console.info("[Kendama Tracker v4.2.2] ready");
+  console.info("[Kendama Tracker v4.2.4] ready");
   syncSettingsForm();
   updateUI();
   applyReadingMode();
