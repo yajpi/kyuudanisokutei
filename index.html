@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>けん玉認定練習トラッカー v4.2.7 一括終了ボタン右寄せ版</title>
+<title>けん玉認定練習トラッカー v4.2.9 ランキング編集削除対応版</title>
 <style>
 :root{--txt:#1f2430;--muted:#5a6475;--line:#cfd6e3;--accent:#7dbb2d;--good:#2aa84a;--bad:#d64545;--radius:18px;--shadow:0 10px 24px rgba(0,0,0,.12);}
 *{box-sizing:border-box}
@@ -820,7 +820,7 @@ button.timeBLaunch:active{
 .timeBRankingTable details div{margin-top:4px;font-size:11px;white-space:nowrap}
 .timeBRankingForm{
   display:grid;
-  grid-template-columns:1fr 1.5fr auto;
+  grid-template-columns:minmax(0,1fr) auto;
   align-items:end;
   gap:9px;
   margin-top:10px;
@@ -855,7 +855,8 @@ button.timeBLaunch:active{
   z-index:1;
 }
 .timeBRankingTable td:nth-child(1),
-.timeBRankingTable td:nth-child(3){
+.timeBRankingTable td:nth-child(2),
+.timeBRankingTable td:nth-child(4){
   white-space:nowrap;
 }
 .timeBRankingTable .rankNo{
@@ -865,11 +866,25 @@ button.timeBLaunch:active{
 .timeBRankingTable .best3{
   font-size:16px;
 }
+.timeBRankingTable .editCell{white-space:nowrap;text-align:right}
+.timeBRankingTable .editRecordButton{min-height:34px;padding:5px 10px;border-radius:11px;font-size:12px}
+.timeBRankingEditor{
+  margin-top:12px;padding:13px;border-radius:16px;
+  background:#fffaf1;border:1px solid rgba(184,139,83,.25);
+}
+.timeBRankingEditor[hidden]{display:none}
+.timeBRankingEditor h3{margin:0 0 9px;font-size:15px}
+.timeBRankingEditForm{display:grid;grid-template-columns:.7fr 1.2fr 1.4fr;gap:8px}
+.timeBRankingEditForm label{display:grid;gap:4px;font-size:11px;font-weight:800}
+.timeBRankingEditActions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px}
+.timeBRankingEditActions button{min-height:38px;padding:7px 12px;border-radius:12px}
+.timeBRankingEditActions .delete{color:#8a3535;background:#fff1f1;border-color:#dda9a9;margin-right:auto}
 @media(max-width:640px){
   .timeBRankingForm{grid-template-columns:1fr}
   .timeBRankingForm button{width:100%}
   .timeBRankingTable{font-size:12px}
   .timeBRankingTable th,.timeBRankingTable td{padding:8px 6px}
+  .timeBRankingEditForm{grid-template-columns:1fr}
 }
 
 
@@ -1845,7 +1860,7 @@ details{
       <div class="pill">保存：端末内</div>
     </div>
     <div class="appVersionRow">
-      <button class="versionChip" id="btnVersion">v4.2.7</button>
+      <button class="versionChip" id="btnVersion">v4.2.9</button>
       <button class="versionChip" id="btnReadingMode" type="button">ふりがな表示</button>
       <button class="settingsChip" id="btnSettings">⚙ 設定</button>
     </div>
@@ -2051,6 +2066,7 @@ details{
           <strong id="timeBFinalTime">--:--.-</strong>
           <b id="timeBFinalRank">未判定</b>
         </div>
+        <div class="mini" id="timeBPlayDate">プレイ日時：--</div>
         <div class="timeBLapSummary" id="timeBLapSummary"></div>
         <div class="timeBExportActions">
           <button class="ghost" id="btnTimeBCopyLaps">ラップをコピー</button>
@@ -2058,16 +2074,36 @@ details{
         </div>
         <div class="timeBRankingForm">
           <label>
-            表示名
-            <input id="timeBRankingName" maxlength="24" placeholder="例：けん玉太郎">
-          </label>
-          <label>
-            一言メモ
+            一言メモ（任意）
             <input id="timeBRankingMemo" maxlength="60" placeholder="例：はねけんで少し詰まりました">
           </label>
           <button class="primary" id="btnTimeBSendRanking">端末ランキングへ登録</button>
         </div>
         <div class="mini" id="timeBRankingSendStatus"></div>
+      </div>
+
+      <div class="timeBRankingEditor" id="timeBRankingEditor" hidden>
+        <h3>ランキング記録を編集</h3>
+        <div class="timeBRankingEditForm">
+          <label>
+            記録（分:秒）
+            <input id="timeBEditElapsed" inputmode="decimal" placeholder="00:45.2">
+          </label>
+          <label>
+            プレイ日時
+            <input id="timeBEditDate" type="datetime-local">
+          </label>
+          <label>
+            一言メモ（任意）
+            <input id="timeBEditMemo" maxlength="60">
+          </label>
+        </div>
+        <div class="timeBRankingEditActions">
+          <button class="delete" id="btnTimeBDeleteRecord">この記録を削除</button>
+          <button class="ghost" id="btnTimeBCancelEdit">キャンセル</button>
+          <button class="primary" id="btnTimeBSaveEdit">修正を保存</button>
+        </div>
+        <div class="mini" id="timeBRankingEditStatus"></div>
       </div>
 
       <div class="timeBRankingView" id="timeBRankingView">
@@ -2110,10 +2146,6 @@ details{
         <span><strong>段位・級位</strong><small>最後に選んだ段位や級位を記憶します。</small></span>
         <input type="checkbox" id="settingRememberRank">
       </label>
-      <label class="settingSwitch">
-        <span><strong>ランキング表示名</strong><small>タイム競技Bで使った名前を記憶します。</small></span>
-        <input type="checkbox" id="settingRememberTimeBName">
-      </label>
     </div>
 
     <div class="settingsGroup">
@@ -2143,7 +2175,7 @@ details{
     </div>
     <div id="changelogList"></div>
     <div class="appInfoBox">
-      <strong>Version 4.2.7</strong>
+      <strong>Version 4.2.9</strong>
       <span>公開版：v3.0</span>
     </div>
   </div>
@@ -2161,7 +2193,7 @@ details{
 
 <footer class="appFooter">
   <strong>けん玉認定練習トラッカー</strong>
-  <span>Version 4.2.7</span>
+  <span>Version 4.2.9</span>
   <small>練習の記録は、次の一回を少しだけ強くします。</small>
 </footer>
 <div id="judgeOverlay" aria-hidden="true">
@@ -2237,10 +2269,9 @@ details{
 
   const el = (id)=>document.getElementById(id);
 
-  const APP_VERSION = "4.2.7";
+  const APP_VERSION = "4.2.9";
   const APP_SETTINGS_KEY = "kendama_tracker_app_settings_v28";
   const APP_UPDATE_SEEN_KEY = "kendama_tracker_update_seen";
-  const TIME_B_NAME_STORAGE = "kendama_timeb_ranking_name";
   const TIME_B_LOCAL_RANKING_STORAGE = "kendama_timeb_local_ranking_v1";
   const TIME_B_RANKING_COOKIE = "kendama_timeb_ranking_v2";
   const READING_MODE_STORAGE = "kendama_reading_mode_v1";
@@ -2272,12 +2303,21 @@ details{
   const DEFAULT_APP_SETTINGS = {
     rememberMode:true,
     rememberRank:true,
-    rememberTimeBName:true,
     vibration:true
   };
 
   const CHANGELOG = [
-    {version:"4.2.7",date:"2026-09-25",current:true,items:[
+    {version:"4.2.9",date:"2026-09-28",current:true,items:[
+      "ランキング各行に『編集』ボタンを追加",
+      "記録タイム・プレイ日時・任意メモを後から修正可能に変更",
+      "編集欄から誤登録を確認付きで削除できる機能を追加"
+    ]},
+    {version:"4.2.8",date:"2026-09-28",items:[
+      "個人用ランキングの表示名入力と名前列を削除",
+      "一言メモを完全な任意入力とし、未入力でも登録可能に調整",
+      "完走時のプレイ日時を自動保存し、登録欄とランキングに表示"
+    ]},
+    {version:"4.2.7",date:"2026-09-25",items:[
       "『全ての技が終了』を文字幅に合わせたコンパクトな大きさに調整",
       "一括終了ボタンを行の右端に固定",
       "スタートとの中間に空白を確保し、誤操作しにくい配置に変更"
@@ -2740,12 +2780,20 @@ details{
   const timeBRankingEntry = el("timeBRankingEntry");
   const timeBFinalTime = el("timeBFinalTime");
   const timeBFinalRank = el("timeBFinalRank");
+  const timeBPlayDate = el("timeBPlayDate");
   const timeBLapSummary = el("timeBLapSummary");
   const btnTimeBCopyLaps = el("btnTimeBCopyLaps");
   const btnTimeBAICopy = el("btnTimeBAICopy");
-  const timeBRankingName = el("timeBRankingName");
   const timeBRankingMemo = el("timeBRankingMemo");
   const btnTimeBSendRanking = el("btnTimeBSendRanking");
+  const timeBRankingEditor = el("timeBRankingEditor");
+  const timeBEditElapsed = el("timeBEditElapsed");
+  const timeBEditDate = el("timeBEditDate");
+  const timeBEditMemo = el("timeBEditMemo");
+  const btnTimeBDeleteRecord = el("btnTimeBDeleteRecord");
+  const btnTimeBCancelEdit = el("btnTimeBCancelEdit");
+  const btnTimeBSaveEdit = el("btnTimeBSaveEdit");
+  const timeBRankingEditStatus = el("timeBRankingEditStatus");
   const btnTimeBLoadRanking = el("btnTimeBLoadRanking");
   const timeBRankingSendStatus = el("timeBRankingSendStatus");
   const timeBRankingView = el("timeBRankingView");
@@ -2795,7 +2843,6 @@ const btnResultAIExport=el("btnResultAIExport");
   const btnSettingsClose = el("btnSettingsClose");
   const settingRememberMode = el("settingRememberMode");
   const settingRememberRank = el("settingRememberRank");
-  const settingRememberTimeBName = el("settingRememberTimeBName");
   const settingVibration = el("settingVibration");
   const btnSaveAppSettings = el("btnSaveAppSettings");
   const btnResetAppSettings = el("btnResetAppSettings");
@@ -2987,7 +3034,6 @@ const btnResultAIExport=el("btnResultAIExport");
   function syncSettingsForm(){
     settingRememberMode.checked=!!appSettings.rememberMode;
     settingRememberRank.checked=!!appSettings.rememberRank;
-    settingRememberTimeBName.checked=!!appSettings.rememberTimeBName;
     settingVibration.checked=!!appSettings.vibration;
   }
 
@@ -3002,7 +3048,6 @@ const btnResultAIExport=el("btnResultAIExport");
     appSettings={
       rememberMode:settingRememberMode.checked,
       rememberRank:settingRememberRank.checked,
-      rememberTimeBName:settingRememberTimeBName.checked,
       vibration:settingVibration.checked
     };
     persistAppSettings();
@@ -3016,14 +3061,6 @@ const btnResultAIExport=el("btnResultAIExport");
         localStorage.removeItem(PREF_RANK_ONLY);
       }catch(e){}
       document.cookie=`${PREF_COOKIE}=; Max-Age=0; Path=/; SameSite=Lax`;
-    }
-
-
-    if(appSettings.rememberTimeBName){
-      const name=(timeBRankingName?.value||"").trim();
-      if(name) try{ localStorage.setItem(TIME_B_NAME_STORAGE,name); }catch(e){}
-    }else{
-      try{ localStorage.removeItem(TIME_B_NAME_STORAGE); }catch(e){}
     }
 
     appSettingsStatus.textContent="設定を保存しました。";
@@ -4755,6 +4792,7 @@ const btnResultAIExport=el("btnResultAIExport");
   let timeBWakeCheckTimer=0;
   let timeBWakeReleaseTimer=0;
   let timeBWakeUntil=0;
+  let timeBEditingRecordId="";
 
 
 
@@ -4773,7 +4811,6 @@ const btnResultAIExport=el("btnResultAIExport");
       elapsed:Number(timeBState.elapsedBefore.toFixed(1)),
       elapsedText:formatTimeB(timeBState.elapsedBefore),
       judgedRank:judgeTimeBRank(timeBState.elapsedBefore),
-      name:(timeBRankingName.value||"").trim() || "匿名",
       memo:(timeBRankingMemo.value||"").trim(),
       lapMode:timeBState.lapMode,
       laps:timeBState.laps.map(lap=>({...lap}))
@@ -4794,8 +4831,12 @@ const btnResultAIExport=el("btnResultAIExport");
       const compact=rows.slice(0,20).map(r=>({
         recordId:r.recordId,finishedAt:r.finishedAt,finishedAtIso:r.finishedAtIso,
         elapsed:r.elapsed,elapsedText:r.elapsedText,judgedRank:r.judgedRank,
-        name:r.name,memo:r.memo,lapMode:r.lapMode
+        memo:r.memo,lapMode:r.lapMode
       }));
+      if(!compact.length){
+        document.cookie=`${TIME_B_RANKING_COOKIE}=; Max-Age=0; Path=/; SameSite=Lax`;
+        return true;
+      }
       while(compact.length){
         const encoded=encodeURIComponent(JSON.stringify(compact));
         if(encoded.length<=3500){
@@ -4817,8 +4858,9 @@ const btnResultAIExport=el("btnResultAIExport");
     }catch(e){}
     const merged=new Map();
     [...localRows,...readTimeBRankingCookie()].forEach((row,index)=>{
-      const key=row.recordId||`${row.finishedAt||""}_${row.elapsed||0}_${row.name||""}_${index}`;
-      if(!merged.has(key) || (row.laps&&row.laps.length)) merged.set(key,row);
+      const key=row.recordId||`${row.finishedAt||""}_${row.elapsed||0}_${index}`;
+      const normalized={...row,recordId:row.recordId||`legacy_${index}_${Number(row.elapsed||0)}_${row.finishedAtIso||row.finishedAt||""}`};
+      if(!merged.has(key) || (row.laps&&row.laps.length)) merged.set(key,normalized);
     });
     return [...merged.values()].sort((a,b)=>Number(a.elapsed||0)-Number(b.elapsed||0));
   }
@@ -4842,16 +4884,6 @@ const btnResultAIExport=el("btnResultAIExport");
       setTimeBRankingStatus("今回の記録は端末ランキングへ登録済みです。","ok");
       return;
     }
-    const name=(timeBRankingName.value||"").trim();
-    if(!name){
-      timeBRankingName.focus();
-      setTimeBRankingStatus("ランキングに表示する名前を入力してください。","ng");
-      return;
-    }
-    if(appSettings.rememberTimeBName){
-      try{ localStorage.setItem(TIME_B_NAME_STORAGE,name); }catch(e){}
-    }
-
     const rows=readLocalTimeBRanking();
     rows.push(timeBRankingRecord());
     rows.sort((a,b)=>Number(a.elapsed||0)-Number(b.elapsed||0));
@@ -4869,6 +4901,7 @@ const btnResultAIExport=el("btnResultAIExport");
   }
 
   function loadTimeBRanking(){
+    closeTimeBRankingEditor();
     renderTimeBRanking(readLocalTimeBRanking());
   }
 
@@ -4879,35 +4912,120 @@ const btnResultAIExport=el("btnResultAIExport");
       return;
     }
     timeBRankingView.innerHTML=`<table class="timeBRankingTable">
-      <thead><tr><th>順位</th><th>名前</th><th>記録</th><th>判定</th><th>日時</th><th>一言メモ</th></tr></thead>
+      <thead><tr><th>順位</th><th>記録</th><th>判定</th><th>プレイ日時</th><th>一言メモ</th><th></th></tr></thead>
       <tbody>${rows.map((r,i)=>`<tr>
         <td class="rankNo ${i<3?"best3":""}">${i+1}</td>
-        <td>${esc(r.name||"匿名")}</td>
         <td><strong>${esc(r.elapsedText||formatTimeB(Number(r.elapsed)||0))}</strong></td>
         <td>${esc(r.judgedRank||judgeTimeBRank(Number(r.elapsed)||0))}</td>
         <td>${esc(r.finishedAt||r.savedAt||"")}</td>
         <td>${esc(r.memo||"")}${Array.isArray(r.laps)&&r.laps.length?`<details><summary>ラップ</summary>${r.laps.map(l=>`<div>${esc(l.name)}：${esc(formatTimeB(l.elapsed))}（区間 ${esc(formatTimeB(l.split))}）</div>`).join("")}</details>`:(r.lapMode==="all-at-once"?'<div class="mini">ラップ未計測</div>':"")}</td>
+        <td class="editCell"><button class="ghost editRecordButton" data-record-id="${esc(encodeURIComponent(r.recordId))}">編集</button></td>
       </tr>`).join("")}</tbody>
     </table>`;
+  }
+
+  function setTimeBRankingEditStatus(text,kind=""){
+    timeBRankingEditStatus.textContent=text;
+    timeBRankingEditStatus.className="mini"+(kind?` ${kind}`:"");
+  }
+
+  function toDateTimeLocalValue(value){
+    const date=new Date(value||Date.now());
+    if(Number.isNaN(date.getTime())) return "";
+    const local=new Date(date.getTime()-date.getTimezoneOffset()*60000);
+    return local.toISOString().slice(0,16);
+  }
+
+  function parseTimeBEditElapsed(value){
+    const text=String(value||"").trim().replace(/：/g,":");
+    if(!text) return NaN;
+    if(!text.includes(":")) return Number(text);
+    const parts=text.split(":");
+    if(parts.length!==2) return NaN;
+    const mins=Number(parts[0]);
+    const secs=Number(parts[1]);
+    if(!Number.isFinite(mins)||!Number.isFinite(secs)||mins<0||secs<0||secs>=60) return NaN;
+    return mins*60+secs;
+  }
+
+  function openTimeBRankingEditor(recordId){
+    const record=readLocalTimeBRanking().find(row=>row.recordId===recordId);
+    if(!record) return;
+    timeBEditingRecordId=recordId;
+    timeBEditElapsed.value=formatTimeB(Number(record.elapsed)||0);
+    timeBEditDate.value=toDateTimeLocalValue(record.finishedAtIso||record.finishedAt);
+    timeBEditMemo.value=record.memo||"";
+    setTimeBRankingEditStatus("");
+    timeBRankingEditor.hidden=false;
+    timeBRankingEditor.scrollIntoView({behavior:"smooth",block:"nearest"});
+  }
+
+  function closeTimeBRankingEditor(){
+    timeBEditingRecordId="";
+    timeBRankingEditor.hidden=true;
+    setTimeBRankingEditStatus("");
+  }
+
+  function saveTimeBRankingEdit(){
+    if(!timeBEditingRecordId) return;
+    const elapsed=parseTimeBEditElapsed(timeBEditElapsed.value);
+    const finishedDate=new Date(timeBEditDate.value);
+    if(!Number.isFinite(elapsed)||elapsed<=0){
+      setTimeBRankingEditStatus("記録は『00:45.2』の形式、または秒数で入力してください。","ng");
+      return;
+    }
+    if(Number.isNaN(finishedDate.getTime())){
+      setTimeBRankingEditStatus("プレイ日時を入力してください。","ng");
+      return;
+    }
+    const rows=readLocalTimeBRanking();
+    const record=rows.find(row=>row.recordId===timeBEditingRecordId);
+    if(!record) return;
+    const elapsedChanged=Math.abs(Number(record.elapsed||0)-elapsed)>.05;
+    record.elapsed=Number(elapsed.toFixed(1));
+    record.elapsedText=formatTimeB(record.elapsed);
+    record.judgedRank=judgeTimeBRank(record.elapsed);
+    record.finishedAtIso=finishedDate.toISOString();
+    record.finishedAt=finishedDate.toLocaleString("ja-JP");
+    record.memo=(timeBEditMemo.value||"").trim();
+    if(elapsedChanged && Array.isArray(record.laps) && record.laps.length){
+      record.laps=[];
+      record.lapMode="all-at-once";
+    }
+    rows.sort((a,b)=>Number(a.elapsed||0)-Number(b.elapsed||0));
+    if(!writeLocalTimeBRanking(rows)){
+      setTimeBRankingEditStatus("修正を保存できませんでした。","ng");
+      return;
+    }
+    closeTimeBRankingEditor();
+    renderTimeBRanking(rows);
+    setTimeBRankingStatus("ランキング記録を修正しました。","ok");
+  }
+
+  function deleteTimeBRankingRecord(){
+    if(!timeBEditingRecordId) return;
+    if(!window.confirm("このランキング記録を削除しますか？")) return;
+    const rows=readLocalTimeBRanking().filter(row=>row.recordId!==timeBEditingRecordId);
+    if(!writeLocalTimeBRanking(rows)){
+      setTimeBRankingEditStatus("記録を削除できませんでした。","ng");
+      return;
+    }
+    closeTimeBRankingEditor();
+    renderTimeBRanking(rows);
+    setTimeBRankingStatus("ランキング記録を削除しました。","ok");
   }
 
   function offerTimeBRanking(){
     timeBRankingEntry.hidden=false;
     timeBFinalTime.textContent=formatTimeB(timeBState.elapsedBefore);
     timeBFinalRank.textContent=judgeTimeBRank(timeBState.elapsedBefore);
+    const playDate=timeBState.completedAt?new Date(timeBState.completedAt):new Date();
+    timeBPlayDate.textContent=`プレイ日時：${playDate.toLocaleString("ja-JP")}`;
     btnTimeBSendRanking.disabled=false;
     setTimeBRankingStatus("");
-    if(appSettings.rememberTimeBName){
-      try{ timeBRankingName.value=localStorage.getItem(TIME_B_NAME_STORAGE)||""; }catch(e){}
-    }else{
-      timeBRankingName.value="";
-    }
     const send=window.confirm("今回の記録をタイム競技B端末ランキングへ登録しますか？");
     if(send){
-      setTimeout(()=>{
-        if(!timeBRankingName.value) timeBRankingName.focus();
-        else timeBRankingMemo.focus();
-      },80);
+      setTimeout(()=>timeBRankingMemo.focus(),80);
     }else{
       setTimeBRankingStatus("今回は登録しません。後からこの欄で登録できます。");
     }
@@ -5116,6 +5234,7 @@ const btnResultAIExport=el("btnResultAIExport");
     timeBState.completedAt=null;
     timeBState.lapMode="per-trick";
     timeBRankingEntry.hidden=true;
+    closeTimeBRankingEditor();
     timeBRankingMemo.value="";
     if(timeBLapSummary) timeBLapSummary.innerHTML="";
     setTimeBRankingStatus("");
@@ -5250,6 +5369,14 @@ const btnResultAIExport=el("btnResultAIExport");
   btnTimeBReset.addEventListener("click",prepareTimeB);
   btnTimeBSendRanking.addEventListener("click",sendTimeBRanking);
   btnTimeBLoadRanking.addEventListener("click",loadTimeBRanking);
+  btnTimeBSaveEdit.addEventListener("click",saveTimeBRankingEdit);
+  btnTimeBCancelEdit.addEventListener("click",closeTimeBRankingEditor);
+  btnTimeBDeleteRecord.addEventListener("click",deleteTimeBRankingRecord);
+  timeBRankingView.addEventListener("click",e=>{
+    const button=e.target.closest(".editRecordButton");
+    if(!button) return;
+    try{ openTimeBRankingEditor(decodeURIComponent(button.dataset.recordId||"")); }catch(error){}
+  });
   btnTimeBCopyLaps.addEventListener("click",()=>copyTimeBLaps(false));
   btnTimeBAICopy.addEventListener("click",()=>copyTimeBLaps(true));
   timeBOverlay.addEventListener("click",e=>{
@@ -5590,7 +5717,7 @@ btnResultUndo.addEventListener("click", ()=>{
   }
   writeRankPreference();
   kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
-  console.info("[Kendama Tracker v4.2.7] ready");
+  console.info("[Kendama Tracker v4.2.9] ready");
   syncSettingsForm();
   updateUI();
   applyReadingMode();
