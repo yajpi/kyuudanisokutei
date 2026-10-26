@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>けん玉認定練習トラッカー v4.3.3 ランキング分離版</title>
+<title>けん玉認定練習トラッカー v4.4.1 コメント・AI操作上部配置版</title>
 <style>
 :root{--txt:#1f2430;--muted:#5a6475;--line:#cfd6e3;--accent:#7dbb2d;--good:#2aa84a;--bad:#d64545;--radius:18px;--shadow:0 10px 24px rgba(0,0,0,.12);}
 *{box-sizing:border-box}
@@ -997,11 +997,32 @@ button.timeBSoloLaunch:hover{filter:brightness(1.025);transform:translateY(-1px)
 .finalResultStatus{display:inline-block;min-width:44px;padding:3px 7px;border-radius:999px;text-align:center;font-weight:900;}
 .finalResultStatus.ok{color:#17652b;background:rgba(42,168,74,.13);}
 .finalResultStatus.ng{color:#8e2525;background:rgba(214,69,69,.12);}
+.certProgressGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
+.certProgressCard{padding:10px 7px;border-radius:12px;background:#fff;border:1px solid rgba(31,36,48,.09);text-align:center;}
+.certProgressCard span{display:block;font-size:10px;color:var(--muted);font-weight:800;}
+.certProgressCard strong{display:block;margin-top:4px;font-size:17px;font-variant-numeric:tabular-nums;}
+.certProgressCard .up{color:#18834a}.certProgressCard .down{color:#b34848}
+.certProgressNote{margin-top:8px;font-size:11px;color:var(--muted);line-height:1.5;}
+.sessionCommentPanel{margin:14px 0;padding:13px;border-radius:15px;background:#fffaf1;border:1px solid rgba(184,139,83,.25);text-align:left;}
+.sessionCommentPanel label:first-child{display:block;font-size:14px;font-weight:900;margin-bottom:7px;}
+.sessionCommentPanel textarea{box-sizing:border-box;width:100%;min-height:66px;max-height:126px;resize:vertical;padding:10px 11px;border:1px solid #d8c9b7;border-radius:12px;background:#fff;font:inherit;line-height:1.45;}
+.sessionCommentChoice{display:flex;align-items:flex-start;gap:8px;margin-top:8px;font-size:12px;font-weight:800;line-height:1.45;}
+.sessionCommentChoice input{width:18px;height:18px;margin:0;flex:none;}
+.sessionCommentStatus{min-height:1.4em;margin-top:5px;font-size:11px;color:var(--muted);}
+#finalScreen .sessionCommentPanel{margin:9px 0 7px;padding:10px 11px;}
+#finalScreen .sessionCommentPanel label:first-child{font-size:12px;margin-bottom:5px;}
+#finalScreen .sessionCommentPanel textarea{min-height:48px;max-height:84px;padding:8px 9px;font-size:13px;}
+#finalScreen .sessionCommentChoice{margin-top:6px;font-size:10px;}
+#finalScreen .sessionCommentChoice input{width:16px;height:16px;}
+#finalScreen .sessionCommentStatus{font-size:10px;min-height:1.2em;margin-top:3px;}
+#finalScreen .resultExportArea{display:flex;justify-content:flex-end;gap:7px;margin:5px 0 10px;flex-wrap:wrap;}
+#finalScreen .resultExportArea button{width:auto;min-height:34px;padding:6px 10px;border-radius:10px;font-size:11px;}
 @media(max-width:560px){
   .finalResultStats{grid-template-columns:1fr 1fr}
   .finalResultStats div:last-child{grid-column:1/-1}
   .finalResultTable{font-size:12px}
   .finalResultTable th,.finalResultTable td{padding:8px 5px}
+  .certProgressGrid{grid-template-columns:1fr 1fr}
 }
 
 /* v4.0.0: GLOKENけん玉検定のクラスカラー */
@@ -1952,7 +1973,7 @@ details{
       <div class="pill">保存：端末内</div>
     </div>
     <div class="appVersionRow">
-      <button class="versionChip" id="btnVersion">v4.3.3</button>
+      <button class="versionChip" id="btnVersion">v4.4.1</button>
       <button class="versionChip" id="btnReadingMode" type="button">ふりがな表示</button>
       <button class="settingsChip" id="btnSettings">⚙ 設定</button>
     </div>
@@ -2285,7 +2306,7 @@ details{
     </div>
     <div id="changelogList"></div>
     <div class="appInfoBox">
-      <strong>Version 4.3.3</strong>
+      <strong>Version 4.4.1</strong>
       <span>公開版：v3.0</span>
     </div>
   </div>
@@ -2303,7 +2324,7 @@ details{
 
 <footer class="appFooter">
   <strong>けん玉認定練習トラッカー</strong>
-  <span>Version 4.3.3</span>
+  <span>Version 4.4.1</span>
   <small>練習の記録は、次の一回を少しだけ強くします。</small>
 </footer>
 <div id="judgeOverlay" aria-hidden="true">
@@ -2319,6 +2340,16 @@ details{
         <div><span>総成功率</span><strong id="finalSuccessRate">0%</strong></div>
         <div><span>実施日時</span><strong id="finalFinishedAt">--</strong></div>
       </div>
+      <section class="finalResultSection certProgressSection">
+        <h3>上達の記録</h3>
+        <div class="certProgressGrid">
+          <div class="certProgressCard"><span>累計実施</span><strong id="finalHistoryCount">1回</strong></div>
+          <div class="certProgressCard"><span>通算平均</span><strong id="finalLifetimeAverage">0%</strong></div>
+          <div class="certProgressCard"><span>直近20回平均</span><strong id="finalRecentAverage">0%</strong></div>
+          <div class="certProgressCard"><span>初回からの変化</span><strong id="finalProgressDelta">±0pt</strong></div>
+        </div>
+        <div class="certProgressNote" id="finalHistoryNote">同じ検定・モード・級段位ごとに集計します。</div>
+      </section>
       <section class="finalResultSection" id="finalFailedSection">
         <h3>未達だった技</h3>
         <div id="finalFailedList"></div>
@@ -2341,11 +2372,17 @@ details{
         <div id="finalScreenTitle" tabindex="-1">結果</div>
         <div id="finalScreenSub"></div>
       </div>
-      <div id="finalScreenContent"></div>
+      <div class="sessionCommentPanel">
+        <label for="sessionComment">今回の一言コメント（任意）</label>
+        <textarea id="sessionComment" maxlength="160" placeholder="例：後半は膝を使うと安定した。次回はふりけんを重点練習。"></textarea>
+        <label class="sessionCommentChoice"><input type="checkbox" id="includeSessionComment" checked><span>このコメントを記録・結果コピー・AI分析用データに含める</span></label>
+        <div class="sessionCommentStatus" id="sessionCommentStatus">コメントなしでも保存できます。</div>
+      </div>
       <div class="resultExportArea">
-<button class="ghost" id="btnResultExport">📋 結果をコピー</button>
-<button class="aiExportButton" id="btnResultAIExport">🤖 AI分析用データをコピー</button>
+<button class="ghost" id="btnResultExport">📋 結果コピー</button>
+<button class="aiExportButton" id="btnResultAIExport">🤖 AI分析用コピー</button>
 </div>
+      <div id="finalScreenContent"></div>
 <div class="resultBottomActions">
   <button class="ghost" id="btnResultUndo">↩ 直前の記録に戻す</button>
   <button class="primary" id="btnFinalScreenClose">結果を閉じる</button>
@@ -2379,7 +2416,7 @@ details{
 
   const el = (id)=>document.getElementById(id);
 
-  const APP_VERSION = "4.3.3";
+  const APP_VERSION = "4.4.1";
   const APP_SETTINGS_KEY = "kendama_tracker_app_settings_v28";
   const APP_UPDATE_SEEN_KEY = "kendama_tracker_update_seen";
   const TIME_B_LOCAL_RANKING_STORAGE = "kendama_timeb_local_ranking_v1";
@@ -2387,6 +2424,8 @@ details{
   const TIME_B_SOLO_LOCAL_RANKING_STORAGE = "kendama_timeb_solo_local_ranking_v1";
   const TIME_B_SOLO_RANKING_COOKIE = "kendama_timeb_solo_ranking_v1";
   const TIME_B_SOLO_DELAY_STORAGE = "kendama_timeb_solo_delay_v2";
+  const CERT_RECORDS_STORAGE = "kendama_certification_records_v1";
+  const CERT_COOKIE_PREFIX = "kendama_cert_v1_";
   const READING_MODE_STORAGE = "kendama_reading_mode_v1";
   const READING_MODES = ["off","furigana","romaji"];
   const TRICK_READINGS = {
@@ -2420,7 +2459,18 @@ details{
   };
 
   const CHANGELOG = [
-    {version:"4.3.3",date:"2026-10-09",current:true,items:[
+    {version:"4.4.1",date:"2026-10-26",current:true,items:[
+      "リザルトの一言コメント欄を画面上部へ移動",
+      "結果コピーとAI分析用コピーを上部へ移動し小型化",
+      "入力までのスクロールを不要にして記録しやすさを改善"
+    ]},
+    {version:"4.4.0",date:"2026-10-26",items:[
+      "各検定・モード・級段位ごとの累計と直近20回をCookieへ保存",
+      "通算平均・直近20回平均・初回からの変化をリザルトに表示",
+      "任意の一言コメントと、記録・コピーへ含めない選択を追加",
+      "AI分析用データへ上達推移と一言コメントを追加"
+    ]},
+    {version:"4.3.3",date:"2026-10-09",items:[
       "通常のタイム競技Bと一人区間測定のランキングを完全に分離",
       "端末内保存とCookieの保存先も計測方法ごとに分離",
       "ランキング見出しに『タイム競技B』と『一人区間測定』を明記",
@@ -2995,6 +3045,9 @@ details{
   const btnResultUndo = el("btnResultUndo");
 const btnResultExport=el("btnResultExport");
 const btnResultAIExport=el("btnResultAIExport");
+  const sessionComment=el("sessionComment");
+  const includeSessionComment=el("includeSessionComment");
+  const sessionCommentStatus=el("sessionCommentStatus");
 
   const btnVersion = el("btnVersion");
   const btnReadingMode = el("btnReadingMode");
@@ -3058,7 +3111,8 @@ const btnResultAIExport=el("btnResultAIExport");
   const S = {
     mode:"dan", rankKey:"shodan", kyuTable:KYU_TABLE_DEFAULT, tasks:[], focusIdx:0,
     log:[], history:[], sessionId:"", startedAt:null, finishedAt:null,
-    finalShown:false, moshiBest:0
+    finalShown:false, moshiBest:0, sessionComment:"", includeSessionComment:true,
+    certificationRecordId:""
   };
   const practice = {active:false, success:0, failedTaskIndex:-1};
 
@@ -3146,6 +3200,9 @@ const btnResultAIExport=el("btnResultAIExport");
       delete S.cloudSaved;
       if(!S.kyuTable) S.kyuTable = KYU_TABLE_DEFAULT;
       if(!Number.isFinite(S.moshiBest)) S.moshiBest = 0;
+      if(typeof S.sessionComment!=="string") S.sessionComment="";
+      if(typeof S.includeSessionComment!=="boolean") S.includeSessionComment=true;
+      if(typeof S.certificationRecordId!=="string") S.certificationRecordId="";
       return true;
     }catch(e){ return false; }
   }
@@ -3153,6 +3210,8 @@ const btnResultAIExport=el("btnResultAIExport");
     mode:S.mode, rankKey:S.rankKey, kyuTable:S.kyuTable, tasks:S.tasks,
     focusIdx:S.focusIdx, log:S.log, sessionId:S.sessionId, startedAt:S.startedAt,
     finishedAt:S.finishedAt, finalShown:S.finalShown,
+    sessionComment:S.sessionComment, includeSessionComment:S.includeSessionComment,
+    certificationRecordId:S.certificationRecordId,
     moshiBest:S.moshiBest
   })); }
   function pushHistory(){ S.history.push(snapshot()); if(S.history.length>60) S.history.shift(); }
@@ -4158,6 +4217,118 @@ const btnResultAIExport=el("btnResultAIExport");
     return attempts>0?Math.round(successes/attempts*100):0;
   }
 
+  function certificationRecordKey(){
+    return [certTypeForMode(S.mode),S.mode,S.rankKey||"none"].join("|");
+  }
+
+  function certificationCookieName(key=certificationRecordKey()){
+    let hash=2166136261;
+    for(let i=0;i<key.length;i++){
+      hash^=key.charCodeAt(i);
+      hash=Math.imul(hash,16777619);
+    }
+    return `${CERT_COOKIE_PREFIX}${(hash>>>0).toString(36)}`;
+  }
+
+  function readCertificationAggregate(key=certificationRecordKey()){
+    const cookieName=certificationCookieName(key);
+    try{
+      const hit=document.cookie.split("; ").find(row=>row.startsWith(cookieName+"="));
+      if(hit){
+        const value=JSON.parse(decodeURIComponent(hit.slice(cookieName.length+1)));
+        if(value?.key===key) return value;
+      }
+    }catch(e){}
+    try{
+      const value=JSON.parse(localStorage.getItem(`${CERT_COOKIE_PREFIX}fallback_${cookieName}`)||"null");
+      if(value?.key===key) return value;
+    }catch(e){}
+    return {key,count:0,passed:0,rateSum:0,firstRate:null,recent:[]};
+  }
+
+  function writeCertificationAggregate(value){
+    const cookieName=certificationCookieName(value.key);
+    const compact={
+      key:value.key,count:Number(value.count||0),passed:Number(value.passed||0),
+      rateSum:Number(value.rateSum||0),firstRate:value.firstRate==null?null:Number(value.firstRate),
+      recent:(Array.isArray(value.recent)?value.recent:[]).slice(-20)
+    };
+    const encoded=encodeURIComponent(JSON.stringify(compact));
+    try{ document.cookie=`${cookieName}=${encoded}; Max-Age=31536000; Path=/; SameSite=Lax`; }catch(e){}
+    try{ localStorage.setItem(`${CERT_COOKIE_PREFIX}fallback_${cookieName}`,JSON.stringify(compact)); }catch(e){}
+  }
+
+  function includedSessionComment(){
+    return S.includeSessionComment ? String(S.sessionComment||"").trim() : "";
+  }
+
+  function buildCertificationRecord(){
+    const completed=S.tasks.filter(taskPassedByRecord).length;
+    return {
+      id:S.certificationRecordId||`cert_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
+      key:certificationRecordKey(),finishedAt:S.finishedAt||Date.now(),
+      certification:certificationDisplayName(),mode:S.mode,modeName:practiceModeDisplayName(),
+      rankKey:S.rankKey,rankName:rankName(),passed:sessionPassed(),
+      successRate:totalSessionSuccessRate(),completed,total:S.tasks.length,
+      comment:includedSessionComment()
+    };
+  }
+
+  function saveCertificationRecord(){
+    if(!S.tasks.length || !S.finishedAt) return;
+    const record=buildCertificationRecord();
+    S.certificationRecordId=record.id;
+    let records=[];
+    try{ records=JSON.parse(localStorage.getItem(CERT_RECORDS_STORAGE)||"[]"); }catch(e){}
+    if(!Array.isArray(records)) records=[];
+    const existing=records.findIndex(item=>item?.id===record.id);
+    if(existing>=0) records[existing]={...records[existing],...record};
+    else records.push(record);
+    try{ localStorage.setItem(CERT_RECORDS_STORAGE,JSON.stringify(records.slice(-300))); }catch(e){}
+
+    const aggregate=readCertificationAggregate(record.key);
+    const recent=Array.isArray(aggregate.recent)?aggregate.recent:[];
+    const recentIndex=recent.findIndex(item=>item?.id===record.id);
+    // Cookieには上達集計に必要な最小情報だけを保持し、容量超過を防ぐ。
+    // コメントを含む各回の詳細は端末内保存に残す。
+    const compact={id:record.id,at:record.finishedAt,rate:record.successRate,passed:record.passed};
+    if(recentIndex>=0){
+      recent[recentIndex]=compact;
+    }else{
+      aggregate.count=Number(aggregate.count||0)+1;
+      aggregate.passed=Number(aggregate.passed||0)+(record.passed?1:0);
+      aggregate.rateSum=Number(aggregate.rateSum||0)+record.successRate;
+      if(aggregate.firstRate==null) aggregate.firstRate=record.successRate;
+      recent.push(compact);
+    }
+    aggregate.recent=recent.slice(-20);
+    writeCertificationAggregate(aggregate);
+  }
+
+  function certificationProgress(){
+    const data=readCertificationAggregate();
+    const recent=Array.isArray(data.recent)?data.recent:[];
+    const count=Number(data.count||0);
+    const lifetime=count?Number(data.rateSum||0)/count:0;
+    const recentAverage=recent.length?recent.reduce((sum,item)=>sum+Number(item.rate||0),0)/recent.length:0;
+    const delta=data.firstRate==null?0:recentAverage-Number(data.firstRate);
+    return {count,lifetime,recentAverage,delta,recentCount:recent.length,passed:Number(data.passed||0)};
+  }
+
+  function renderCertificationProgress(){
+    const progress=certificationProgress();
+    const set=(id,value)=>{ const node=el(id); if(node) node.textContent=value; };
+    set("finalHistoryCount",`${progress.count}回`);
+    set("finalLifetimeAverage",`${progress.lifetime.toFixed(1)}%`);
+    set("finalRecentAverage",`${progress.recentAverage.toFixed(1)}%`);
+    const deltaNode=el("finalProgressDelta");
+    if(deltaNode){
+      deltaNode.textContent=`${progress.delta>0?"+":progress.delta<0?"":"±"}${progress.delta.toFixed(1)}pt`;
+      deltaNode.className=progress.delta>0?"up":progress.delta<0?"down":"";
+    }
+    set("finalHistoryNote",`同じ「${certificationDisplayName()}・${practiceModeDisplayName()}・${rankName()}」で集計。直近平均は${progress.recentCount}回分、合格・達成は累計${progress.passed}回です。`);
+  }
+
   function renderFinalResult(){
     if(!finalResultPanel) return;
     refreshAllTaskVerdicts();
@@ -4195,6 +4366,7 @@ const btnResultAIExport=el("btnResultAIExport");
         </tr>`;
       }).join("")}</tbody>
     </table>`;
+    renderCertificationProgress();
     finalResultPanel.hidden=false;
   }
 
@@ -4234,6 +4406,9 @@ const btnResultAIExport=el("btnResultAIExport");
         : "未達の種目があります。結果を確認して次の練習につなげましょう。";
     }
     finalScreenContent.innerHTML=finalResultPanel.innerHTML;
+    if(sessionComment) sessionComment.value=S.sessionComment||"";
+    if(includeSessionComment) includeSessionComment.checked=S.includeSessionComment!==false;
+    if(sessionCommentStatus) sessionCommentStatus.textContent=includedSessionComment()?"コメントを記録・コピーに含めます。":"コメントなしでも保存できます。";
     finalScreen.scrollTop=0;
     finalScreen.classList.add("show");
     finalScreen.setAttribute("aria-hidden","false");
@@ -4252,6 +4427,7 @@ const btnResultAIExport=el("btnResultAIExport");
     if(S.finalShown) return;
     S.finishedAt = Date.now();
     S.finalShown = true;
+    saveCertificationRecord();
     showFinalResult();
     save();
   }
@@ -4585,6 +4761,11 @@ const btnResultAIExport=el("btnResultAIExport");
     lines.push(`作成日：${new Date().toLocaleString()}`);
     lines.push(`モード：${mode.value} / 選択：${rankSel.options[rankSel.selectedIndex]?.textContent || "-"}`);
     if(S.mode==="kyu") lines.push(`到達可能：${kyuBest()}`);
+    const progress=certificationProgress();
+    if(progress.count){
+      lines.push(`同条件の累計：${progress.count}回 / 通算平均 ${progress.lifetime.toFixed(1)}% / 直近${progress.recentCount}回平均 ${progress.recentAverage.toFixed(1)}%`);
+    }
+    if(includedSessionComment()) lines.push(`一言コメント：${includedSessionComment()}`);
     lines.push("");
 
     S.tasks.forEach(t=>{
@@ -4777,6 +4958,14 @@ const btnResultAIExport=el("btnResultAIExport");
     lines.push(`最終判定：${S.mode==="repeat10" ? `再現性チェック（規定達成 ${S.tasks.filter(taskPassedByRecord).length}/${S.tasks.length}技）` : (sessionPassed()?"合格":"不合格")}`);
     if(S.startedAt) lines.push(`開始日時：${new Date(S.startedAt).toLocaleString("ja-JP")}`);
     if(S.finishedAt) lines.push(`終了日時：${new Date(S.finishedAt).toLocaleString("ja-JP")}`);
+    const progress=certificationProgress();
+    if(progress.count){
+      lines.push(`同条件の累計実施：${progress.count}回`);
+      lines.push(`同条件の通算平均成功率：${progress.lifetime.toFixed(1)}%`);
+      lines.push(`同条件の直近${progress.recentCount}回平均成功率：${progress.recentAverage.toFixed(1)}%`);
+      lines.push(`初回からの変化：${progress.delta>0?"+":progress.delta<0?"":"±"}${progress.delta.toFixed(1)}ポイント`);
+    }
+    if(includedSessionComment()) lines.push(`今回の一言コメント：${includedSessionComment()}`);
     lines.push("");
 
     lines.push("【今回の特徴（アプリによる簡易集計）】");
@@ -4889,6 +5078,7 @@ const btnResultAIExport=el("btnResultAIExport");
     S.log = [];
     S.history = [];
     S.sessionId=""; S.startedAt=null; S.finishedAt=null; S.finalShown=false;
+    S.sessionComment=""; S.includeSessionComment=true; S.certificationRecordId="";
     if(!S.kyuTable) S.kyuTable = KYU_TABLE_DEFAULT;
     save();
     updateUI();
@@ -5896,6 +6086,9 @@ const btnResultAIExport=el("btnResultAIExport");
     S.startedAt = Date.now();
     S.finishedAt = null;
     S.finalShown = false;
+    S.sessionComment = "";
+    S.includeSessionComment = true;
+    S.certificationRecordId = "";
     addLog("開始", `モード：${S.mode}`, rankSel.options[rankSel.selectedIndex]?.textContent || "");
   }
 
@@ -5981,6 +6174,26 @@ const btnResultAIExport=el("btnResultAIExport");
 
   btnExport.addEventListener("click", exportText);
   btnAIExport.addEventListener("click", exportAIAnalysisText);
+  let sessionCommentSaveTimer=0;
+  function commitSessionComment(){
+    clearTimeout(sessionCommentSaveTimer);
+    S.sessionComment=sessionComment?.value||"";
+    S.includeSessionComment=includeSessionComment?.checked!==false;
+    save();
+    if(S.certificationRecordId) saveCertificationRecord();
+    if(sessionCommentStatus){
+      sessionCommentStatus.textContent=includedSessionComment()
+        ? "コメントを記録・コピーに含めます。"
+        : (S.sessionComment.trim()?"コメントは下書きのまま保持し、記録・コピーには含めません。":"コメントなしでも保存できます。");
+    }
+  }
+  if(sessionComment){
+    sessionComment.addEventListener("input",()=>{
+      clearTimeout(sessionCommentSaveTimer);
+      sessionCommentSaveTimer=setTimeout(commitSessionComment,250);
+    });
+  }
+  if(includeSessionComment) includeSessionComment.addEventListener("change",commitSessionComment);
   btnUndo.addEventListener("click", undo);
   btnReset.addEventListener("click", ()=>{
     const ok = confirm("全リセットいたします。よろしいですか？");
@@ -6088,7 +6301,7 @@ btnResultUndo.addEventListener("click", ()=>{
   }
   writeRankPreference();
   kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
-  console.info("[Kendama Tracker v4.3.3] ready");
+  console.info("[Kendama Tracker v4.4.1] ready");
   syncSettingsForm();
   updateUI();
   applyReadingMode();
