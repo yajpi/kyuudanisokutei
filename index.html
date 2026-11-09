@@ -1,9 +1,10 @@
+```html
 <!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>けん玉認定練習トラッカー v4.4.1 コメント・AI操作上部配置版</title>
+<title>けん玉認定練習トラッカー v4.4.2 残り成功ランプ版</title>
 <style>
 :root{--txt:#1f2430;--muted:#5a6475;--line:#cfd6e3;--accent:#7dbb2d;--good:#2aa84a;--bad:#d64545;--radius:18px;--shadow:0 10px 24px rgba(0,0,0,.12);}
 *{box-sizing:border-box}
@@ -1274,6 +1275,26 @@ button.bad{color:#fff;border-color:#be3f39;background:linear-gradient(180deg,#e8
 .dot{border-color:#d9cec1;background:#eee6dd}
 .dot.s{background:#2e9b61;border-color:#23834f}
 .dot.f{background:#dc514a;border-color:#c7443e}
+.requiredSuccessProgress{
+  display:none;align-items:center;justify-content:center;gap:9px;
+  width:fit-content;max-width:100%;margin:11px auto 5px;padding:8px 12px;
+  border:1px solid #efc65c;border-radius:15px;background:#fff9df;
+  box-sizing:border-box;color:#514536;
+}
+.requiredSuccessProgress.show{display:flex}
+.requiredSuccessLabel{font-size:12px;font-weight:1000;white-space:nowrap}
+.requiredSuccessLamps{display:flex;align-items:center;justify-content:center;gap:6px;min-width:0}
+.requiredSuccessLamp{
+  width:18px;height:18px;flex:0 0 18px;border-radius:50%;
+  border:2px solid #aaa59d;background:#e6e3de;box-shadow:inset 0 1px 2px rgba(0,0,0,.08);
+}
+.requiredSuccessLamp.achieved{
+  border-color:#23834f;background:#35aa68;box-shadow:0 0 0 2px rgba(53,170,104,.12),inset 0 1px 2px rgba(255,255,255,.45);
+}
+.requiredSuccessText{padding-left:9px;border-left:1px solid #ddc77e;font-size:12px;font-weight:1000;white-space:nowrap}
+.requiredSuccessProgress.complete .requiredSuccessText{color:#187743}
+@keyframes requiredLampPop{0%{transform:scale(.72)}60%{transform:scale(1.16)}100%{transform:scale(1)}}
+.requiredSuccessLamp.just-achieved{animation:requiredLampPop .28s ease-out}
 .item{border-color:#eadfd3;background:#fff;border-radius:18px}
 .item.focus{border:2px solid rgba(243,152,0,.7);background:#fff8eb;box-shadow:0 8px 24px rgba(227,137,12,.10)}
 .badge{border-color:#e5dacf;background:#faf6f1}
@@ -1328,7 +1349,7 @@ body.final-screen-open{overflow:hidden}
 .mainJudgeActions{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:12px;
+  gap:22px;
 }
 .mainJudgeActions #btnOk,
 .mainJudgeActions #btnNg{
@@ -1661,6 +1682,11 @@ details{
 @media(max-width:520px){
   #btnOk,#btnNg{min-height:104px !important;font-size:24px !important;}
   #btnNext{width:54% !important;max-width:230px !important;min-height:48px !important;font-size:15px !important;}
+  .mainJudgeActions{gap:18px}
+  .requiredSuccessProgress{gap:7px;padding:7px 9px}
+  .requiredSuccessLamp{width:16px;height:16px;flex-basis:16px}
+  .requiredSuccessLamps{gap:5px}
+  .requiredSuccessLabel,.requiredSuccessText{font-size:11px}
 }
 
 
@@ -1973,7 +1999,7 @@ details{
       <div class="pill">保存：端末内</div>
     </div>
     <div class="appVersionRow">
-      <button class="versionChip" id="btnVersion">v4.4.1</button>
+      <button class="versionChip" id="btnVersion">v4.4.2</button>
       <button class="versionChip" id="btnReadingMode" type="button">ふりがな表示</button>
       <button class="settingsChip" id="btnSettings">⚙ 設定</button>
     </div>
@@ -2019,6 +2045,11 @@ details{
         </div>
         <div id="focusName">開始してください</div>
         <div class="mini" id="focusMeta" style="margin-top:8px;"></div>
+        <div class="requiredSuccessProgress" id="requiredSuccessProgress" role="group" aria-live="polite" aria-label="規定成功数">
+          <span class="requiredSuccessLabel">規定成功</span>
+          <span class="requiredSuccessLamps" id="requiredSuccessLamps"></span>
+          <span class="requiredSuccessText" id="requiredSuccessText"></span>
+        </div>
 
         <div class="resetActionRow">
           <button class="ghost compactUtilityButton" id="btnReset"><span class="utilityLabel"><span class="utilityIcon" aria-hidden="true">🧽</span>リセット</span></button>
@@ -2306,7 +2337,7 @@ details{
     </div>
     <div id="changelogList"></div>
     <div class="appInfoBox">
-      <strong>Version 4.4.1</strong>
+      <strong>Version 4.4.2</strong>
       <span>公開版：v3.0</span>
     </div>
   </div>
@@ -2324,7 +2355,7 @@ details{
 
 <footer class="appFooter">
   <strong>けん玉認定練習トラッカー</strong>
-  <span>Version 4.4.1</span>
+  <span>Version 4.4.2</span>
   <small>練習の記録は、次の一回を少しだけ強くします。</small>
 </footer>
 <div id="judgeOverlay" aria-hidden="true">
@@ -2416,7 +2447,7 @@ details{
 
   const el = (id)=>document.getElementById(id);
 
-  const APP_VERSION = "4.4.1";
+  const APP_VERSION = "4.4.2";
   const APP_SETTINGS_KEY = "kendama_tracker_app_settings_v28";
   const APP_UPDATE_SEEN_KEY = "kendama_tracker_update_seen";
   const TIME_B_LOCAL_RANKING_STORAGE = "kendama_timeb_local_ranking_v1";
@@ -2459,7 +2490,12 @@ details{
   };
 
   const CHANGELOG = [
-    {version:"4.4.1",date:"2026-10-26",current:true,items:[
+    {version:"4.4.2",date:"2026-11-09",current:true,items:[
+      "必要成功数だけ表示する規定成功ランプを追加",
+      "成功するたびにグレーのランプが緑へ変化し、残り成功回数を表示",
+      "成功・失敗ボタンの間隔を広げて押し間違いを軽減"
+    ]},
+    {version:"4.4.1",date:"2026-10-26",items:[
       "リザルトの一言コメント欄を画面上部へ移動",
       "結果コピーとAI分析用コピーを上部へ移動し小型化",
       "入力までのスクロールを不要にして記録しやすさを改善"
@@ -3022,6 +3058,9 @@ details{
   const bestRank = el("bestRank");
   const attemptPosition = el("attemptPosition");
   const dotsRow = el("dotsRow");
+  const requiredSuccessProgress = el("requiredSuccessProgress");
+  const requiredSuccessLamps = el("requiredSuccessLamps");
+  const requiredSuccessText = el("requiredSuccessText");
   const judgeOverlay = document.getElementById("judgeOverlay");
   const judgeBox = document.getElementById("judgeBox");
   const judgeTitle = document.getElementById("judgeTitle");
@@ -3487,6 +3526,31 @@ const btnResultAIExport=el("btnResultAIExport");
 
   function focusTask(){ return S.tasks[S.focusIdx] || null; }
 
+  function renderRequiredSuccess(t){
+    if(!requiredSuccessProgress || !requiredSuccessLamps || !requiredSuccessText) return;
+    const required=t?.type==="count" ? Number(taskRequirement(t)) : 0;
+    if(!t || t.type!=="count" || !Number.isFinite(required) || required<1){
+      requiredSuccessProgress.classList.remove("show","complete");
+      requiredSuccessLamps.innerHTML="";
+      requiredSuccessText.textContent="";
+      return;
+    }
+    const success=Math.max(0,Math.min(required,Number(t.success||0)));
+    const remaining=Math.max(0,required-success);
+    const marks=Array.isArray(t.marks)?t.marks:[];
+    const latestWasSuccess=marks.length>0 && marks[marks.length-1]===1 && t.flashIndex===marks.length-1;
+    requiredSuccessLamps.innerHTML=Array.from({length:required},(_,index)=>{
+      const achieved=index<success;
+      const justAchieved=achieved && latestWasSuccess && index===success-1;
+      const state=achieved?"達成済み":"未達成";
+      return `<span class="requiredSuccessLamp${achieved?" achieved":""}${justAchieved?" just-achieved":""}" aria-label="${index+1}個目：${state}" title="${index+1}個目：${state}"></span>`;
+    }).join("");
+    requiredSuccessProgress.classList.toggle("complete",remaining===0);
+    requiredSuccessProgress.classList.add("show");
+    requiredSuccessText.textContent=remaining===0 ? "✓ 規定達成" : (remaining===1 ? "あと1回" : `残り${remaining}回`);
+    requiredSuccessProgress.setAttribute("aria-label",`規定成功${required}回。${remaining===0?"規定達成":`残り${remaining}回`}`);
+  }
+
   function renderDots(t){
     if(!t || t.type!=="count"){
       attemptPosition.classList.remove("show","complete");
@@ -3670,6 +3734,7 @@ const btnResultAIExport=el("btnResultAIExport");
       focusMeta.textContent="";
       btnOk.disabled=true; btnNg.disabled=true; btnNext.disabled=true;
       setBadge("wait");
+      renderRequiredSuccess(null);
       renderDots(null);
       return;
     }
@@ -3677,6 +3742,7 @@ const btnResultAIExport=el("btnResultAIExport");
     focusName.innerHTML=readingLabelHTML(t.name);
 
     const req = (S.mode==="kyu") ? kyuRequirementFor(t.no) : t.required;
+    renderRequiredSuccess(t);
 
     if(t.type==="count"){
       if(isGlokenMode()){
@@ -6301,7 +6367,7 @@ btnResultUndo.addEventListener("click", ()=>{
   }
   writeRankPreference();
   kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
-  console.info("[Kendama Tracker v4.4.1] ready");
+  console.info("[Kendama Tracker v4.4.2] ready");
   syncSettingsForm();
   updateUI();
   applyReadingMode();
@@ -6313,3 +6379,4 @@ btnResultUndo.addEventListener("click", ()=>{
 
 </body>
 </html>
+```
