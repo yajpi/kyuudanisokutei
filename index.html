@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>けん玉認定練習トラッカー v4.4.3 タイム競技Bブルーボタン版</title>
+<title>けん玉認定練習トラッカー v4.5.3 タイマー初期表示・ボタン配置改善版</title>
 <style>
 :root{--txt:#1f2430;--muted:#5a6475;--line:#cfd6e3;--accent:#7dbb2d;--good:#2aa84a;--bad:#d64545;--radius:18px;--shadow:0 10px 24px rgba(0,0,0,.12);}
 *{box-sizing:border-box}
@@ -518,6 +518,76 @@ button.feedback-failure{
   }
 }
 
+
+/* v4.5.0: CSVから作るタイマー練習 */
+.practiceTimerLaunch{
+  grid-column:1;color:#245e5c!important;
+  background:linear-gradient(180deg,#eaf8f6,#d1eeea)!important;
+  border-color:#91c9c2!important;box-shadow:0 5px 14px rgba(52,118,111,.14)!important;
+  font-weight:900!important;
+}
+.practiceTimerOverlay{
+  position:fixed;inset:0;z-index:10020;display:none;align-items:center;justify-content:center;
+  padding:12px;background:rgba(22,35,38,.56);backdrop-filter:blur(6px);
+}
+.practiceTimerOverlay.show{display:flex}
+.practiceTimerCard{
+  width:min(760px,100%);max-height:calc(100dvh - 24px);overflow:auto;box-sizing:border-box;
+  padding:18px;border:1px solid #a9d4cf;border-radius:24px;background:linear-gradient(180deg,#f8fffe,#f4faf9);
+  box-shadow:0 24px 70px rgba(23,60,57,.28);
+}
+.practiceTimerHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.practiceTimerHead h2{margin:2px 0 0;color:#285f5b}
+.practiceTimerSetup{margin-top:13px;padding:13px;border:1px solid #c9e4e0;border-radius:17px;background:#fff}
+.practiceTimerFormat{margin-bottom:9px;font-size:11px;line-height:1.55;color:#60716f}
+.practiceTimerSetupActions,.practiceTimerControls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.practiceTimerCsv{box-sizing:border-box;width:100%;height:44px;min-height:44px;max-height:80px;margin-top:6px;padding:10px;border-radius:12px;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical;white-space:pre;overflow:auto}
+.practiceTimerSetupActions{margin-top:8px;gap:6px}
+.practiceTimerSetupActions button{min-height:40px;padding:7px 11px}
+.practiceTimerSetupActions .practiceTimerSampleButton{min-height:32px;margin-left:auto;padding:4px 8px;font-size:10px;opacity:.68}
+.practiceTimerSummary{margin-top:9px;padding:9px 11px;border-radius:12px;background:#eef8f6;font-size:12px;font-weight:800;color:#356c67}
+.practiceTimerList{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+.practiceTimerList li{display:grid;grid-template-columns:30px minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:8px 10px;border:1px solid #d7e9e6;border-radius:11px;background:#fff;font-size:12px}
+.practiceTimerList li.current{border-color:#4ca69d;background:#e7f7f4;box-shadow:0 0 0 2px rgba(76,166,157,.10)}
+.practiceTimerList li.done{opacity:.65;background:#edf3f2}
+.practiceTimerList .menuNo{font-weight:900;color:#54817d}.practiceTimerList .menuTime{font-weight:900;white-space:nowrap}
+.practiceTimerList .menuNote{grid-column:2/-1;color:#6b7775;font-size:10px;overflow-wrap:anywhere}
+.practiceTimerList .menuRemove{min-height:30px;padding:3px 8px;border-radius:9px;color:#8b4545;background:#fff2f2;border-color:#dfb5b5;font-size:11px}
+.practiceTimerManual{margin-top:13px;padding:12px;border-top:1px dashed #bcd8d4;background:#f7fcfb;border-radius:12px}
+.practiceTimerManual h3{margin:0 0 4px;font-size:14px;color:#356c67}
+.practiceTimerManualGrid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(88px,.55fr) minmax(0,1.4fr) auto;gap:7px;align-items:end;margin-top:8px}
+.practiceTimerManualGrid label{display:grid;gap:4px;font-size:10px}
+.practiceTimerManualGrid input{width:100%;min-width:0;box-sizing:border-box;min-height:40px;padding:7px 8px}
+.practiceTimerManualGrid button{min-height:40px;padding:7px 11px;white-space:nowrap}
+.practiceTimerManualStatus{min-height:1.4em;margin-top:6px;font-size:10px;color:#657572}
+.practiceTimerRun{margin-top:13px;padding:14px;border:1px solid #b9ddd8;border-radius:18px;background:#fff;text-align:center}
+.practiceTimerRun[hidden]{display:none}
+.practiceTimerTotal{font-size:12px;color:#687977}.practiceTimerTotal strong{font-variant-numeric:tabular-nums}
+.practiceTimerCurrent{margin-top:8px;font-size:clamp(28px,7vw,46px);font-weight:1000;color:#285f5b;line-height:1.15;overflow-wrap:anywhere}
+.practiceTimerNote{min-height:1.5em;margin-top:6px;color:#647371;font-size:12px;line-height:1.4}
+.practiceTimerClock{margin:13px 0 5px;font-size:clamp(54px,14vw,94px);font-weight:1000;font-variant-numeric:tabular-nums;line-height:1;color:#244f64}
+.practiceTimerNext{font-size:12px;color:#697675;min-height:1.5em}
+.practiceTimerProgress{margin-top:5px;font-size:11px;font-weight:900;color:#4f7874}
+.practiceTimerControls{justify-content:center;margin-top:13px}
+.practiceTimerControls button{min-height:48px;border-radius:14px;padding:8px 14px;font-weight:900}
+#btnPracticeTimerToggle{min-width:132px;color:#fff;background:linear-gradient(180deg,#48aa80,#318a66);border-color:#287758}
+#btnPracticeTimerNext{color:#285d79;background:#edf7ff;border-color:#a9cce1}
+.practiceTimerStatus{margin-top:9px;min-height:1.5em;font-size:11px;color:#62716f}
+.practiceTimerStatus.ok{color:#247149;font-weight:900}.practiceTimerStatus.warn{color:#925629;font-weight:800}
+@media(max-width:640px){
+  .practiceTimerOverlay{align-items:flex-start;padding:4px}
+  .practiceTimerCard{max-height:calc(100dvh - 8px);padding:11px;border-radius:17px}
+  .practiceTimerHead h2{font-size:19px}
+  .practiceTimerSetup{padding:10px}
+  .practiceTimerCsv{height:42px;min-height:42px}
+  .practiceTimerManualGrid{grid-template-columns:1fr 92px}
+  .practiceTimerManualGrid .manualNote{grid-column:1/-1}
+  .practiceTimerManualGrid button{grid-column:1/-1;width:100%}
+  .practiceTimerRun{padding:11px}
+  .practiceTimerClock{margin-top:9px}
+  .practiceTimerControls{display:grid;grid-template-columns:1fr 1fr}
+  .practiceTimerControls #btnPracticeTimerToggle{grid-column:1/-1;width:100%}
+}
 
 /* v26: タイム競技B */
 .timeBOverlay{
@@ -1123,7 +1193,8 @@ body[data-gloken-class] .dot.current{
 }
 .selectorActions #btnStart,
 .selectorActions .timeBLaunch,
-.selectorActions .timeBSoloLaunch{
+.selectorActions .timeBSoloLaunch,
+.selectorActions .practiceTimerLaunch{
   width:100%;
   min-height:40px;
   height:40px;
@@ -1131,6 +1202,10 @@ body[data-gloken-class] .dot.current{
   font-size:13px;
 }
 .selectorActions .timeBSoloLaunch{font-size:11px;padding-inline:5px;line-height:1.15}
+.selectorActions #btnStart{grid-column:1;grid-row:1}
+.selectorActions .timeBLaunch{grid-column:2;grid-row:1}
+.selectorActions .practiceTimerLaunch{grid-column:1;grid-row:2;font-size:11px;padding-inline:5px;line-height:1.15}
+.selectorActions .timeBSoloLaunch{grid-column:2;grid-row:2}
 @media(max-width:390px){
   .setupSelectors{gap:5px !important}
   .selectorField label{font-size:9px}
@@ -1998,7 +2073,7 @@ details{
       <div class="pill">保存：端末内</div>
     </div>
     <div class="appVersionRow">
-      <button class="versionChip" id="btnVersion">v4.4.3</button>
+      <button class="versionChip" id="btnVersion">v4.5.3</button>
       <button class="versionChip" id="btnReadingMode" type="button">ふりがな表示</button>
       <button class="settingsChip" id="btnSettings">⚙ 設定</button>
     </div>
@@ -2028,6 +2103,7 @@ details{
           <button class="primary" id="btnStart">開始</button>
           <button class="timeBLaunch" id="btnOpenTimeB">タイム競技B</button>
           <button class="timeBSoloLaunch" id="btnOpenTimeBSolo">一人区間測定用タイム競技B</button>
+          <button class="practiceTimerLaunch" id="btnOpenPracticeTimer">タイマー練習（CSV読込）</button>
         </div>
       </div>
     </div>
@@ -2274,6 +2350,60 @@ details{
   </section>
 </div>
 
+<div class="practiceTimerOverlay" id="practiceTimerOverlay" aria-hidden="true">
+  <section class="practiceTimerCard" role="dialog" aria-modal="true" aria-labelledby="practiceTimerTitle">
+    <div class="practiceTimerHead">
+      <div>
+        <div class="mini">CSVから毎回メニューを作成</div>
+        <h2 id="practiceTimerTitle">タイマー練習</h2>
+      </div>
+      <button class="ghost" id="btnClosePracticeTimer">閉じる</button>
+    </div>
+
+    <div class="practiceTimerSetup" id="practiceTimerSetup">
+      <div class="practiceTimerFormat">
+        必須列：<strong>技名,時間</strong>　任意列：<strong>注意点</strong><br>
+        時間は秒数、<code>3分</code>、<code>1:30</code>のいずれでも読み込めます。コピーしたCSV全体を下の1行欄へ貼り付けてください。
+      </div>
+      <textarea class="practiceTimerCsv" id="practiceTimerCsv" rows="1" spellcheck="false" autocomplete="off" aria-label="CSV貼り付け欄" placeholder="ここへCSVを貼り付け：技名,時間,注意点"></textarea>
+      <div class="practiceTimerSetupActions">
+        <button class="primary" id="btnPracticeTimerLoad">メニューを読み込む</button>
+        <button class="good" id="btnPracticeTimerBegin" disabled>このメニューで練習開始</button>
+        <button class="ghost practiceTimerSampleButton" id="btnPracticeTimerSample">見本を入力</button>
+      </div>
+      <div class="practiceTimerSummary" id="practiceTimerSummary">CSVを読み込むと、技数と合計時間を表示します。</div>
+      <ol class="practiceTimerList" id="practiceTimerList"></ol>
+      <section class="practiceTimerManual">
+        <h3>CSVがない場合：技を直接追加</h3>
+        <div class="mini">技名と時間を入力して「メニューに追加」を押してください。複数の技を順番に追加できます。</div>
+        <div class="practiceTimerManualGrid">
+          <label>練習したい技<input id="practiceTimerManualName" maxlength="80" placeholder="例：宇宙一周"></label>
+          <label>時間<input id="practiceTimerManualTime" maxlength="20" inputmode="text" placeholder="例：3分"></label>
+          <label class="manualNote">注意点（任意）<input id="practiceTimerManualNote" maxlength="160" placeholder="例：玉を高く上げすぎない"></label>
+          <button class="good" id="btnPracticeTimerManualAdd">メニューに追加</button>
+        </div>
+        <div class="practiceTimerManualStatus" id="practiceTimerManualStatus"></div>
+      </section>
+    </div>
+
+    <div class="practiceTimerRun" id="practiceTimerRun" hidden>
+      <div class="practiceTimerTotal">全体残り <strong id="practiceTimerTotalRemaining">00:00</strong></div>
+      <div class="practiceTimerCurrent" id="practiceTimerCurrent">技名</div>
+      <div class="practiceTimerNote" id="practiceTimerNote"></div>
+      <div class="practiceTimerClock" id="practiceTimerClock">00:00</div>
+      <div class="practiceTimerNext" id="practiceTimerNext"></div>
+      <div class="practiceTimerProgress" id="practiceTimerProgress">1 / 1</div>
+      <div class="practiceTimerControls">
+        <button id="btnPracticeTimerToggle">スタート</button>
+        <button id="btnPracticeTimerNext">次の技へ</button>
+        <button class="ghost" id="btnPracticeTimerReset">最初から</button>
+        <button class="ghost" id="btnPracticeTimerEdit">メニュー編集</button>
+      </div>
+      <div class="practiceTimerStatus" id="practiceTimerStatus">スタートを押すと練習を開始します。</div>
+    </div>
+  </section>
+</div>
+
 <canvas id="celebrationCanvas" aria-hidden="true"></canvas>
 <div id="rainCloudEffect" aria-hidden="true">
   <div class="rainCloudBody"></div>
@@ -2336,7 +2466,7 @@ details{
     </div>
     <div id="changelogList"></div>
     <div class="appInfoBox">
-      <strong>Version 4.4.3</strong>
+      <strong>Version 4.5.3</strong>
       <span>公開版：v3.0</span>
     </div>
   </div>
@@ -2354,7 +2484,7 @@ details{
 
 <footer class="appFooter">
   <strong>けん玉認定練習トラッカー</strong>
-  <span>Version 4.4.3</span>
+  <span>Version 4.5.3</span>
   <small>練習の記録は、次の一回を少しだけ強くします。</small>
 </footer>
 <div id="judgeOverlay" aria-hidden="true">
@@ -2446,7 +2576,7 @@ details{
 
   const el = (id)=>document.getElementById(id);
 
-  const APP_VERSION = "4.4.3";
+  const APP_VERSION = "4.5.3";
   const APP_SETTINGS_KEY = "kendama_tracker_app_settings_v28";
   const APP_UPDATE_SEEN_KEY = "kendama_tracker_update_seen";
   const TIME_B_LOCAL_RANKING_STORAGE = "kendama_timeb_local_ranking_v1";
@@ -2456,6 +2586,7 @@ details{
   const TIME_B_SOLO_DELAY_STORAGE = "kendama_timeb_solo_delay_v2";
   const CERT_RECORDS_STORAGE = "kendama_certification_records_v1";
   const CERT_COOKIE_PREFIX = "kendama_cert_v1_";
+  const PRACTICE_TIMER_STORAGE = "kendama_practice_timer_menu_v1";
   const READING_MODE_STORAGE = "kendama_reading_mode_v1";
   const READING_MODES = ["off","furigana","romaji"];
   const TRICK_READINGS = {
@@ -2474,7 +2605,7 @@ details{
     "ヨーロッパ一周":["よーろっぱいっしゅう","yoroppa isshu"],"うぐいす～けん":["うぐいす から けん","uguisu to ken"]
   };
   const BUTTON_READINGS = {
-    btnStart:["かいし","kaishi"],btnOpenTimeB:["たいむきょうぎ びー","time kyogi B"],btnOpenTimeBSolo:["ひとりくかんそくていようたいむきょうぎ びー","solo split time competition B"],btnExport:["けっかをこぴー","copy result"],btnAIExport:["えーあいぶんせきようでーたをこぴー","copy data for AI analysis"],btnUndo:["もどす","modosu"],btnReset:["りせっと","reset"],
+    btnStart:["かいし","kaishi"],btnOpenTimeB:["たいむきょうぎ びー","time kyogi B"],btnOpenTimeBSolo:["ひとりくかんそくていようたいむきょうぎ びー","solo split time competition B"],btnOpenPracticeTimer:["たいまーれんしゅう","timer practice"],btnExport:["けっかをこぴー","copy result"],btnAIExport:["えーあいぶんせきようでーたをこぴー","copy data for AI analysis"],btnUndo:["もどす","modosu"],btnReset:["りせっと","reset"],
     btnOk:["せいこう","seiko"],btnNg:["しっぱい","shippai"],btnNext:["すきっぷ・のこりをすべてしっぱいとしてきろく","skip / record remaining as failures"],btnTime:["きろく","kiroku"],btnFree:["とうろく","toroku"],
     btnMoshiRecord:["きろく","kiroku"],btnMoshiPassed:["できた","dekita"],btnMoshiFailed:["できなかった","dekinakatta"],
     btnTimeBStart:["すたーと","start"],btnTimeBPause:["いちじていし","pause"],btnTimeBSuccess:["せいこう・つぎのわざへ","success / next"],btnTimeBReset:["りせっと","reset"],
@@ -2489,7 +2620,28 @@ details{
   };
 
   const CHANGELOG = [
-    {version:"4.4.3",date:"2026-11-09",current:true,items:[
+    {version:"4.5.3",date:"2026-11-13",current:true,items:[
+      "タイマー練習を開いた際に以前のCSVを自動入力しない空欄開始へ変更",
+      "メニュー読込と練習開始を左側へ詰め、見本ボタンを右端へ小型配置",
+      "開始ボタンの文言を『このメニューで練習開始』へ変更"
+    ]},
+    {version:"4.5.2",date:"2026-11-13",items:[
+      "タイマー練習のCSVファイル選択を廃止し、貼り付け欄を1行相当に小型化",
+      "CSVがない場合に技名・時間・注意点を直接入力できる手動追加欄を追加",
+      "手動で複数技を追加し、一覧から個別削除できるよう改善"
+    ]},
+    {version:"4.5.1",date:"2026-11-13",items:[
+      "タイマー練習ボタンを一人区間測定用タイム競技Bの横へ小型配置",
+      "段位・GLOKENクラス級を練習モードごとに記憶して復元",
+      "旧バージョンで保存した選択設定をモード別記憶へ引き継ぎ"
+    ]},
+    {version:"4.5.0",date:"2026-11-13",items:[
+      "CSVから複数技と練習時間を読み込むタイマー練習モードを追加",
+      "技名・時間・任意の注意点を読み込み、終了時に次の技へ自動切替",
+      "一時停止・次の技・最初から・メニュー編集と画面点灯維持に対応",
+      "CSVファイル選択とテキスト貼り付けの両方に対応"
+    ]},
+    {version:"4.4.3",date:"2026-11-09",items:[
       "最初の画面のタイム競技Bボタンをオレンジから落ち着いた青へ変更",
       "開始ボタンや判定ボタンと色で区別しやすく改善"
     ]},
@@ -2993,6 +3145,33 @@ details{
   const btnStart = el("btnStart");
   const btnOpenTimeB = el("btnOpenTimeB");
   const btnOpenTimeBSolo = el("btnOpenTimeBSolo");
+  const btnOpenPracticeTimer = el("btnOpenPracticeTimer");
+  const practiceTimerOverlay = el("practiceTimerOverlay");
+  const btnClosePracticeTimer = el("btnClosePracticeTimer");
+  const practiceTimerSetup = el("practiceTimerSetup");
+  const practiceTimerCsv = el("practiceTimerCsv");
+  const btnPracticeTimerSample = el("btnPracticeTimerSample");
+  const btnPracticeTimerLoad = el("btnPracticeTimerLoad");
+  const btnPracticeTimerBegin = el("btnPracticeTimerBegin");
+  const practiceTimerSummary = el("practiceTimerSummary");
+  const practiceTimerList = el("practiceTimerList");
+  const practiceTimerManualName = el("practiceTimerManualName");
+  const practiceTimerManualTime = el("practiceTimerManualTime");
+  const practiceTimerManualNote = el("practiceTimerManualNote");
+  const btnPracticeTimerManualAdd = el("btnPracticeTimerManualAdd");
+  const practiceTimerManualStatus = el("practiceTimerManualStatus");
+  const practiceTimerRun = el("practiceTimerRun");
+  const practiceTimerTotalRemaining = el("practiceTimerTotalRemaining");
+  const practiceTimerCurrent = el("practiceTimerCurrent");
+  const practiceTimerNote = el("practiceTimerNote");
+  const practiceTimerClock = el("practiceTimerClock");
+  const practiceTimerNext = el("practiceTimerNext");
+  const practiceTimerProgress = el("practiceTimerProgress");
+  const btnPracticeTimerToggle = el("btnPracticeTimerToggle");
+  const btnPracticeTimerNext = el("btnPracticeTimerNext");
+  const btnPracticeTimerReset = el("btnPracticeTimerReset");
+  const btnPracticeTimerEdit = el("btnPracticeTimerEdit");
+  const practiceTimerStatus = el("practiceTimerStatus");
   const timeBOverlay = el("timeBOverlay");
   const timeBCard = el("timeBCard");
   const timeBTitle = el("timeBTitle");
@@ -3176,9 +3355,15 @@ const btnResultAIExport=el("btnResultAIExport");
     if(!appSettings.rememberMode && !appSettings.rememberRank) return;
     let old={};
     try{ old=JSON.parse(localStorage.getItem(PREF_FALLBACK)||"{}"); }catch(e){}
+    const currentMode=mode.value||"dan";
+    const rankByMode=(old.rankByMode && typeof old.rankByMode==="object") ? {...old.rankByMode} : {};
+    // 旧バージョンの単一選択も、対応するモード別記憶へ移行する。
+    if(old.mode && old.rankKey && !rankByMode[old.mode]) rankByMode[old.mode]=old.rankKey;
+    if(appSettings.rememberRank && rankSel.value) rankByMode[currentMode]=rankSel.value;
     const pref={
-      mode:appSettings.rememberMode ? (mode.value||"dan") : (old.mode||"dan"),
-      rankKey:appSettings.rememberRank ? (rankSel.value||"shodan") : (old.rankKey||"shodan")
+      mode:appSettings.rememberMode ? currentMode : (old.mode||"dan"),
+      rankKey:appSettings.rememberRank ? (rankSel.value||rankByMode[currentMode]||"shodan") : (old.rankKey||"shodan"),
+      rankByMode
     };
     try{
       localStorage.setItem(PREF_FALLBACK,JSON.stringify(pref));
@@ -3211,8 +3396,15 @@ const btnResultAIExport=el("btnResultAIExport");
     if(!pref) return null;
     return {
       mode:appSettings.rememberMode ? pref.mode : "dan",
-      rankKey:appSettings.rememberRank ? pref.rankKey : "shodan"
+      rankKey:appSettings.rememberRank ? pref.rankKey : "shodan",
+      rankByMode:appSettings.rememberRank && pref.rankByMode && typeof pref.rankByMode==="object" ? pref.rankByMode : {}
     };
+  }
+
+  function rememberedRankForMode(modeKey){
+    if(!appSettings.rememberRank) return null;
+    const pref=readRankPreference();
+    return pref?.rankByMode?.[modeKey] || (pref?.mode===modeKey ? pref.rankKey : null);
   }
 
   function applyRankPreference(){
@@ -3221,9 +3413,10 @@ const btnResultAIExport=el("btnResultAIExport");
     if(Object.values(PRACTICE_MODE_GROUPS).flat().some(([value])=>value===pref.mode)){
       certType.value=certTypeForMode(pref.mode);
       populatePracticeModes(certType.value,pref.mode);
-      setupRankSelector(pref.rankKey);
-      if([...rankSel.options].some(o=>o.value===pref.rankKey)){
-        rankSel.value = pref.rankKey;
+      const preferredRank=pref.rankByMode?.[pref.mode]||pref.rankKey;
+      setupRankSelector(preferredRank);
+      if([...rankSel.options].some(o=>o.value===preferredRank)){
+        rankSel.value = preferredRank;
       }
       return true;
     }
@@ -5178,6 +5371,282 @@ const btnResultAIExport=el("btnResultAIExport");
     focusName.style.textShadow="0 1px 0 rgba(255,255,255,.55)";
   }
 
+  const practiceTimerState={
+    menu:[],index:0,running:false,finished:false,prepared:false,
+    segmentRemaining:0,totalRemaining:0,lastTick:0,raf:0,wakeLock:null,audio:null
+  };
+
+  function parseCsvRows(text){
+    const rows=[];let row=[],field="",quoted=false;
+    const source=String(text||"").replace(/^\uFEFF/,"");
+    for(let i=0;i<source.length;i++){
+      const ch=source[i];
+      if(quoted){
+        if(ch==='"' && source[i+1]==='"'){field+='"';i++;}
+        else if(ch==='"') quoted=false;
+        else field+=ch;
+      }else if(ch==='"') quoted=true;
+      else if(ch===","){row.push(field.trim());field="";}
+      else if(ch==="\n"){
+        row.push(field.trim());field="";
+        if(row.some(value=>value!=="")) rows.push(row);
+        row=[];
+      }else if(ch!=="\r") field+=ch;
+    }
+    row.push(field.trim());
+    if(row.some(value=>value!=="")) rows.push(row);
+    if(quoted) throw new Error("CSVの引用符が閉じられていません。");
+    return rows;
+  }
+
+  function parsePracticeDuration(value){
+    const text=String(value||"").trim().replace(/\s+/g,"");
+    if(!text) return NaN;
+    if(/^\d+(?:\.\d+)?$/.test(text)) return Number(text);
+    const clock=text.match(/^(\d+):(\d{1,2})$/);
+    if(clock) return Number(clock[1])*60+Number(clock[2]);
+    const jp=text.match(/^(?:(\d+(?:\.\d+)?)分)?(?:(\d+(?:\.\d+)?)秒)?$/);
+    if(jp && (jp[1]||jp[2])) return Number(jp[1]||0)*60+Number(jp[2]||0);
+    const short=text.match(/^(?:(\d+(?:\.\d+)?)m)?(?:(\d+(?:\.\d+)?)s)?$/i);
+    if(short && (short[1]||short[2])) return Number(short[1]||0)*60+Number(short[2]||0);
+    return NaN;
+  }
+
+  function buildPracticeTimerMenu(csvText){
+    const rows=parseCsvRows(csvText);
+    if(rows.length<2) throw new Error("見出し行と、1件以上の練習メニューが必要です。");
+    const headers=rows[0].map(value=>value.trim().toLowerCase());
+    const findHeader=(names)=>headers.findIndex(header=>names.includes(header));
+    const nameIndex=findHeader(["技名","技","種目","name","trick"]);
+    const timeIndex=findHeader(["時間","秒","練習時間","time","seconds"]);
+    const noteIndex=findHeader(["注意点","メモ","ポイント","note","notes"]);
+    if(nameIndex<0 || timeIndex<0) throw new Error("見出しに「技名」と「時間」を入れてください。");
+    const menu=[];
+    rows.slice(1).forEach((row,rowIndex)=>{
+      const name=String(row[nameIndex]||"").trim();
+      const seconds=parsePracticeDuration(row[timeIndex]);
+      if(!name && !row[timeIndex]) return;
+      if(!name) throw new Error(`${rowIndex+2}行目の技名が空です。`);
+      if(!Number.isFinite(seconds) || seconds<=0) throw new Error(`${rowIndex+2}行目の時間を読み取れません。`);
+      if(seconds>7200) throw new Error(`${rowIndex+2}行目の時間は120分以内にしてください。`);
+      menu.push({name:name.slice(0,80),seconds:Math.round(seconds),note:noteIndex>=0?String(row[noteIndex]||"").trim().slice(0,160):""});
+    });
+    if(!menu.length) throw new Error("有効な練習メニューがありません。");
+    if(menu.length>50) throw new Error("一度に読み込める技は50件までです。");
+    const total=menu.reduce((sum,item)=>sum+item.seconds,0);
+    if(total>4*60*60) throw new Error("合計時間は4時間以内にしてください。");
+    return menu;
+  }
+
+  function formatPracticeTime(seconds){
+    const value=Math.max(0,Math.ceil(Number(seconds)||0));
+    const hours=Math.floor(value/3600),minutes=Math.floor(value%3600/60),secs=value%60;
+    if(hours) return `${hours}:${String(minutes).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
+    return `${String(minutes).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
+  }
+
+  function practiceTimerMenuToCsv(menu){
+    const cell=value=>{
+      const text=String(value??"");
+      return /[",\r\n]/.test(text)?`"${text.replaceAll('"','""')}"`:text;
+    };
+    return ["技名,時間,注意点",...menu.map(item=>[cell(item.name),cell(item.seconds),cell(item.note||"")].join(","))].join("\n");
+  }
+
+  function applyPracticeTimerMenu(menu,rawText=null){
+    practiceTimerState.menu=menu;
+    practiceTimerState.prepared=false;
+    const total=menu.reduce((sum,item)=>sum+item.seconds,0);
+    practiceTimerSummary.textContent=menu.length
+      ? `${menu.length}技・合計 ${formatPracticeTime(total)} を読み込みました。`
+      : "技を追加するか、CSVを貼り付けてください。";
+    btnPracticeTimerBegin.disabled=menu.length===0;
+    const raw=rawText??practiceTimerMenuToCsv(menu);
+    practiceTimerCsv.value=raw;
+    renderPracticeTimerMenu();
+    try{localStorage.setItem(PRACTICE_TIMER_STORAGE,JSON.stringify({raw,menu}));}catch(e){}
+  }
+
+  function renderPracticeTimerMenu(){
+    practiceTimerList.innerHTML="";
+    practiceTimerState.menu.forEach((item,index)=>{
+      const li=document.createElement("li");
+      if(practiceTimerState.prepared){
+        if(index<practiceTimerState.index) li.classList.add("done");
+        if(index===practiceTimerState.index && !practiceTimerState.finished) li.classList.add("current");
+      }
+      const no=document.createElement("span");no.className="menuNo";no.textContent=String(index+1);
+      const name=document.createElement("strong");name.textContent=item.name;
+      const time=document.createElement("span");time.className="menuTime";time.textContent=formatPracticeTime(item.seconds);
+      li.append(no,name,time);
+      if(!practiceTimerState.prepared){
+        const remove=document.createElement("button");remove.type="button";remove.className="menuRemove";
+        remove.dataset.index=String(index);remove.textContent="削除";remove.setAttribute("aria-label",`${item.name}を削除`);
+        li.appendChild(remove);
+      }
+      if(item.note){const note=document.createElement("span");note.className="menuNote";note.textContent=item.note;li.appendChild(note);}
+      practiceTimerList.appendChild(li);
+    });
+  }
+
+  function setPracticeTimerStatus(text,kind=""){
+    practiceTimerStatus.textContent=text;
+    practiceTimerStatus.className="practiceTimerStatus"+(kind?` ${kind}`:"");
+  }
+
+  function loadPracticeTimerCsv(){
+    try{
+      const raw=practiceTimerCsv.value;
+      const menu=buildPracticeTimerMenu(raw);
+      applyPracticeTimerMenu(menu,raw);
+    }catch(error){
+      practiceTimerState.menu=[];
+      btnPracticeTimerBegin.disabled=true;
+      practiceTimerList.innerHTML="";
+      practiceTimerSummary.textContent=`読み込みエラー：${error.message}`;
+    }
+  }
+
+  function addManualPracticeTimerItem(){
+    const name=String(practiceTimerManualName.value||"").trim();
+    const seconds=parsePracticeDuration(practiceTimerManualTime.value);
+    const note=String(practiceTimerManualNote.value||"").trim();
+    if(!name){practiceTimerManualStatus.textContent="練習したい技を入力してください。";return;}
+    if(!Number.isFinite(seconds)||seconds<=0){practiceTimerManualStatus.textContent="時間を「180」「3分」「1:30」などで入力してください。";return;}
+    if(seconds>7200){practiceTimerManualStatus.textContent="1つの技は120分以内にしてください。";return;}
+    if(practiceTimerState.menu.length>=50){practiceTimerManualStatus.textContent="一度に追加できる技は50件までです。";return;}
+    const menu=[...practiceTimerState.menu,{name:name.slice(0,80),seconds:Math.round(seconds),note:note.slice(0,160)}];
+    if(menu.reduce((sum,item)=>sum+item.seconds,0)>4*60*60){practiceTimerManualStatus.textContent="合計時間は4時間以内にしてください。";return;}
+    applyPracticeTimerMenu(menu);
+    practiceTimerManualName.value="";practiceTimerManualTime.value="";practiceTimerManualNote.value="";
+    practiceTimerManualStatus.textContent=`「${name}」を追加しました。`;
+    practiceTimerManualName.focus();
+  }
+
+  function renderPracticeTimerRun(){
+    const item=practiceTimerState.menu[practiceTimerState.index];
+    if(!item) return;
+    practiceTimerCurrent.textContent=item.name;
+    practiceTimerNote.textContent=item.note||" ";
+    practiceTimerClock.textContent=formatPracticeTime(practiceTimerState.segmentRemaining);
+    practiceTimerTotalRemaining.textContent=formatPracticeTime(practiceTimerState.totalRemaining);
+    practiceTimerProgress.textContent=`${practiceTimerState.index+1} / ${practiceTimerState.menu.length}`;
+    const next=practiceTimerState.menu[practiceTimerState.index+1];
+    practiceTimerNext.textContent=next?`次の技：${next.name}（${formatPracticeTime(next.seconds)}）`:"この技で最後です。";
+    btnPracticeTimerToggle.textContent=practiceTimerState.running?"一時停止":(practiceTimerState.finished?"もう一度":"スタート");
+    btnPracticeTimerNext.disabled=practiceTimerState.finished;
+    renderPracticeTimerMenu();
+  }
+
+  function preparePracticeTimerRun(){
+    stopPracticeTimer(false);
+    practiceTimerState.index=0;practiceTimerState.finished=false;practiceTimerState.prepared=true;
+    practiceTimerState.segmentRemaining=practiceTimerState.menu[0]?.seconds||0;
+    practiceTimerState.totalRemaining=practiceTimerState.menu.reduce((sum,item)=>sum+item.seconds,0);
+    practiceTimerSetup.hidden=true;practiceTimerRun.hidden=false;
+    setPracticeTimerStatus("スタートを押すと練習を開始します。");
+    renderPracticeTimerRun();
+  }
+
+  async function requestPracticeTimerWakeLock(){
+    if(!practiceTimerState.running || document.visibilityState!=="visible" || !("wakeLock" in navigator)) return;
+    if(practiceTimerState.wakeLock && !practiceTimerState.wakeLock.released) return;
+    try{
+      practiceTimerState.wakeLock=await navigator.wakeLock.request("screen");
+      practiceTimerState.wakeLock.addEventListener("release",()=>{practiceTimerState.wakeLock=null;},{once:true});
+      setPracticeTimerStatus("練習中・画面スリープ防止が有効です。","ok");
+    }catch(e){setPracticeTimerStatus("練習中・画面スリープ防止は端末側で利用できません。","warn");}
+  }
+
+  function releasePracticeTimerWakeLock(){
+    const lock=practiceTimerState.wakeLock;practiceTimerState.wakeLock=null;
+    if(lock && !lock.released) lock.release().catch(()=>{});
+  }
+
+  function practiceTimerTone(finalTone=false){
+    try{
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      if(!AudioCtx) return;
+      const ctx=practiceTimerState.audio||(practiceTimerState.audio=new AudioCtx());
+      const osc=ctx.createOscillator(),gain=ctx.createGain();
+      osc.frequency.value=finalTone?880:660;gain.gain.setValueAtTime(.0001,ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.16,ctx.currentTime+.015);
+      gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.18);
+      osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.2);
+    }catch(e){}
+  }
+
+  function finishPracticeTimer(){
+    practiceTimerState.running=false;practiceTimerState.finished=true;
+    practiceTimerState.segmentRemaining=0;practiceTimerState.totalRemaining=0;
+    cancelAnimationFrame(practiceTimerState.raf);practiceTimerState.raf=0;
+    releasePracticeTimerWakeLock();practiceTimerTone(true);vibrate([80,40,120]);
+    setPracticeTimerStatus("全メニューの練習が完了しました。","ok");
+    renderPracticeTimerRun();
+  }
+
+  function advancePracticeTimer(autoAdvance=false){
+    if(practiceTimerState.finished) return;
+    const remainingCurrent=Math.max(0,practiceTimerState.segmentRemaining);
+    if(!autoAdvance) practiceTimerState.totalRemaining=Math.max(0,practiceTimerState.totalRemaining-remainingCurrent);
+    if(practiceTimerState.index>=practiceTimerState.menu.length-1){finishPracticeTimer();return;}
+    practiceTimerState.index++;
+    practiceTimerState.segmentRemaining=practiceTimerState.menu[practiceTimerState.index].seconds;
+    practiceTimerTone(false);vibrate(45);
+    setPracticeTimerStatus(`「${practiceTimerState.menu[practiceTimerState.index].name}」へ切り替えました。`,"ok");
+    renderPracticeTimerRun();
+  }
+
+  function practiceTimerTick(){
+    if(!practiceTimerState.running) return;
+    const now=Date.now(),delta=Math.max(0,(now-practiceTimerState.lastTick)/1000);
+    practiceTimerState.lastTick=now;
+    practiceTimerState.segmentRemaining-=delta;
+    practiceTimerState.totalRemaining=Math.max(0,practiceTimerState.totalRemaining-delta);
+    while(practiceTimerState.segmentRemaining<=0 && !practiceTimerState.finished){
+      const overshoot=Math.max(0,-practiceTimerState.segmentRemaining);
+      if(practiceTimerState.index>=practiceTimerState.menu.length-1){finishPracticeTimer();break;}
+      advancePracticeTimer(true);
+      practiceTimerState.segmentRemaining=Math.max(0,practiceTimerState.segmentRemaining-overshoot);
+    }
+    if(!practiceTimerState.finished){renderPracticeTimerRun();practiceTimerState.raf=requestAnimationFrame(practiceTimerTick);}
+  }
+
+  function togglePracticeTimer(){
+    if(practiceTimerState.finished){preparePracticeTimerRun();}
+    if(practiceTimerState.running){stopPracticeTimer(true);return;}
+    practiceTimerState.running=true;practiceTimerState.lastTick=Date.now();
+    setPracticeTimerStatus("練習中です。","ok");requestPracticeTimerWakeLock();
+    renderPracticeTimerRun();practiceTimerState.raf=requestAnimationFrame(practiceTimerTick);
+  }
+
+  function stopPracticeTimer(showStatus=true){
+    if(practiceTimerState.running){
+      const now=Date.now(),delta=Math.max(0,(now-practiceTimerState.lastTick)/1000);
+      practiceTimerState.segmentRemaining=Math.max(0,practiceTimerState.segmentRemaining-delta);
+      practiceTimerState.totalRemaining=Math.max(0,practiceTimerState.totalRemaining-delta);
+    }
+    practiceTimerState.running=false;cancelAnimationFrame(practiceTimerState.raf);practiceTimerState.raf=0;
+    releasePracticeTimerWakeLock();
+    if(showStatus) setPracticeTimerStatus("一時停止中です。","warn");
+    if(practiceTimerState.prepared) renderPracticeTimerRun();
+  }
+
+  function openPracticeTimer(){
+    practiceTimerOverlay.classList.add("show");practiceTimerOverlay.setAttribute("aria-hidden","false");
+    if(practiceTimerState.prepared){practiceTimerSetup.hidden=true;practiceTimerRun.hidden=false;renderPracticeTimerRun();return;}
+    practiceTimerSetup.hidden=false;practiceTimerRun.hidden=true;
+  }
+
+  function closePracticeTimer(){
+    stopPracticeTimer(false);practiceTimerOverlay.classList.remove("show");practiceTimerOverlay.setAttribute("aria-hidden","true");
+  }
+
+  function editPracticeTimerMenu(){
+    stopPracticeTimer(false);practiceTimerState.prepared=false;practiceTimerSetup.hidden=false;practiceTimerRun.hidden=true;
+    renderPracticeTimerMenu();
+  }
+
 
   const TIME_B_TRICKS = [
     "前ふりろうそく",
@@ -5983,6 +6452,33 @@ const btnResultAIExport=el("btnResultAIExport");
 
   btnOpenTimeB.addEventListener("click",()=>openTimeB(false));
   btnOpenTimeBSolo.addEventListener("click",()=>openTimeB(true));
+  btnOpenPracticeTimer.addEventListener("click",openPracticeTimer);
+  btnClosePracticeTimer.addEventListener("click",closePracticeTimer);
+  btnPracticeTimerSample.addEventListener("click",()=>{
+    practiceTimerCsv.value="技名,時間,注意点\n宇宙一周,6分,玉を高く上げすぎない\n地球まわし,4分,けん先をまっすぐ保つ\nうぐいす,3分,静止してからけんへ\nさか落とし,2分,軸を崩さない";
+    loadPracticeTimerCsv();
+  });
+  btnPracticeTimerLoad.addEventListener("click",loadPracticeTimerCsv);
+  btnPracticeTimerBegin.addEventListener("click",preparePracticeTimerRun);
+  btnPracticeTimerToggle.addEventListener("click",togglePracticeTimer);
+  btnPracticeTimerNext.addEventListener("click",()=>advancePracticeTimer(false));
+  btnPracticeTimerReset.addEventListener("click",preparePracticeTimerRun);
+  btnPracticeTimerEdit.addEventListener("click",editPracticeTimerMenu);
+  btnPracticeTimerManualAdd.addEventListener("click",addManualPracticeTimerItem);
+  practiceTimerManualTime.addEventListener("keydown",e=>{
+    if(e.key==="Enter"){e.preventDefault();addManualPracticeTimerItem();}
+  });
+  practiceTimerList.addEventListener("click",e=>{
+    const button=e.target.closest(".menuRemove");
+    if(!button) return;
+    const index=Number(button.dataset.index);
+    if(!Number.isInteger(index)||index<0||index>=practiceTimerState.menu.length) return;
+    const removed=practiceTimerState.menu[index];
+    const menu=practiceTimerState.menu.filter((_,itemIndex)=>itemIndex!==index);
+    applyPracticeTimerMenu(menu);
+    practiceTimerManualStatus.textContent=`「${removed.name}」を削除しました。`;
+  });
+  practiceTimerOverlay.addEventListener("click",e=>{if(e.target===practiceTimerOverlay) closePracticeTimer();});
   btnCloseTimeB.addEventListener("click",closeTimeB);
   btnTimeBStart.addEventListener("click",startOrResumeTimeB);
   btnTimeBSoloStart.addEventListener("click",startOrResumeTimeB);
@@ -6016,6 +6512,9 @@ const btnResultAIExport=el("btnResultAIExport");
     if(document.visibilityState==="visible"){
       renderTimeBClock();
       if(timeBWakeUntil>Date.now()) ensureTimeBWakeLock();
+      if(practiceTimerState.running){
+        requestPracticeTimerWakeLock();
+      }
     }
   });
 
@@ -6204,13 +6703,14 @@ const btnResultAIExport=el("btnResultAIExport");
   updateNoticeOverlay.addEventListener("click",e=>{ if(e.target===updateNoticeOverlay) closeUpdateNotice(); });
 
   certType.addEventListener("change",()=>{
+    // 切替前のモードと段位・クラスを先に保存する。
+    writeRankPreference();
     populatePracticeModes(certType.value);
-    setupRankSelector();
+    setupRankSelector(rememberedRankForMode(mode.value));
     writeRankPreference();
   });
   mode.addEventListener("change", ()=>{
-    const previousRank = rankSel.value;
-    setupRankSelector(previousRank);
+    setupRankSelector(rememberedRankForMode(mode.value));
     writeRankPreference();
   });
   rankSel.addEventListener("change", ()=>{ writeRankPreference(); applyGlokenTheme(rankSel.value); });
@@ -6358,6 +6858,8 @@ btnResultUndo.addEventListener("click", ()=>{
   btnPracticeSkip.addEventListener("click", closeRecovery);
 
   // init
+  // ブラウザのフォーム復元を含め、起動時のCSV欄は必ず空にする。
+  practiceTimerCsv.value="";
   load();
   if(!applyRankPreference()){
     const initialMode=S.mode||"dan";
@@ -6370,7 +6872,7 @@ btnResultUndo.addEventListener("click", ()=>{
   }
   writeRankPreference();
   kyuTableTa.value = JSON.stringify(S.kyuTable || KYU_TABLE_DEFAULT, null, 2);
-  console.info("[Kendama Tracker v4.4.3] ready");
+  console.info("[Kendama Tracker v4.5.3] ready");
   syncSettingsForm();
   updateUI();
   applyReadingMode();
